@@ -51,7 +51,7 @@ export default function useTransportVehiclesList({
         try {
             navigation.addListener('focus', () => setIsLoad(!isLoad))
             const result =
-                await transportVehicleServices.loadAllTransportVehicleByEnterpriseIdAndServerIdValidFromLocalDatabase(
+                await transportVehicleServices.loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
                     user.enterpriseId,
                     item.id
                 )

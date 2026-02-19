@@ -7,9 +7,9 @@ import { TransportVehicleServices } from '../../../domin/services/interfaces/Tra
 import { ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'
 import { MaterialTransportServices } from '../../../domin/services/interfaces/MaterialTransportServices'
-import { useConfig } from '../../../contexts/ConfigContext'
 import { MaterialServices } from '../../../domin/services/interfaces/MaterialServices'
 import { WorkRoutesServices } from '../../../domin/services/interfaces/WorkRoutesServices'
+import { useApplicationContext } from '../../../contexts/ApplicationContext'
 
 type UseTransportProps = {
     work: WorkDto
@@ -32,7 +32,7 @@ export default function useTransport({
     const [isLoadingList, setIsLoadingList] = useState(true)
     const [transportVehicles, setTransportVehicles] = useState<TransportVehicleDto[]>([])
     const { user } = useAuth()
-    const { rotasPadroes } = useConfig()
+    const { saveWork } = useApplicationContext()
 
     async function loadAllTransportVehicles() {
         try {
@@ -65,14 +65,11 @@ export default function useTransport({
         })
     }
     return {
-        user,
-        rotasPadroes,
         work,
         transportVehicles,
         isLoadingList,
-        isLoad,
         setIsLoad,
-
         handleClickItemTransportVehicle,
+        saveWork,
     }
 }

@@ -2,7 +2,20 @@ import { BankInformation } from '../../entity/bank-information/BankInformation'
 import { EquipmentEntity } from '../../entity/equipment/EquipmentEntity'
 
 export interface EquipmentRepositoryGateway {
+    /**
+     * Cria no banco de dados um entity
+     *
+     * @param {EquipmentEntity} entity - entity.
+     * @returns {EquipmentEntity} Resultado.
+     */
     createEquipmentInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity>
+
+    /**
+     * Atualiza no banco de dados um entity
+     *
+     * @param {EquipmentEntity} entity - entity.
+     * @returns {EquipmentEntity} Resultado.
+     */
     updateEquipmentInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity>
     deleteEquipmentInLocalDatabase(id: string, userId: string): Promise<void>
     findEquipmentByIdInLocalDatabase(id: string): Promise<EquipmentEntity | null>

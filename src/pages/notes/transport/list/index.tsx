@@ -1,8 +1,6 @@
 import React from 'react'
-import { TouchableOpacity, FlatList, StyleSheet, View, ActivityIndicator } from 'react-native'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { FlatList, View, ActivityIndicator } from 'react-native'
 import Container from '../../../../components/Container'
-import theme from '../../../../global/styles/theme'
 import {
     Card,
     CardContent,
@@ -51,13 +49,7 @@ export default function ApontamentosLista({ navigation, route }) {
                     <View style={{ justifyContent: 'flex-start', flex: 1, width: '95%' }}>
                         <ListaVazia />
                     </View>
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={handlerClickNewButton}
-                        style={styles.touchableOpacityStyle}
-                    >
-                        <FontAwesome name="plus" size={20} color={'#fff'} />
-                    </TouchableOpacity>
+                    <ButtonNewRegister onPressFunction={handlerClickNewButton} activeOpacity={0.7} />
                 </Content>
             </Container>
         )
@@ -158,7 +150,7 @@ export default function ApontamentosLista({ navigation, route }) {
                                             </ViewRight>
                                         </CardContent>
                                         {item.observation.length > 0 ? (
-                                            <View style={styles.viewObs}>
+                                            <View style={{ width: '100%', flexDirection: 'column' }}>
                                                 <TextLabel>Observação: </TextLabel>
                                                 <TextDescricao>{item.observation}</TextDescricao>
                                             </View>
@@ -176,31 +168,3 @@ export default function ApontamentosLista({ navigation, route }) {
         )
     }
 }
-
-const styles = StyleSheet.create({
-    touchableOpacityStyle: {
-        shadowColor: '#000000',
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowOpacity: 0.37,
-        shadowRadius: 7.49,
-        elevation: 8,
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: theme.colors.btplus,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-        position: 'absolute',
-        right: 20,
-        bottom: 20,
-    },
-
-    viewObs: {
-        width: '100%',
-        flexDirection: 'column',
-    },
-})

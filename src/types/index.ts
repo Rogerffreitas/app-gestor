@@ -26,6 +26,9 @@ export enum MenuEquipmentType {
 export enum FuelSupplyTypes {
     MAINTENANCE_TRUCK = 'MAINTENANCE_TRUCK',
     GAS_STATION = 'GAS_STATION',
+    TRANSPORT_VEHICLE = 't_vehicle',
+    EQUIPMENT = 'equipment',
+    MAINTENANCE_TRUCK_TANK = 'm_t_tank',
 }
 
 export type ErrorMessages = {
@@ -41,7 +44,7 @@ export enum TableName {
     WORK_EQUIPMENTS = 'work_equipments',
     MATERIAL_TRANSPORTS = 'material_transports',
     TRANSPORT_VEHICLES = 'transport_vehicles',
-    FUEL_SUPPLYS = 'fuel_supplys',
+    FUEL_SUPPLYS = 'fuel_supples',
     DISCOUNTS = 'discounts',
     HOUR_METER_MONITORINGS = 'hour_meter_monitorings',
     MAINTENANCE_TRUCKS = 'maintenance_trucks',
@@ -57,7 +60,10 @@ export enum ScreenNames {
     WORK_EQUIPMENTS = 'Escolha os equipamentos',
     WORK_EQUIPMENTS_LIST = 'Equipamentos da obra',
     TRANSPORT_OF_MATERIALS = 'Transport of materials',
-    FUEL_SUPPLYS = 'Fuel supplys',
+    FUEL_SUPPLES = 'Fuel supples',
+    FUEL_SUPPLY_LIST = 'Fuel supply List',
+    NEW_FUEL_SUPPLY = 'New Fuel supply',
+    EDIT_FUEL_SUPPLY = 'Edit Fuel supply',
     DISCOUNTS = 'Discounts',
     HOUR_METER_MONITORINGS = 'Hour meter monitorings',
     MAINTENANCE_TRUCKS = 'Melosas',
@@ -82,7 +88,10 @@ export enum ScreenTitles {
     WORK_EQUIPMENTS = 'Escolha os equipamentos',
     WORK_EQUIPMENTS_LIST = 'Equipamentos da obra',
     TRANSPORT_OF_MATERIALS = 'transport_of_materials',
-    FUEL_SUPPLYS = 'fuel_supplys',
+    FUEL_SUPPLES = 'Abastecimentos',
+    FUEL_SUPPLY_LIST = 'Abastecimentos',
+    EDIT_FUEL_SUPPLY = 'Editar Abastecimento',
+    NEW_FUEL_SUPPLY = 'Novo Abastecimento',
     DISCOUNTS = 'discounts',
     HOUR_METER_MONITORINGS = 'hour_meter_monitorings',
     MAINTENANCE_TRUCKS = 'Melosas',

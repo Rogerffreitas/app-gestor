@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { TouchableOpacity, FlatList, StyleSheet, View, ActivityIndicator } from 'react-native'
+import React from 'react'
+import { FlatList, View, ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
-
-import { useAuth } from '../../../../contexts/AuthContext'
 import Container from '../../../../components/Container'
-import { getAll } from '../../../../dao/AbastecimentoDAO'
-
-import theme from '../../../../global/styles/theme'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import Abastecimento from '../../../../database/model/FuelSupplyModel'
 import CardLineContentRight from '../../../../components/cardLine/CardLineContentRight'
 import CardLine from '../../../../components/cardLine/CardLine'
 import CardLineContent from '../../../../components/cardLine/CardLineContent'
@@ -20,41 +14,21 @@ import Content from '../../../../components/Content'
 import ListaVazia from '../../../../components/List/ListaVazia'
 import Linha from '../../../../components/cardLine/Line'
 import SyncButton from '../../../../components/SyncButton'
+import useFuelSupplesList from './useFuelSupplesList'
+import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
+import { FuelSupplyTypes } from '../../../../types'
 
-export default function ({ navigation, route }) {
-    const { usuario } = useAuth()
-    const [load, setLoad] = useState(true)
-    const [obra, setObra] = useState(route.params?.obra)
-    const [veiculo, setVeiculo] = useState(route.params?.veiculo)
-    const [tipo, setTipo] = useState<string>(route.params?.tipo)
-    const [loadingList, setLoadingList] = useState(true)
-    const [abastecimentos, setAbastecimentos] = useState<Abastecimento[]>([])
+export default function FuelSupplyList({ navigation, route }) {
+    const { fuelSupplyServices, transportVehicleOrWorkEquipmentId, workId, type } = route.params
+    const { isLoadingList, fuelSupples, handlerClickNewButton, handleClickEditButton } = useFuelSupplesList({
+        fuelSupplyServices,
+        transportVehicleOrWorkEquipmentId,
+        workId,
+        type,
+        navigation,
+    })
 
-    useEffect(() => {
-        _getAll()
-    }, [load])
-
-    async function _getAll() {
-        navigation.addListener('focus', () => setLoad(!load))
-        const result = await getAll(obra, tipo, veiculo, usuario.empresaId)
-        setAbastecimentos(result)
-        setLoadingList(false)
-    }
-
-    function _handlerNewRaw() {
-        navigation.navigate('Novo Abastecimento', {
-            obra: obra,
-            veiculo: veiculo,
-            tipo: tipo,
-        })
-    }
-    function _editarAbastecimento(abastecimento: Abastecimento) {
-        navigation.navigate('Editar Abastecimento', {
-            abastecimento: abastecimento._raw,
-        })
-    }
-
-    if (loadingList) {
+    if (isLoadingList) {
         return (
             <Container>
                 <View style={{ justifyContent: 'center', flex: 1 }}>
@@ -66,7 +40,7 @@ export default function ({ navigation, route }) {
 
     return (
         <Container>
-            {abastecimentos.length == 0 ? (
+            {fuelSupples.length == 0 ? (
                 <Content>
                     <ListaVazia />
                 </Content>
@@ -74,7 +48,7 @@ export default function ({ navigation, route }) {
                 <ContentCardList>
                     <FlatList
                         style={{ flex: 1, width: '95%' }}
-                        data={abastecimentos}
+                        data={fuelSupples}
                         keyExtractor={(item) => {
                             return item.id
                         }}
@@ -85,7 +59,7 @@ export default function ({ navigation, route }) {
                             return (
                                 <View style={{ flex: 1 }}>
                                     <CardLine onPress={() => ({})} opacity={1}>
-                                        <ViewTituloCardLine titulo={item.descricao}>
+                                        <ViewTituloCardLine titulo={item.description}>
                                             <View
                                                 style={{
                                                     width: '10%',
@@ -96,9 +70,7 @@ export default function ({ navigation, route }) {
                                                 <SyncButton item={item} model={'abastecimento'} />
                                             </View>
                                             {index == 0 ? (
-                                                <ButtonEditar
-                                                    onPress={() => _editarAbastecimento(item)}
-                                                >
+                                                <ButtonEditar onPress={() => handleClickEditButton(item)}>
                                                     <FontAwesome
                                                         name={'edit'}
                                                         size={20}
@@ -115,7 +87,7 @@ export default function ({ navigation, route }) {
                                                 <TextTituloCardLine conteudo={'Quantidade:'} />
                                                 <TextTituloCardLine conteudo={'Valor por litro:'} />
                                                 <TextTituloCardLine conteudo={'Total:'} />
-                                                {item.tipo != 'equipamento' ? (
+                                                {item.type != FuelSupplyTypes.EQUIPMENT ? (
                                                     <TextTituloCardLine conteudo={'Descontar? '} />
                                                 ) : (
                                                     <></>
@@ -123,29 +95,29 @@ export default function ({ navigation, route }) {
                                             </CardLineContentLeft>
                                             <CardLineContentRight>
                                                 <TextConteudoCardLine
-                                                    conteudo={item.quantidade.toLocaleString(
+                                                    conteudo={item.quantity.toLocaleString('pt-BR', {
+                                                        style: 'decimal',
+                                                        maximumFractionDigits: 2,
+                                                    })}
+                                                />
+                                                <TextConteudoCardLine
+                                                    conteudo={(item.valuePerLiter / 100).toLocaleString(
                                                         'pt-BR',
                                                         {
-                                                            style: 'decimal',
-                                                            maximumFractionDigits: 2,
+                                                            style: 'currency',
+                                                            currency: 'BRL',
                                                         }
                                                     )}
                                                 />
                                                 <TextConteudoCardLine
-                                                    conteudo={item.valorPorLitro.toLocaleString(
-                                                        'pt-BR',
-                                                        { style: 'currency', currency: 'BRL' }
-                                                    )}
-                                                />
-                                                <TextConteudoCardLine
-                                                    conteudo={item.valor.toLocaleString('pt-BR', {
+                                                    conteudo={(item.value / 100).toLocaleString('pt-BR', {
                                                         style: 'currency',
                                                         currency: 'BRL',
                                                     })}
                                                 />
-                                                {item.tipo != 'equipamento' ? (
+                                                {item.type != FuelSupplyTypes.EQUIPMENT ? (
                                                     <TextConteudoCardLine
-                                                        conteudo={item.descontar ? 'Sim' : 'Não'}
+                                                        conteudo={item.isDiscount ? 'Sim' : 'Não'}
                                                     />
                                                 ) : (
                                                     <></>
@@ -159,38 +131,11 @@ export default function ({ navigation, route }) {
                     ></FlatList>
                 </ContentCardList>
             )}
-            <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={_handlerNewRaw}
-                style={styles.touchableOpacityStyle}
-            >
-                <FontAwesome name="plus" size={20} color={'#fff'} />
-            </TouchableOpacity>
+
+            <ButtonNewRegister onPressFunction={handlerClickNewButton} activeOpacity={0.7} />
         </Container>
     )
 }
-
-const styles = StyleSheet.create({
-    touchableOpacityStyle: {
-        shadowColor: '#000000',
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowOpacity: 0.37,
-        shadowRadius: 7.49,
-        elevation: 8,
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: theme.colors.btplus,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-        position: 'absolute',
-        bottom: 0,
-    },
-})
 
 const ContentCardList = styled.View`
     justify-content: center;

@@ -1,5 +1,5 @@
 import FuelSupplyModel from '../../../database/model/FuelSupplyModel'
-import { ChangeErrorFields, ErrorMessages } from '../../../types'
+import { ChangeErrorFields, ErrorMessages, FuelSupplyTypes } from '../../../types'
 import AbstratcEntity from '../AbstratcEntity'
 import { FuelSupplyDto } from './FuelSupplyDto'
 
@@ -9,7 +9,7 @@ export class FuelSupplyEntity extends AbstratcEntity {
     private _value: number
     private _description: string
     private _type: string
-    private _transportVehicleOrEquipmentId: string
+    private _transportVehicleOrWorkEquipmentId: string
     private _observation: string
     private _isGasStation: boolean
     private _maintenanceTrucksWorkEquipmentId: string
@@ -23,10 +23,12 @@ export class FuelSupplyEntity extends AbstratcEntity {
         const entity = new FuelSupplyEntity()
         entity._quantity = data.quantity
         entity._valuePerLiter = data.valuePerLiter
-        entity._value = data.quantity * data.valuePerLiter
+        entity._value = parseInt(
+            ((data.quantity / 100) * (data.valuePerLiter / 100)).toFixed(2).replace('.', '')
+        )
         entity._description = data.description
         entity._type = data.type
-        entity._transportVehicleOrEquipmentId = data.transportVehicleOrEquipmentId
+        entity._transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
         entity._observation = data.observation
         entity._isGasStation = data.isGasStation
         entity._maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
@@ -40,14 +42,14 @@ export class FuelSupplyEntity extends AbstratcEntity {
         return entity
     }
 
-    public async modelToEntity(data: FuelSupplyModel): Promise<FuelSupplyEntity> {
+    public static modelToEntity(data: FuelSupplyModel): FuelSupplyEntity {
         const entity = new FuelSupplyEntity()
         entity._quantity = data.quantity
         entity._valuePerLiter = data.valuePerLiter
         entity._value = data.value
         entity._description = data.description
         entity._type = data.type
-        entity._transportVehicleOrEquipmentId = data.transportVehicleOrEquipmentId
+        entity._transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
         entity._observation = data.observation
         entity._isGasStation = data.isGasStation
         entity._maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
@@ -88,8 +90,8 @@ export class FuelSupplyEntity extends AbstratcEntity {
         return this._type
     }
 
-    get transportVehicleOrEquipmentId(): string {
-        return this._transportVehicleOrEquipmentId
+    get transportVehicleOrWorkEquipmentId(): string {
+        return this._transportVehicleOrWorkEquipmentId
     }
 
     get observation(): string {
@@ -137,7 +139,10 @@ export class FuelSupplyEntity extends AbstratcEntity {
         if (!this._valuePerLiter || this._valuePerLiter <= 0)
             addError('valuePerLiter', 'Preencha o campo obrigatório')
         if (!this._value || this._value <= 0) addError('value', 'Preencha o campo obrigatório')
-        if (!this._hourMeterOrKmMeter || this._hourMeterOrKmMeter <= 0)
+        if (
+            (!this._hourMeterOrKmMeter && this.type == FuelSupplyTypes.EQUIPMENT) ||
+            (this._hourMeterOrKmMeter <= 0 && this.type == FuelSupplyTypes.EQUIPMENT)
+        )
             addError('hourMeterOrKmMeter', 'Preencha o campo obrigatório')
         if (!this._description?.trim()) addError('description', 'Preencha o campo obrigatório')
         if (!this._type?.trim()) addError('type', 'Preencha o campo obrigatório')

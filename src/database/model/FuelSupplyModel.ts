@@ -2,10 +2,7 @@ import { Model } from '@nozbe/watermelondb'
 import { date, readonly, field } from '@nozbe/watermelondb/decorators'
 
 export default class FuelSupplyModel extends Model {
-    static table = 'fuel_supplys'
-
-    @field('server_id')
-    serverId: number
+    static table = 'fuel_supples'
 
     @field('quantity')
     quantity: number
@@ -19,11 +16,14 @@ export default class FuelSupplyModel extends Model {
     @field('description')
     public description: string
 
+    @field('server_id')
+    serverId: number
+
     @field('type')
     public type: string
 
-    @field('transport_vehicle_or_equipment_id')
-    transportVehicleOrEquipmentId: string
+    @field('transport_vehicle_or_work_equipment_id')
+    transportVehicleOrWorkEquipmentId: string
 
     @field('observation')
     public observation: string

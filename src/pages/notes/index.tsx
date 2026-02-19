@@ -18,10 +18,14 @@ import { WorkRoutesServicesImpl } from '../../domin/services/impl/WorkRoutesServ
 import { WorkRoutesWatermelonDbRepository } from '../../persistence/WorkRoutesWatermelonDbRepository'
 import { MaterialServicesImpl } from '../../domin/services/impl/MaterialServicesImpl'
 import { MaterialWatermelonDbRepository } from '../../persistence/MaterialWatermelonDbRepository'
+import FuelSupplyServicesImpl from '../../domin/services/impl/FuelSupplyServicesImpl'
+import { FuelSupplyWatermelonDbRepository } from '../../persistence/FuelSupplyWatermelonDbRepository'
+import WorkEquipmentServicesImpl from '../../domin/services/impl/WorkEquipmentServicesImpl'
+import { WorkEquipmentWatermelonDbRepository } from '../../persistence/WorkEquipmentWatermelonDbRepository'
 
 enum MenuOptions {
-    TRANSPORT_NOTE = 'TRANSPORT_NOTE',
-    HOUR_METER_MONITORINGS = 'HOUR_METER_MONITORINGS',
+    EQUIPMENT = 'equipment',
+    TRANSPORT_VEHICLE = 't_vehicle',
     MAINTENANCE_TRUCK_NOTE = 'MAINTENANCE_TRUCK_NOTE',
 }
 
@@ -34,7 +38,6 @@ export default function Notes({ navigation, route }) {
     const [isLoad, setIsLoad] = useState(true)
     const [isLoadingList, setIsLoadingList] = useState(true)
     const { work, saveWork } = useApplicationContext()
-    const [screen, setScreen] = useState<ScreenNames>(null)
 
     async function loadAllWork() {
         navigation.addListener('focus', () => setIsLoad(!isLoad))
@@ -66,12 +69,6 @@ export default function Notes({ navigation, route }) {
     function handleClickItemWork(item: WorkDto) {
         saveWork(item)
         navigation.setOptions({ title: 'Apontamentos' })
-    }
-
-    function handleClickType(screenNames: ScreenNames) {
-        navigation.navigate(screenNames, {
-            type: type,
-        })
     }
 
     if (isLoadingList) {
@@ -132,7 +129,7 @@ export default function Notes({ navigation, route }) {
                     />
                     {user.role == UserRoles.USER || user.role == UserRoles.ADMIN ? (
                         <View>
-                            <ButtonStyled onPress={() => setType(MenuOptions.TRANSPORT_NOTE)}>
+                            <ButtonStyled onPress={() => setType(MenuOptions.TRANSPORT_VEHICLE)}>
                                 <ImageStyled>
                                     <LottieView
                                         autoPlay
@@ -147,7 +144,7 @@ export default function Notes({ navigation, route }) {
                             </ButtonStyled>
                             <ButtonStyled
                                 style={{ backgroundColor: '#000080' }}
-                                onPress={() => setType(MenuOptions.HOUR_METER_MONITORINGS)}
+                                onPress={() => setType(MenuOptions.EQUIPMENT)}
                             >
                                 <ImageStyled>
                                     <Image
@@ -190,7 +187,7 @@ export default function Notes({ navigation, route }) {
         )
     }
 
-    if (work && type && !screen) {
+    if (work && type) {
         return (
             <Container>
                 <View style={{ width: '100%' }}>
@@ -203,7 +200,7 @@ export default function Notes({ navigation, route }) {
                         descricao={work.description}
                     />
 
-                    {type == MenuOptions.TRANSPORT_NOTE && (
+                    {type == MenuOptions.TRANSPORT_VEHICLE && (
                         <ButtonStyled
                             onPress={() => {
                                 navigation.navigate(ScreenNames.TRANSPORT_NOTE, {
@@ -236,10 +233,14 @@ export default function Notes({ navigation, route }) {
                             </TextContent>
                         </ButtonStyled>
                     )}
-                    {type == MenuOptions.HOUR_METER_MONITORINGS && (
+                    {type == MenuOptions.EQUIPMENT && (
                         <ButtonStyled
                             style={{ backgroundColor: '#000080' }}
-                            onPress={() => handleClickType(ScreenNames.HOUR_METER_MONITORINGS)}
+                            onPress={() => {
+                                navigation.navigate(ScreenNames.HOUR_METER_MONITORINGS, {
+                                    work: work,
+                                })
+                            }}
                         >
                             <ImageStyled>
                                 <Image
@@ -254,7 +255,11 @@ export default function Notes({ navigation, route }) {
                     )}
                     <ButtonStyled
                         style={{ backgroundColor: '#000080' }}
-                        onPress={() => handleClickType(ScreenNames.DISCOUNTS)}
+                        onPress={() => {
+                            navigation.navigate(ScreenNames.DISCOUNTS, {
+                                work: work,
+                            })
+                        }}
                     >
                         <ImageStyled>
                             <Image
@@ -268,7 +273,21 @@ export default function Notes({ navigation, route }) {
                     </ButtonStyled>
                     <ButtonStyled
                         style={{ backgroundColor: '#000080' }}
-                        onPress={() => setScreen(ScreenNames.TRANSPORT_NOTE)}
+                        onPress={() => {
+                            navigation.navigate(ScreenNames.FUEL_SUPPLES, {
+                                work: work,
+                                type: type,
+                                fuelSupplyServices: new FuelSupplyServicesImpl(
+                                    new FuelSupplyWatermelonDbRepository()
+                                ),
+                                transportVehicleServices: new TransportVehicleServicesImpl(
+                                    new TransportVehicleWatermelonDbRepository()
+                                ),
+                                workEquipmentServices: new WorkEquipmentServicesImpl(
+                                    new WorkEquipmentWatermelonDbRepository()
+                                ),
+                            })
+                        }}
                     >
                         <ImageStyled>
                             <Image

@@ -4,7 +4,7 @@ import { EquipmentEntity } from '../domin/entity/equipment/EquipmentEntity'
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../database'
 import EquipmentModel from '../database/model/EquipmentModel'
-import { TableName } from '../types'
+import { TableName, UserAction } from '../types'
 
 export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway {
     async updateEquipmentBankInformation(
@@ -91,10 +91,9 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
     async updateEquipmentInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity> {
         console.log('Updating equipment in the database')
         try {
-            let result: EquipmentModel
-            await database.write(async () => {
+            const result = await database.write(async () => {
                 const item = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(entity.id)
-                result = await item.update(() => {
+                return await item.update(() => {
                     item.nameProprietary = entity.nameProprietary
                     item.cpfCnpjProprietary = entity.cpfCnpjProprietary
                     item.telProprietary = entity.telProprietary
@@ -106,7 +105,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                     item.operatorMotorist = entity.operatorMotorist
                     item.modelOrPlate = entity.modelOrPlate
                     item.userId = entity.userId
-                    item.userAction = entity.userAction
+                    item.userAction = UserAction.UPDATE
                 })
             })
             return new EquipmentEntity().modelToEntity(result)

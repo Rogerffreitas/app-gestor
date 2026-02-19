@@ -13,7 +13,6 @@ import TextTituloCardLine from '../../../components/cardLine/TextTituloCardLine'
 import ViewTituloCardLine from '../../../components/cardLine/ViewTituloCardLine'
 import ObraSelected from '../../../components/List/ObraSelected'
 import useTransport from './UseTransport'
-import theme from '../../../global/styles/theme'
 
 export default function TransportNote({ navigation, route }) {
     const {
@@ -23,7 +22,7 @@ export default function TransportNote({ navigation, route }) {
         workRoutesServices,
         materialServices,
     } = route.params
-    const { transportVehicles, isLoadingList, handleClickItemTransportVehicle } = useTransport({
+    const { transportVehicles, isLoadingList, handleClickItemTransportVehicle, saveWork } = useTransport({
         transportVehicleServices,
         materialTransportServices,
         workRoutesServices,
@@ -50,6 +49,7 @@ export default function TransportNote({ navigation, route }) {
                         <ObraSelected
                             active={1}
                             onPress={() => {
+                                saveWork(null)
                                 navigation.goBack()
                             }}
                             titulo={work.name}
@@ -69,6 +69,7 @@ export default function TransportNote({ navigation, route }) {
                     <ObraSelected
                         active={1}
                         onPress={() => {
+                            saveWork(null)
                             navigation.goBack()
                         }}
                         titulo={work.name}
@@ -132,31 +133,3 @@ export default function TransportNote({ navigation, route }) {
         </Container>
     )
 }
-
-const styles = StyleSheet.create({
-    touchableOpacityStyle: {
-        shadowColor: '#000000',
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowOpacity: 0.37,
-        shadowRadius: 7.49,
-        elevation: 8,
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: theme.colors.btplus,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-        position: 'absolute',
-        right: 20,
-        bottom: 20,
-    },
-
-    viewObs: {
-        width: '100%',
-        flexDirection: 'column',
-    },
-})

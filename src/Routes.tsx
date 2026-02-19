@@ -59,6 +59,10 @@ import { ScreenNames, ScreenTitles } from './types'
 import { WorkServicesImpl } from './domin/services/impl/WorkServicesImpl'
 import { WorkWatermelonDbRepository } from './persistence/WorkWatermelonDbRepository'
 import { AxiosHttpClientAdapter } from './infra/adapter/AxiosHttpClientAdapter'
+import FuelSupples from './pages/notes/fuel-supply'
+import FuelSupplyList from './pages/notes/fuel-supply/list'
+import EditFuelSupply from './pages/notes/fuel-supply/edit'
+import NewFuelSupply from './pages/notes/fuel-supply/new'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -254,6 +258,7 @@ export default function App() {
             ) : signed ? (
                 <>
                     <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+
                     <Stack.Screen
                         name={ScreenNames.NOTES}
                         component={Notes}
@@ -284,6 +289,27 @@ export default function App() {
                         name={ScreenNames.TRANSPORT_DETAILS}
                         component={TransportDetails}
                         options={{ title: ScreenTitles.TRANSPORT_DETAILS }}
+                    />
+
+                    <Stack.Screen
+                        name={ScreenNames.FUEL_SUPPLES}
+                        component={FuelSupples}
+                        options={{ title: ScreenTitles.FUEL_SUPPLES }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.FUEL_SUPPLY_LIST}
+                        component={FuelSupplyList}
+                        options={{ title: ScreenTitles.FUEL_SUPPLY_LIST }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_FUEL_SUPPLY}
+                        component={EditFuelSupply}
+                        options={{ title: ScreenTitles.EDIT_FUEL_SUPPLY }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.NEW_FUEL_SUPPLY}
+                        component={NewFuelSupply}
+                        options={{ title: ScreenTitles.NEW_FUEL_SUPPLY }}
                     />
 
                     <Stack.Screen name="Cadastros" component={Cadastros} />

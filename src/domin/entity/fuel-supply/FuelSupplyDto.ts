@@ -7,51 +7,52 @@ export class FuelSupplyDto {
 
     description: string
     type: string
-    transportVehicleOrEquipmentId: string
+    transportVehicleOrWorkEquipmentId: string
     observation: string
     isGasStation: boolean
-    maintenanceTrucksWorkEquipmentId: string
-    hourMeterOrKmMeter: number
     isDiscount: boolean
-    invoiceId: number
-    invoiceStatus: string
+    hourMeterOrKmMeter: number
 
     workId: string
-    serverId: number
     userId: string
-    userAction: UserAction
     enterpriseId: string
-    isValid: boolean
+    serverId?: number
+    userAction?: UserAction
+    isValid?: boolean
+    invoiceId?: number
+    invoiceStatus?: string
+    maintenanceTrucksWorkEquipmentId?: string
     value?: number
     id?: string
     createdAt?: number
     updatedAt?: number
     status?: string
 
-    public entityToDto?(data: FuelSupplyEntity): FuelSupplyDto {
-        this.quantity = data.quantity
-        this.valuePerLiter = data.valuePerLiter
-        this.value = data.value
-        this.description = data.description
-        this.type = data.type
-        this.transportVehicleOrEquipmentId = data.transportVehicleOrEquipmentId
-        this.observation = data.observation
-        this.isGasStation = data.isGasStation
-        this.maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
-        this.hourMeterOrKmMeter = data.hourMeterOrKmMeter
-        this.isDiscount = data.isDiscount
-        this.invoiceId = data.invoiceId
-        this.invoiceStatus = data.invoiceStatus
-        this.workId = data.workId
-        this.serverId = data.serverId
-        this.userId = data.userId
-        this.userAction = data.userAction
-        this.enterpriseId = data.enterpriseId
-        this.isValid = data.isValid
-        this.id = data.id
-        this.createdAt = data.createdAt
-        this.updatedAt = data.updatedAt
-        this.status = data.status
-        return this
+    public static entityToDto?(data: FuelSupplyEntity): FuelSupplyDto {
+        const dto = new FuelSupplyDto()
+        dto.quantity = data.quantity
+        dto.valuePerLiter = data.valuePerLiter
+        dto.value = data.value
+        dto.description = data.description
+        dto.type = data.type
+        dto.transportVehicleOrWorkEquipmentId = data.transportVehicleOrEquipmentId
+        dto.observation = data.observation
+        dto.isGasStation = data.isGasStation
+        dto.maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
+        dto.hourMeterOrKmMeter = data.hourMeterOrKmMeter
+        dto.isDiscount = data.isDiscount
+        dto.invoiceId = data.invoiceId
+        dto.invoiceStatus = data.invoiceStatus
+        dto.workId = data.workId
+        dto.serverId = data.serverId
+        dto.userId = data.userId
+        dto.userAction = data.userAction
+        dto.enterpriseId = data.enterpriseId
+        dto.isValid = data.isValid
+        dto.id = data.id
+        dto.createdAt = data.createdAt
+        dto.updatedAt = data.updatedAt
+        dto.status = data.status
+        return dto
     }
 }

@@ -47,11 +47,16 @@ export class TransportVehicleServicesImpl implements TransportVehicleServices {
     saveTransportVehicleServerId(dtos: TransportVehicleDto[]): void {
         throw new Error('Method not implemented.')
     }
-    loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
+    async loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string
     ): Promise<TransportVehicleDto[]> {
-        throw new Error('Method not implemented.')
+        const entities =
+            await this.repository.loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
+                enterpriseId,
+                workId
+            )
+        return entities.map((entity) => new TransportVehicleDto().entityToDto(entity))
     }
     async loadAllTransportVehicleByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
