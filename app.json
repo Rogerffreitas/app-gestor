@@ -28,7 +28,7 @@
                 "foregroundImage": "./assets/image/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
             },
-            "package": "com.rogerffreitas.appgestor",
+            "package": "com.rogerffreitas.app-gestor",
             "runtimeVersion": "1.0.1-beta",
             "permissions": ["WRITE_EXTERNAL_STORAGE", "READ_EXTERNAL_STORAGE"],
             "versionCode": 2
