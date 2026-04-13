@@ -34,4 +34,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# env
 .env
+
+# coverage
+coverage/**/*

@@ -1,15 +1,17 @@
+import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
-import { MaintenanceTruckGateway } from '../../application/gateways/MaintenanceTruckRepositoryGateway'
+import { MaintenanceTruckRepositoryGateway } from '../../application/gateways/MaintenanceTruckRepositoryGateway'
 import { MaintenanceTruckDto } from '../../entity/maintenance-truck/MaintenanceTruckDto'
 import { MaintenanceTruckEntity } from '../../entity/maintenance-truck/MaintenanceTruckEntity'
 import { MaintenanceTruckServices } from '../interfaces/MaintenanceTruckServices'
+import { inject, injectable } from 'inversify'
 
+@injectable()
 export class MaintenanceTruckServicesImpl implements MaintenanceTruckServices {
-    private repository: MaintenanceTruckGateway
-
-    constructor(maintenanceTruckRepositoryGateway: MaintenanceTruckGateway) {
-        this.repository = maintenanceTruckRepositoryGateway
-    }
+    constructor(
+        @inject(TYPES.MaintenanceTruckRepositoryGateway)
+        private repository: MaintenanceTruckRepositoryGateway
+    ) {}
 
     async createMaintenanceTruckInLocalDatabase(
         dto: MaintenanceTruckDto,
@@ -29,12 +31,12 @@ export class MaintenanceTruckServicesImpl implements MaintenanceTruckServices {
         const entityUpdated = await this.repository.createMaintenanceTruckInLocalDatabase(entity)
         return new MaintenanceTruckDto().entityToDto(entityUpdated)
     }
-    deleteMaintenanceTruckInLocalDatabase(
+    async deleteMaintenanceTruckInLocalDatabase(
         id: string,
         workEquipmentId: string,
         userId: string
     ): Promise<void> {
-        return this.repository.deleteMaintenanceTruckInLocalDatabase(id, workEquipmentId, userId)
+        return await this.repository.deleteMaintenanceTruckInLocalDatabase(id, workEquipmentId, userId)
     }
     async findMaintenanceTruckByIdInLocalDatabase(id: string): Promise<MaintenanceTruckDto> {
         const entity = await this.repository.findMaintenanceTruckByIdInLocalDatabase(id)

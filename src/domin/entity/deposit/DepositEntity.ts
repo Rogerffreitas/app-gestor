@@ -4,8 +4,8 @@ import AbstratcEntity from '../AbstratcEntity'
 import DepositDto from './DepositDto'
 
 export default class DepositEntity extends AbstratcEntity {
-    _name: string
-    _description: string
+    private _name: string
+    private _description: string
 
     get name(): string {
         return this._name
@@ -67,15 +67,13 @@ export default class DepositEntity extends AbstratcEntity {
         }
 
         if (errorMessages.length > 0) {
-            console.log(errorMessages)
+            console.info('[Deposit] Validation Errors:', errorMessages)
+            const formattedErrors = errorMessages.map((err) => `[${err.field}]: ${err.message}`).join('\n- ')
+            throw new Error(
+                `[Deposit] Entity validation failed, cause: Erros de validação:\n- ${formattedErrors}`
+            )
         }
 
-        if (errorMessages.length > 0) {
-            throw new Error('Entity validation failed', {
-                cause: 'Erros de validação:\n- ' + errorMessages.join('\n- '),
-            })
-        }
-
-        console.log('Entity valid')
+        console.log('[Deposit] Entity valid')
     }
 }

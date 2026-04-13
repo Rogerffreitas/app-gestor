@@ -1,83 +1,56 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { onFetchUpdateAsync } from "../services/updateService";
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { onFetchUpdateAsync } from '../services/updateService'
 
 type ConfigContextProviderProps = {
-  children?: React.ReactNode | undefined;
-};
+    children?: React.ReactNode | undefined
+}
 
 type ConfigContextType = {
-  config: {
-    urlApi: string;
-    urlLogin: string;
-    isExtraDMTPaid: boolean;
-    dmtPicket: number;
-    workRoutes: any[];
-    lastConectionServer: string;
-    keySecureStoreUser: string;
-    keySecureStoreEnterprise: string;
-    keySecureStoreToken: string;
-  };
-};
+    config: {
+        isExtraDMTPaid: boolean
+        dmtPicket: number
+        workRoutes: any[]
+        lastConectionServer: number
+        urlApi: string
+    }
+}
 
-const ConfigContext = createContext({} as ConfigContextType);
+const ConfigContext = createContext({} as ConfigContextType)
 
 export function ConfigContextProvider(props: ConfigContextProviderProps) {
-  const [config, setConfig] = useState({
-    urlApi: "",
-    urlLogin: "",
-    isExtraDMTPaid: false,
-    dmtPicket: 0,
-    workRoutes: [],
-    lastConectionServer: "",
-    keySecureStoreUser: "",
-    keySecureStoreEnterprise: "",
-    keySecureStoreToken: "",
-  });
+    const [config, setConfig] = useState({
+        isExtraDMTPaid: false,
+        dmtPicket: 0,
+        workRoutes: [],
+        lastConectionServer: 0,
+        urlApi: '',
+    })
 
-  useEffect(() => {
-    _getconfigFromStore();
-    onFetchUpdateAsync();
-  }, []);
+    useEffect(() => {
+        _getconfigFromStore()
+        onFetchUpdateAsync()
+    }, [])
 
-  async function _getconfigFromStore() {
-    setConfig((state) => ({ ...state, isExtraDMTPaid: true }));
-    setConfig((state) => ({
-      ...state,
-      urlLogin: process.env.EXPO_PUBLIC_URL_API,
-    }));
-    setConfig((state) => ({
-      ...state,
-      urlLogin: process.env.EXPO_PUBLIC_URL_LOGIN,
-    }));
-    setConfig((state) => ({ ...state, dmtPicket: 20 }));
-    setConfig((state) => ({ ...state, workRoutes: ["DIÁRIA", "MEIA DIÁRIA"] }));
-    setConfig((state) => ({
-      ...state,
-      keySecureStoreUser: process.env.EXPO_PUBLIC_KEY_SECURE_STORE_USER,
-    }));
-    setConfig((state) => ({
-      ...state,
-      keySecureStoreEnterprise:
-        process.env.EXPO_PUBLIC_KEY_SECURE_STORE_ENTERPRISE,
-    }));
-    setConfig((state) => ({
-      ...state,
-      keySecureStoreToken: process.env.EXPO_PUBLIC_KEY_SECURE_STORE_TOKEN,
-    }));
-  }
+    async function _getconfigFromStore() {
+        console.log('_getconfigFromStore')
+        setConfig((state) => ({ ...state, isExtraDMTPaid: true }))
+        setConfig((state) => ({ ...state, dmtPicket: 20 }))
+        setConfig((state) => ({ ...state, workRoutes: ['DIÁRIA', 'MEIA DIÁRIA'] }))
+        setConfig((state) => ({ ...state, urlApi: 'http://164.152.34.165:3000/api/v1' }))
+    }
 
-  return (
-    <ConfigContext.Provider
-      value={{
-        config,
-      }}
-    >
-      {props.children}
-    </ConfigContext.Provider>
-  );
+    return (
+        <ConfigContext.Provider
+            value={{
+                config,
+            }}
+        >
+            {props.children}
+        </ConfigContext.Provider>
+    )
 }
 
 export function useConfig() {
-  const context = useContext(ConfigContext);
-  return context;
+    const context = useContext(ConfigContext)
+    return context
 }

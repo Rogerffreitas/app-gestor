@@ -12,20 +12,15 @@ import InputMaskNumber2 from '../../../../components/input/InputMaskNumber2'
 import styled from 'styled-components/native'
 import useNewEquipment from './UseNewEquipment'
 
-export default function NewEquipment({ navigation, route }) {
-    const { equipmentServices } = route.params
-    const { states, erros, handleClickType, onChange, handleSubmitButton, EquipmentOrVehicle } =
-        useNewEquipment({
-            equipmentServices,
-            navigation,
-        })
+export default function NewEquipment() {
+    const { states, erros, actions, EquipmentOrVehicle } = useNewEquipment()
     return (
         <Container>
             {!states.type ? (
                 <View style={{ width: '100%' }}>
                     <ButtonStyled
                         style={{ backgroundColor: '#000080' }}
-                        onPress={() => handleClickType(EquipmentOrVehicle.EQUIPMENT)}
+                        onPress={() => actions.handleClickType(EquipmentOrVehicle.EQUIPMENT)}
                     >
                         <ImageStyled>
                             <Image
@@ -39,7 +34,7 @@ export default function NewEquipment({ navigation, route }) {
                     </ButtonStyled>
                     <ButtonStyled
                         style={{ backgroundColor: '#000080' }}
-                        onPress={() => handleClickType(EquipmentOrVehicle.VEHICLE)}
+                        onPress={() => actions.handleClickType(EquipmentOrVehicle.VEHICLE)}
                     >
                         <ImageStyled>
                             <Image
@@ -64,7 +59,7 @@ export default function NewEquipment({ navigation, route }) {
                         autoCorrect={false}
                         secureTextEntry={false}
                         onChangeTextFunction={(value: string) => {
-                            onChange('proprietatyName')(value)
+                            actions.onChange('proprietatyName')(value)
                         }}
                         autoFocus={false}
                         keyboardType={'default'}
@@ -78,7 +73,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('cpfCnpj')(value)
+                                    actions.onChange('cpfCnpj')(value)
                                 }}
                                 autoFocus={false}
                                 keyboardType={'default'}
@@ -95,7 +90,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('tel')(value)
+                                    actions.onChange('tel')(value)
                                 }}
                                 autoFocus={false}
                                 keyboardType={'numeric'}
@@ -114,7 +109,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('operatorMotorist')(value)
+                                    actions.onChange('operatorMotorist')(value)
                                 }}
                                 autoFocus={false}
                                 keyboardType={'default'}
@@ -132,7 +127,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('modelOrPlate')(value)
+                                    actions.onChange('modelOrPlate')(value)
                                 }}
                                 autoFocus={false}
                                 keyboardType={'default'}
@@ -155,7 +150,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('startRental')(value)
+                                    actions.onChange('startRental')(value)
                                 }}
                                 autoFocus={false}
                                 keyboardType={'numeric'}
@@ -173,7 +168,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('hourMeterOrOdometer')(
+                                    actions.onChange('hourMeterOrOdometer')(
                                         +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                     )
                                 }}
@@ -215,11 +210,11 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('monthlyPayment')(
+                                    actions.onChange('monthlyPayment')(
                                         +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                     )
                                     if (states.isEquipment) {
-                                        onChange('valuePerHourKm')(
+                                        actions.onChange('valuePerHourKm')(
                                             (
                                                 value
                                                     .replace('R$ ', '')
@@ -230,7 +225,7 @@ export default function NewEquipment({ navigation, route }) {
                                                 .replace('.', '')
                                         )
 
-                                        onChange('valuePerDay')(
+                                        actions.onChange('valuePerDay')(
                                             (
                                                 value
                                                     .replace('R$ ', '')
@@ -254,7 +249,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('valuePerHourKm')(
+                                    actions.onChange('valuePerHourKm')(
                                         +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                     )
                                 }}
@@ -270,7 +265,7 @@ export default function NewEquipment({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('valuePerDay')(
+                                    actions.onChange('valuePerDay')(
                                         +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                     )
                                 }}
@@ -281,7 +276,7 @@ export default function NewEquipment({ navigation, route }) {
                     </View>
 
                     {!states.isLoading ? (
-                        <ButtonAction acao={'Salvar'} onPressFunction={handleSubmitButton} />
+                        <ButtonAction acao={'Salvar'} onPressFunction={actions.handleSubmitButton} />
                     ) : (
                         <ButtonActionLoading onPressFunction={() => {}} />
                     )}

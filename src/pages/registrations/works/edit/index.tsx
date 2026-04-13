@@ -9,13 +9,8 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import ButtonActionLoading from '../../../../components/button/ButtonActionLoading'
 import useEditWork from './UseEditWork'
 
-export default function EditWork({ navigation, route }) {
-    const { workServices, work } = route.params
-    const { states, erros, showConfirmDialog, handleEditButtonPress, onChange } = useEditWork({
-        navigation,
-        work,
-        workServices,
-    })
+export default function EditWork() {
+    const { states, erros, work, actions } = useEditWork()
     return (
         <Container>
             <FormComponent nomeForm={work.serverId ? 'Código: ' + work.serverId : work.name}>
@@ -27,7 +22,7 @@ export default function EditWork({ navigation, route }) {
                     secureTextEntry={false}
                     value={states.name}
                     onChangeText={(text) => {
-                        onChange('name')(text)
+                        actions.onChange('name')(text)
                     }}
                     keyboardType={'default'}
                     autoFocus={true}
@@ -40,7 +35,7 @@ export default function EditWork({ navigation, route }) {
                     secureTextEntry={false}
                     value={states.description}
                     onChangeText={(value) => {
-                        onChange('description')(value)
+                        actions.onChange('description')(value)
                     }}
                     keyboardType={'default'}
                     autoFocus={false}
@@ -53,18 +48,18 @@ export default function EditWork({ navigation, route }) {
                     secureTextEntry={false}
                     value={states.pickets + ''}
                     onChangeText={(value) => {
-                        onChange('pickets')(value)
+                        actions.onChange('pickets')(value)
                     }}
                     keyboardType={'default'}
                     autoFocus={false}
                 />
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar Edição'} onPressFunction={handleEditButtonPress} />
+                    <ButtonAction acao={'Salvar Edição'} onPressFunction={actions.handleEditButtonPress} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}
                 <ViewButton>
-                    <ButtonEditar onPress={() => showConfirmDialog()}>
+                    <ButtonEditar onPress={() => actions.showConfirmDialog()}>
                         <FontAwesome name={'trash'} size={20} style={{ color: '#fff' }} />
                     </ButtonEditar>
                 </ViewButton>

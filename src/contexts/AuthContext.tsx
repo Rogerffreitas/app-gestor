@@ -1,126 +1,127 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { PermissionsAndroid, Platform } from "react-native";
-import User from "../interfaces/User";
-import * as SecureStore from "expo-secure-store";
-import Token from "../interfaces/Token";
-import Enterprise from "../interfaces/Enterprise";
-import { useConfig } from "./ConfigContext";
-import AuthServices from "../domin/services/interfaces/AuthServices";
-import { HttpRequest } from "../domin/entity/http/dtos/HttpRequest";
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { Alert, PermissionsAndroid, Platform } from 'react-native'
+import User from '../interfaces/User'
+import * as SecureStore from 'expo-secure-store'
+import Token from '../interfaces/Token'
+import { AuthServices } from '../domin/services/interfaces/AuthServices'
+import { HttpRequest } from '../domin/entity/http/dtos/HttpRequest'
+import { jwtDecode } from 'jwt-decode'
+import UserDto from '../domin/entity/user/UserDto'
+import EnterpriseDto from '../interfaces/EnterpriseDto'
+import { useInjection } from '../infra/hooks/useInjection'
+import { AuthServicesImpl } from '../domin/services/impl/AuthServicesImpl'
+import { AxiosHttpClientAdapter } from '../adapter/AxiosHttpClientAdapter'
 
 type AuthContextProviderProps = {
-  children?: React.ReactNode | undefined;
-  authServices: AuthServices;
-};
+    children?: React.ReactNode | undefined
+}
 
 type AuthContextType = {
-  token: Token;
-  firstAccess: boolean;
-  signed: boolean;
-  user: User | undefined;
-  enterprise: Enterprise;
-  loading: boolean;
-  setFirstAccess: (acesso: boolean) => void;
-  signIn: (username: string, senha: string) => void;
-  signOut: () => void;
-};
+    token: Token
+    firstAccess: boolean
+    signed: boolean
+    user: User | undefined
+    enterprise: EnterpriseDto
+    loading: boolean
+    setFirstAccess: (acesso: boolean) => void
+    signIn: (username: string, senha: string) => void
+    signOut: () => void
+}
 
-const AuthContext = createContext({} as AuthContextType);
+type jwtDecode = {
+    user: UserDto
+    enterprise: EnterpriseDto
+}
+
+const AuthContext = createContext({} as AuthContextType)
 
 export function AuthContextProvider(props: AuthContextProviderProps) {
-  const [firstAccess, setFirstAccess] = useState(true);
-  const [user, setUser] = useState<User>();
-  const [enterprise, setEnterprise] = useState<Enterprise>();
-  const [token, setToken] = useState<Token>();
-  const [loading, setLoading] = useState(true);
-  const { config } = useConfig();
+    const authServices = new AuthServicesImpl(new AxiosHttpClientAdapter())
+    const [firstAccess, setFirstAccess] = useState(true)
+    const [user, setUser] = useState<User>()
+    const [enterprise, setEnterprise] = useState<EnterpriseDto>()
+    const [token, setToken] = useState<Token>()
+    const [loading, setLoading] = useState(true)
 
-  async function signIn(username: string, password: string) {
-    try {
-      const { user, enterprise, token } =
-        await props.authServices.loginByUsernameAndPassword({
-          baseURL: config.urlApi,
-          url: config.urlLogin,
-          body: { username, password },
-        } as HttpRequest);
-      setEnterprise(enterprise);
-      setUser(user);
-      setToken(token);
-      await SecureStore.setItemAsync(
-        config.keySecureStoreUser,
-        JSON.stringify(user)
-      );
-      await SecureStore.setItemAsync(
-        config.keySecureStoreToken,
-        JSON.stringify(token)
-      );
-      await SecureStore.setItemAsync(
-        config.keySecureStoreEnterprise,
-        JSON.stringify(enterprise)
-      );
-    } catch (err) {
-      console.error(err);
+    async function signIn(username: string, password: string) {
+        try {
+            const { accessToken } = await authServices.loginByUsernameAndPassword({
+                baseURL: 'http://164.152.34.165:3000/api/v1',
+                url: '/auth/signin',
+                body: { username, password },
+            } as HttpRequest)
+            const decoded = jwtDecode<jwtDecode>(accessToken.token)
+            setEnterprise(decoded.enterprise)
+            setUser(decoded.user)
+            setToken(accessToken)
+
+            await SecureStore.setItemAsync('gestor-user', JSON.stringify(decoded.user))
+            await SecureStore.setItemAsync('gestor-token', JSON.stringify(accessToken))
+            await SecureStore.setItemAsync('gestor-enterprise', JSON.stringify(decoded.enterprise))
+        } catch (error) {
+            console.log(error)
+            if (error) {
+                Alert.alert('⚠️ Ocorreu um erro ao tentar fazer login!', `Messagem: ${error}`)
+            }
+        }
     }
-  }
-  function signOut() {
-    SecureStore.deleteItemAsync(config.keySecureStoreUser).then(() => {
-      setUser(null);
-    });
-    SecureStore.deleteItemAsync(config.keySecureStoreToken).then(() => {
-      setToken(null);
-    });
+    function signOut() {
+        SecureStore.deleteItemAsync('gestor-user').then(() => {
+            setUser(null)
+        })
+        SecureStore.deleteItemAsync('gestor-token').then(() => {
+            setToken(null)
+        })
 
-    SecureStore.deleteItemAsync(config.keySecureStoreEnterprise).then(() => {
-      setEnterprise(null);
-    });
-  }
-
-  async function getUserFromStore() {
-    if (Number(Platform.Version) >= 33) {
-      setFirstAccess(false);
-    } else {
-      const granted = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      );
-      setFirstAccess(!granted);
+        SecureStore.deleteItemAsync('gestor-enterprise').then(() => {
+            setEnterprise(null)
+        })
     }
-    setLoading(false);
-    let resultUser = await SecureStore.getItemAsync(config.keySecureStoreUser);
-    let resultToken = await SecureStore.getItemAsync(
-      config.keySecureStoreToken
-    );
-    let resultEnterprise = await SecureStore.getItemAsync(
-      config.keySecureStoreEnterprise
-    );
-    setUser(await JSON.parse(resultUser));
-    setToken(await JSON.parse(resultToken));
-    setEnterprise(await JSON.parse(resultEnterprise));
-  }
 
-  useEffect(() => {
-    getUserFromStore();
-  }, []);
+    async function getUserFromStore() {
+        if (Number(Platform.Version) >= 33) {
+            setFirstAccess(false)
+        } else {
+            const granted = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+            )
+            setFirstAccess(!granted)
+        }
 
-  return (
-    <AuthContext.Provider
-      value={{
-        token,
-        firstAccess,
-        setFirstAccess,
-        signed: !!user,
-        user,
-        enterprise,
-        loading,
-        signIn,
-        signOut,
-      }}
-    >
-      {props.children}
-    </AuthContext.Provider>
-  );
+        let resultUser = await SecureStore.getItemAsync('gestor-user')
+        let resultToken = await SecureStore.getItemAsync('gestor-token')
+        let resultEnterprise = await SecureStore.getItemAsync('gestor-enterprise')
+
+        setUser(await JSON.parse(resultUser))
+        setToken(await JSON.parse(resultToken))
+        setEnterprise(await JSON.parse(resultEnterprise))
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        getUserFromStore()
+    }, [])
+
+    return (
+        <AuthContext.Provider
+            value={{
+                token,
+                firstAccess,
+                setFirstAccess,
+                signed: !!user,
+                user,
+                enterprise,
+                loading,
+                signIn,
+                signOut,
+            }}
+        >
+            {props.children}
+        </AuthContext.Provider>
+    )
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  return context;
+    const context = useContext(AuthContext)
+    return context
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import Container from '../../components/Container'
 import styled from 'styled-components/native'
 import LottieView from 'lottie-react-native'
@@ -7,52 +7,33 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useApplicationContext } from '../../contexts/ApplicationContext'
 import ObraSelected from '../../components/List/ObraSelected'
 import ItemObra from '../../components/List/ItemObra'
-import { ScreenNames, UserRoles } from '../../types'
+import { DiscountTypes, FuelSupplyTypes, MenuOptionsNotesTypes, ScreenNames, UserRoles } from '../../types'
 import { errorVibration } from '../../services/VibrationService'
 import WorkDto from '../../domin/entity/work/WorkDto'
-import { TransportVehicleServicesImpl } from '../../domin/services/impl/TransportVehicleServicesImpl'
-import { TransportVehicleWatermelonDbRepository } from '../../persistence/TransportVehicleWatermelonDbRepository'
-import { MaterialTransportServicesImpl } from '../../domin/services/impl/MaterialTransportServicesImpl'
-import { MaterialTransportWatermelonDbRepository } from '../../persistence/MaterialTransportWatermelonDbRepository'
-import { WorkRoutesServicesImpl } from '../../domin/services/impl/WorkRoutesServicesImpl'
-import { WorkRoutesWatermelonDbRepository } from '../../persistence/WorkRoutesWatermelonDbRepository'
-import { MaterialServicesImpl } from '../../domin/services/impl/MaterialServicesImpl'
-import { MaterialWatermelonDbRepository } from '../../persistence/MaterialWatermelonDbRepository'
-import FuelSupplyServicesImpl from '../../domin/services/impl/FuelSupplyServicesImpl'
-import { FuelSupplyWatermelonDbRepository } from '../../persistence/FuelSupplyWatermelonDbRepository'
-import WorkEquipmentServicesImpl from '../../domin/services/impl/WorkEquipmentServicesImpl'
-import { WorkEquipmentWatermelonDbRepository } from '../../persistence/WorkEquipmentWatermelonDbRepository'
+import { WorkServices } from '../../domin/services/interfaces/WorkServices'
+import { useInjection } from '../../infra/hooks/useInjection'
+import { useNavigation } from '@react-navigation/native'
 
-enum MenuOptions {
-    EQUIPMENT = 'equipment',
-    TRANSPORT_VEHICLE = 't_vehicle',
-    MAINTENANCE_TRUCK_NOTE = 'MAINTENANCE_TRUCK_NOTE',
-}
-
-export default function Notes({ navigation, route }) {
-    const { workServices } = route.params
+export default function Notes() {
+    const workServices = useInjection<WorkServices>('WorkServices')
+    const navigation = useNavigation()
     const animation = useRef(null)
-    const [type, setType] = useState<MenuOptions>(null)
+    const [type, setType] = useState<MenuOptionsNotesTypes>(null)
     const { user } = useAuth()
     const [works, setWorks] = useState<WorkDto[]>([])
-    const [isLoad, setIsLoad] = useState(true)
     const [isLoadingList, setIsLoadingList] = useState(true)
     const { work, saveWork } = useApplicationContext()
 
     async function loadAllWork() {
-        navigation.addListener('focus', () => setIsLoad(!isLoad))
-        if (work) {
-            setIsLoadingList(false)
-            return
-        }
         navigation.setOptions({ title: 'Escolha uma obra' })
 
         try {
-            const allWorks = await workServices.loadWorkListFromDatabase(
-                user.enterpriseId,
-                user.id,
-                user.role
-            )
+            const allWorks =
+                await workServices.loadAllWorkByEnterpriseIdAndUserIdAndValidServerIdFromDatabase(
+                    user.enterpriseId,
+                    user.id,
+                    user.role
+                )
             setWorks(allWorks)
         } catch (error) {
             Alert.alert('Erro ao tentar buscar as obras', 'Menssagem: ' + error)
@@ -63,8 +44,16 @@ export default function Notes({ navigation, route }) {
     }
 
     useEffect(() => {
-        loadAllWork()
-    }, [isLoad])
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (work) {
+                navigation.setOptions({ title: 'Apontamentos' })
+                setIsLoadingList(false)
+                return
+            }
+            loadAllWork()
+        })
+        return unsubscribe
+    }, [work, navigation])
 
     function handleClickItemWork(item: WorkDto) {
         saveWork(item)
@@ -122,14 +111,14 @@ export default function Notes({ navigation, route }) {
                         active={1}
                         onPress={() => {
                             saveWork(null)
-                            setIsLoad(!isLoad)
+                            loadAllWork()
                         }}
                         titulo={'OBRA: ' + work.name}
                         descricao={work.description}
                     />
                     {user.role == UserRoles.USER || user.role == UserRoles.ADMIN ? (
                         <View>
-                            <ButtonStyled onPress={() => setType(MenuOptions.TRANSPORT_VEHICLE)}>
+                            <ButtonStyled onPress={() => setType(MenuOptionsNotesTypes.TRANSPORT_VEHICLE)}>
                                 <ImageStyled>
                                     <LottieView
                                         autoPlay
@@ -144,7 +133,7 @@ export default function Notes({ navigation, route }) {
                             </ButtonStyled>
                             <ButtonStyled
                                 style={{ backgroundColor: '#000080' }}
-                                onPress={() => setType(MenuOptions.EQUIPMENT)}
+                                onPress={() => setType(MenuOptionsNotesTypes.EQUIPMENT)}
                             >
                                 <ImageStyled>
                                     <Image
@@ -160,13 +149,13 @@ export default function Notes({ navigation, route }) {
                     ) : (
                         <></>
                     )}
-                    {user.role == UserRoles.MAINTENANCE_TRUCK || user.role == UserRoles.ADMIN ? (
+                    {user.role == UserRoles.MAINTENANCE_TRUCK ||
+                    user.role === UserRoles.USER ||
+                    user.role == UserRoles.ADMIN ? (
                         <ButtonStyled
                             style={{ backgroundColor: '#000080' }}
                             onPress={() => {
-                                navigation.navigate(ScreenNames.MAINTENANCE_TRUCK_NOTE, {
-                                    work: work,
-                                })
+                                navigation.navigate(ScreenNames.MAINTENANCE_TRUCK_FUEL_TANK)
                             }}
                         >
                             <ImageStyled>
@@ -200,24 +189,10 @@ export default function Notes({ navigation, route }) {
                         descricao={work.description}
                     />
 
-                    {type == MenuOptions.TRANSPORT_VEHICLE && (
+                    {type == MenuOptionsNotesTypes.TRANSPORT_VEHICLE && (
                         <ButtonStyled
                             onPress={() => {
-                                navigation.navigate(ScreenNames.TRANSPORT_NOTE, {
-                                    work: work,
-                                    transportVehicleServices: new TransportVehicleServicesImpl(
-                                        new TransportVehicleWatermelonDbRepository()
-                                    ),
-                                    materialTransportServices: new MaterialTransportServicesImpl(
-                                        new MaterialTransportWatermelonDbRepository()
-                                    ),
-                                    workRoutesServices: new WorkRoutesServicesImpl(
-                                        new WorkRoutesWatermelonDbRepository()
-                                    ),
-                                    materialServices: new MaterialServicesImpl(
-                                        new MaterialWatermelonDbRepository()
-                                    ),
-                                })
+                                navigation.navigate(ScreenNames.TRANSPORT_NOTE)
                             }}
                         >
                             <ImageStyled>
@@ -233,13 +208,11 @@ export default function Notes({ navigation, route }) {
                             </TextContent>
                         </ButtonStyled>
                     )}
-                    {type == MenuOptions.EQUIPMENT && (
+                    {type == MenuOptionsNotesTypes.EQUIPMENT && (
                         <ButtonStyled
                             style={{ backgroundColor: '#000080' }}
                             onPress={() => {
-                                navigation.navigate(ScreenNames.HOUR_METER_MONITORINGS, {
-                                    work: work,
-                                })
+                                navigation.navigate(ScreenNames.HOUR_METER_MONITORINGS)
                             }}
                         >
                             <ImageStyled>
@@ -257,7 +230,7 @@ export default function Notes({ navigation, route }) {
                         style={{ backgroundColor: '#000080' }}
                         onPress={() => {
                             navigation.navigate(ScreenNames.DISCOUNTS, {
-                                work: work,
+                                type: type as unknown as DiscountTypes,
                             })
                         }}
                     >
@@ -274,18 +247,8 @@ export default function Notes({ navigation, route }) {
                     <ButtonStyled
                         style={{ backgroundColor: '#000080' }}
                         onPress={() => {
-                            navigation.navigate(ScreenNames.FUEL_SUPPLES, {
-                                work: work,
-                                type: type,
-                                fuelSupplyServices: new FuelSupplyServicesImpl(
-                                    new FuelSupplyWatermelonDbRepository()
-                                ),
-                                transportVehicleServices: new TransportVehicleServicesImpl(
-                                    new TransportVehicleWatermelonDbRepository()
-                                ),
-                                workEquipmentServices: new WorkEquipmentServicesImpl(
-                                    new WorkEquipmentWatermelonDbRepository()
-                                ),
+                            navigation.navigate(ScreenNames.FUEL_SUPPLIES, {
+                                type: type as unknown as FuelSupplyTypes,
                             })
                         }}
                     >

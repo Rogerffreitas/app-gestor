@@ -1,31 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TransportVehicleServices } from '../../../../domin/services/interfaces/TransportVehicleServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import { UserAction } from '../../../../types'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '../../../../infra/hooks/useInjection'
 
-type UseEditTransportVehicleProps = {
-    transportVehicle: TransportVehicleDto
-    transportVehicleServices: TransportVehicleServices
-    navigation
-}
+type EditTransportVehicleProp = RouteProp<RootStackParamList, ScreenNames.EDIT_TRANSPORT_VEHICLE>
 
-export default function useEditTransportVehicle({
-    navigation,
-    transportVehicleServices,
-    transportVehicle,
-}: UseEditTransportVehicleProps) {
+export default function useEditTransportVehicle() {
+    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const navigation = useNavigation()
+    const route = useRoute<EditTransportVehicleProp>()
+    const { transportVehicleId } = route.params
+
     const [states, setStates] = useState({
-        motorist: transportVehicle.motorist,
-        plate: transportVehicle.plate,
-        color: transportVehicle.color,
-        capacity: transportVehicle.capacity,
-        proprietaryName: transportVehicle.nameProprietary,
-        cpfCnpj: transportVehicle.cpfCnpjProprietary,
-        tel: transportVehicle.telProprietary,
+        transportVehicle: null as TransportVehicleDto,
+        motorist: '',
+        plate: '',
+        color: '',
+        capacity: null,
+        proprietaryName: '',
+        cpfCnpj: '',
+        tel: '',
         isLoading: false,
         isSync: false,
     })
@@ -40,6 +40,34 @@ export default function useEditTransportVehicle({
     })
 
     const { user } = useAuth()
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadTranpostVehicle()
+        })
+        return unsubscribe
+    }, [navigation])
+
+    async function loadTranpostVehicle() {
+        try {
+            const result =
+                await transportVehicleServices.findTransportVehicleByIdInLocalDatabase(transportVehicleId)
+
+            setStates((state) => ({ ...state, transportVehicle: result }))
+            setStates((state) => ({ ...state, motorist: result.motorist }))
+            setStates((state) => ({ ...state, plate: result.plate }))
+            setStates((state) => ({ ...state, color: result.color }))
+            setStates((state) => ({ ...state, capacity: result.capacity }))
+            setStates((state) => ({ ...state, proprietaryName: result.nameProprietary }))
+            setStates((state) => ({ ...state, cpfCnpj: result.cpfCnpjProprietary }))
+            setStates((state) => ({ ...state, tel: result.telProprietary }))
+        } catch (error) {
+            Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
+            errorVibration()
+        } finally {
+            setStates((state) => ({ ...state, isLoadingList: false }))
+        }
+    }
 
     async function handleClickEditButton() {
         if (user.id == null || user.enterpriseId == null) {
@@ -59,13 +87,10 @@ export default function useEditTransportVehicle({
                 .nameProprietary(states.proprietaryName)
                 .cpfCnpjProprietary(states.cpfCnpj)
                 .telProprietary(states.tel)
-                .workId(transportVehicle.workId)
-                .serverId(transportVehicle.serverId)
-                .id(transportVehicle.id)
+                .workId(states.transportVehicle.workId)
+                .id(states.transportVehicle.id)
                 .userId(user.id)
-                .userAction(UserAction.UPDATE)
                 .enterpriseId(user.enterpriseId)
-                .isValid(true)
                 .build()
 
             const updatedEntity = await transportVehicleServices.updateTransportVehicleInLocalDatabase(
@@ -107,12 +132,15 @@ export default function useEditTransportVehicle({
     }
 
     async function handleClickDeleteButton() {
-        if (transportVehicle.id == null) {
+        if (states.transportVehicle.id == null) {
             Alert.alert('Error')
             navigation.goBack()
         }
         try {
-            await transportVehicleServices.deleteTransportVehicleInLocalDatabase(transportVehicle.id, user.id)
+            await transportVehicleServices.deleteTransportVehicleInLocalDatabase(
+                states.transportVehicle.id,
+                user.id
+            )
             Alert.alert('Caçamba apagada!')
             successVibration()
             navigation.goBack()
@@ -124,7 +152,7 @@ export default function useEditTransportVehicle({
         }
     }
 
-    const _showConfirmDialog = () => {
+    const showConfirmDialog = () => {
         return Alert.alert('Deseja apagar a Obra?', 'Para confirmar pressione sim?', [
             {
                 text: 'SIM',
@@ -163,8 +191,10 @@ export default function useEditTransportVehicle({
     return {
         states,
         errors,
-        _showConfirmDialog,
-        handleClickEditButton,
-        onChange,
+        actions: {
+            showConfirmDialog,
+            handleClickEditButton,
+            onChange,
+        },
     }
 }

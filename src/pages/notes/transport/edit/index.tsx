@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, FlatList, Text, View } from 'react-native'
 import { useAuth } from '../../../../contexts/AuthContext'
 import Obra from '../../../../database/model/WorkModel'
-import WorkRoutesModel from '../../../../database/model/WorkRoutesModel'
+import WorkRoutesModel from '../../../../database/model/WorkRouteModel'
 import TransportVehicle from '../../../../database/model/TransportVehicleModel'
 import Material from '../../../../database/model/MaterialModel'
 import * as RotaDAO from '../../../../dao/RotaDao'
@@ -255,9 +255,7 @@ export default function Apontamentos({ navigation, route }) {
                         onPress={_handlerClickButtonMaterial}
                         numero={'3'}
                         titulo={'MATERIAL:'}
-                        conteudo={
-                            material != null || undefined ? material.nome : 'Escolha um material'
-                        }
+                        conteudo={material != null || undefined ? material.nome : 'Escolha um material'}
                         corIcon={iconMaterial == 'check' ? 'green' : theme.colors.menu}
                         nomeIcon={iconMaterial}
                         tamanho={iconMaterial == 'check' ? 15 : 30}
@@ -299,9 +297,7 @@ export default function Apontamentos({ navigation, route }) {
                         onPress={_handlerClickButtonEstaca}
                         numero={'4'}
                         titulo={'ESTACA:'}
-                        conteudo={
-                            estaca != null || undefined ? estaca : 'Informe o número da estaca'
-                        }
+                        conteudo={estaca != null || undefined ? estaca : 'Informe o número da estaca'}
                         corIcon={iconEstaca == 'check' ? 'green' : theme.colors.menu}
                         nomeIcon={iconEstaca}
                         tamanho={iconEstaca == 'check' ? 15 : 30}
@@ -320,7 +316,7 @@ export default function Apontamentos({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(text) => {
-                                setPreEstaca(text), setErroMessageEstaca('')
+                                ;(setPreEstaca(text), setErroMessageEstaca(''))
                             }}
                             autoFocus={true}
                             keyboardType={'numeric'}
@@ -342,9 +338,7 @@ export default function Apontamentos({ navigation, route }) {
                         onPress={_handlerClickButtonVeiculo}
                         numero={'5'}
                         titulo={'VEÍCULO'}
-                        conteudo={
-                            veiculo != null || undefined ? veiculo.placa : 'Escolha um Veículo'
-                        }
+                        conteudo={veiculo != null || undefined ? veiculo.placa : 'Escolha um Veículo'}
                         corIcon={iconVeiculo == 'check' ? 'green' : theme.colors.menu}
                         nomeIcon={iconVeiculo}
                         tamanho={iconVeiculo == 'check' ? 15 : 30}
@@ -382,9 +376,7 @@ export default function Apontamentos({ navigation, route }) {
                                                 <TextPlacaTitle>PLACA</TextPlacaTitle>
                                             </ViewPlaca>
 
-                                            <TextPlacaDescripition>
-                                                {item.placa}
-                                            </TextPlacaDescripition>
+                                            <TextPlacaDescripition>{item.placa}</TextPlacaDescripition>
                                         </CardListContent>
                                     </CardPlaca>
                                 </View>
@@ -401,11 +393,7 @@ export default function Apontamentos({ navigation, route }) {
                     {rota != null && material != null && estaca != null && veiculo != null ? (
                         <ButtonSave onPress={_handlerSaveItemsSelect}>
                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>CONFIRMAR</Text>
-                            <FontAwesome
-                                name={'check'}
-                                size={30}
-                                style={{ color: '#fff', marginLeft: 10 }}
-                            />
+                            <FontAwesome name={'check'} size={30} style={{ color: '#fff', marginLeft: 10 }} />
                         </ButtonSave>
                     ) : (
                         ''

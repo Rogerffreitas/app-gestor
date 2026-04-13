@@ -3,73 +3,60 @@ import { useAuth } from '../../../contexts/AuthContext'
 import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
 import { ToastAndroid } from 'react-native'
 import WorkDto from '../../../domin/entity/work/WorkDto'
-import { UserServices } from '../../../domin/services/interfaces/UserServices'
-import { DepositServices } from '../../../domin/services/interfaces/DepositServices'
-import { WorkRoutesServices } from '../../../domin/services/interfaces/WorkRoutesServices'
+import { useNavigation } from '@react-navigation/native'
+import { ScreenNames } from '../../../types'
+import { useInjection } from '../../../infra/hooks/useInjection'
 
-type WorksListProps = {
-    workServices: WorkServices
-    userServices: UserServices
-    depositServices: DepositServices
-    workRoutesServices: WorkRoutesServices
-    navigation: any
-}
-
-export function useWorksList({
-    navigation,
-    workServices,
-    userServices,
-    workRoutesServices,
-    depositServices,
-}: WorksListProps) {
-    const [works, setWorks] = useState<WorkDto[]>([])
-    const [loadingList, setLoadingList] = useState(true)
+export function useWorksList() {
+    const workServices = useInjection<WorkServices>('WorkServices')
+    const navigation = useNavigation()
     const { user } = useAuth()
-    const [load, setLoad] = useState(true)
+    const [states, setStates] = useState({
+        isLoadingList: true,
+        works: [] as WorkDto[],
+    })
 
-    async function getAllWorks() {
+    async function loadAll() {
         try {
-            navigation.addListener('focus', () => setLoad(!load))
             const results = await workServices.loadWorkListFromDatabase(
                 user.enterpriseId,
                 user.username + '-' + user.id,
                 user.role
             )
-            setWorks(results)
-            setLoadingList(false)
+            setStates((state) => ({ ...state, works: results }))
         } catch (error) {
             console.log(error)
             ToastAndroid.show('Erro ao carregar obras', ToastAndroid.LONG)
         } finally {
-            setLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     useEffect(() => {
-        getAllWorks()
-    }, [load])
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAll()
+        })
+        return unsubscribe
+    }, [navigation])
 
     function handleClickItemList(item: WorkDto) {
-        navigation.navigate('Work Routes', {
-            work: item,
-            workRoutesServices: workRoutesServices,
-            depositServices: depositServices,
+        navigation.navigate(ScreenNames.WORK_ROUTES, {
+            workId: item.id,
         })
     }
 
     function handleClickEditButton(item: WorkDto) {
-        navigation.navigate('Edit Work', {
+        navigation.navigate(ScreenNames.EDIT_WORK, {
             work: item,
-            workServices: workServices,
         })
     }
 
     function handleClintNewButton() {
-        navigation.navigate('New Work', {
-            workServices: workServices,
-            userServices: userServices,
-        })
+        navigation.navigate(ScreenNames.NEW_WORK)
     }
 
-    return { works, loadingList, handleClickItemList, handleClickEditButton, handleClintNewButton }
+    return {
+        states,
+        actions: { handleClickItemList, handleClickEditButton, handleClintNewButton },
+    }
 }

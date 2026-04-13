@@ -1,7 +1,7 @@
 import { BankInformation } from '../../entity/bank-information/BankInformation'
 import { TransportVehicleEntity } from '../../entity/transport-vehicle/TransportVehicleEntity'
 
-export interface TransportVehicleGateway {
+export interface TransportVehicleReposirotyGateway {
     createTransportVehicleInLocalDatabase(entity: TransportVehicleEntity): Promise<TransportVehicleEntity>
     updateTransportVehicleInLocalDatabase(entity: TransportVehicleEntity): Promise<TransportVehicleEntity>
     deleteTransportVehicleInLocalDatabase(id: string, userId: string): Promise<void>

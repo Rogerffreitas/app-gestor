@@ -4,12 +4,12 @@ export interface WorkEquipmentRepositoryGateway {
     createWorkEquipmentInLocalDatabase(entity: WorkEquipmentEntity): Promise<WorkEquipmentEntity>
     deleteWorkEquipmentInLocalDatabase(id: string, userId: string): Promise<void>
     loadAllWorkEquipmentByEnterpriseIdFromLocalDatabase(
-        workId: string,
-        enterpriseId: string
+        enterpriseId: string,
+        workId: string
     ): Promise<WorkEquipmentEntity[]>
     saveWorkEquipmentServerId(entitys: WorkEquipmentEntity[]): void
     loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-        workId: string,
-        enterpriseId: string
+        enterpriseId: string,
+        workId: string
     ): Promise<WorkEquipmentEntity[]>
 }

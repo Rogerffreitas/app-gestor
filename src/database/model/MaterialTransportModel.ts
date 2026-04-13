@@ -1,6 +1,6 @@
 import { Model } from '@nozbe/watermelondb'
 import { date, field, readonly } from '@nozbe/watermelondb/decorators'
-import WorkRoutesModel from './WorkRoutesModel'
+import WorkRoutesModel from './WorkRouteModel'
 import { TableName } from '../../types'
 import MaterialModel from './MaterialModel'
 import TransportVehicleModel from './TransportVehicleModel'

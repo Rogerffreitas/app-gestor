@@ -1,39 +1,68 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BankInformation } from '../../../../domin/entity/bank-information/BankInformation'
 import { Alert } from 'react-native'
 import { Builder } from '../../../../services/Builder'
 import { TransportVehicleServices } from '../../../../domin/services/interfaces/TransportVehicleServices'
 import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
+import { useInjection } from '../../../../infra/hooks/useInjection'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { errorVibration } from '../../../../services/VibrationService'
 
-type BankInfoProps = {
-    transportVehicle: TransportVehicleDto
-    transportVehicleServices: TransportVehicleServices
-    navigation: any
-}
+type BankInfoProp = RouteProp<RootStackParamList, ScreenNames.BANK_INFO_TRANSPORT_VEHICLE>
 
-export default function useBankInfo({
-    transportVehicle,
-    transportVehicleServices,
-    navigation,
-}: BankInfoProps) {
+export default function useBankInfo() {
+    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const navigation = useNavigation()
+    const route = useRoute<BankInfoProp>()
+    const { transportVehicleId } = route.params
+
     const [bankInformation, setBankInformation] = useState({
-        bank: transportVehicle.bank,
-        agency: transportVehicle.agency,
-        account: transportVehicle.account,
-        beneficiary: transportVehicle.beneficiary,
-        pix: transportVehicle.pix,
+        bank: null,
+        agency: null,
+        account: null,
+        beneficiary: null,
+        pix: null,
     })
-    const [isLoading, setIsLoading] = useState(false)
+
+    const [states, setStates] = useState({
+        transportVehicle: null as TransportVehicleDto,
+        isLoadingList: true,
+        isLoading: false,
+        isSync: false,
+    })
+
+    async function loadBankInfo() {
+        try {
+            const result =
+                await transportVehicleServices.findTransportVehicleByIdInLocalDatabase(transportVehicleId)
+
+            setStates((state) => ({ ...state, transportVehicle: result }))
+            setBankInformation((state) => ({ ...state, bank: result.bank }))
+            setBankInformation((state) => ({ ...state, agency: result.agency }))
+            setBankInformation((state) => ({ ...state, account: result.account }))
+            setBankInformation((state) => ({ ...state, beneficiary: result.beneficiary }))
+            setBankInformation((state) => ({ ...state, pix: result.pix }))
+        } catch (error) {
+            Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
+            errorVibration()
+        } finally {
+            setStates((state) => ({ ...state, isLoadingList: false }))
+        }
+    }
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadBankInfo()
+        })
+        return unsubscribe
+    }, [navigation])
 
     async function handleClickEditButton() {
-        if (transportVehicle.id == undefined || null) {
-            Alert.alert('Error  ')
-            navigation.goBack()
-        }
         try {
-            setIsLoading(true)
-            await transportVehicleServices.updateTransportVehicleBankInformation(
-                transportVehicle.id,
+            setStates((state) => ({ ...state, isLoading: true }))
+            const result = await transportVehicleServices.updateTransportVehicleBankInformation(
+                states.transportVehicle.id,
                 Builder<BankInformation>()
                     .bank(bankInformation.bank)
                     .agency(bankInformation.agency)
@@ -42,6 +71,7 @@ export default function useBankInfo({
                     .pix(bankInformation.pix)
                     .build()
             )
+            console.log(result)
             Alert.alert('Informações de pagamento cadastradas!')
             navigation.goBack()
         } catch (error) {
@@ -51,7 +81,7 @@ export default function useBankInfo({
                 'Menssagem: ' + error
             )
         } finally {
-            setIsLoading(false)
+            setStates((state) => ({ ...state, isLoading: false }))
         }
     }
 
@@ -63,8 +93,10 @@ export default function useBankInfo({
 
     return {
         bankInformation,
-        isLoading,
-        handleClickEditButton,
-        onChange,
+        states,
+        actions: {
+            handleClickEditButton,
+            onChange,
+        },
     }
 }

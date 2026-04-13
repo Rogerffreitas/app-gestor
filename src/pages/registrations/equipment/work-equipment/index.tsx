@@ -12,19 +12,16 @@ import TextConteudoCardLine from '../../../../components/cardLine/TextConteudoCa
 import TextTituloCardLine from '../../../../components/cardLine/TextTituloCardLine'
 import ListaVazia from '../../../../components/List/ListaVazia'
 import Content from '../../../../components/Content'
-import SyncButton from '../../../../components/SyncButton'
-import ObraSelected from '../../../../components/List/ObraSelected'
+import SyncButton from '../../../../components/sync-button'
 import ViewTituloCardLine from '../../../../components/cardLine/ViewTituloCardLine'
 import useWorkEquipmentList from './UseWorkEquipmentList'
 import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
+import ObraSelected from '../../../../components/List/ObraSelected'
 
-export default function WorkEquipmentList({ navigation, route }) {
-    const { work, workEquipmentServices, equipmentServices } = route.params
-    const { workEquipments, isLoadingList, handleNewWorkEquipment, showConfirmDialog } = useWorkEquipmentList(
-        { work, workEquipmentServices, navigation, equipmentServices }
-    )
+export default function WorkEquipmentList() {
+    const { states, actions } = useWorkEquipmentList()
 
-    if (isLoadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <ActivityIndicator size="large" color="#666" />
@@ -34,15 +31,15 @@ export default function WorkEquipmentList({ navigation, route }) {
 
     return (
         <Container>
-            {workEquipments.length == 0 ? (
+            {states.workEquipments.length == 0 ? (
                 <Content>
                     <ObraSelected
                         active={1}
                         onPress={() => {
-                            navigation.goBack()
+                            actions.goBack()
                         }}
-                        titulo={work.name}
-                        descricao={work.description}
+                        titulo={states.work.name}
+                        descricao={states.work.description}
                     />
                     <View style={{ justifyContent: 'center', flex: 1, width: '95%' }}>
                         <ListaVazia />
@@ -53,17 +50,17 @@ export default function WorkEquipmentList({ navigation, route }) {
                     <ObraSelected
                         active={1}
                         onPress={() => {
-                            navigation.goBack()
+                            actions.goBack()
                         }}
-                        titulo={work.name}
-                        descricao={work.description}
+                        titulo={states.work.name}
+                        descricao={states.work.description}
                     />
                     <FlatList
                         style={{
                             flex: 1,
                             width: '90%',
                         }}
-                        data={workEquipments}
+                        data={states.workEquipments}
                         keyExtractor={(item) => {
                             return item.id
                         }}
@@ -78,9 +75,9 @@ export default function WorkEquipmentList({ navigation, route }) {
                                                 alignItems: 'center',
                                             }}
                                         >
-                                            <SyncButton item={item} model={'obra_equipamento'} />
+                                            <SyncButton item={item} model={'workEquipments'} />
                                         </View>
-                                        <ButtonEditar onPress={() => showConfirmDialog(item)}>
+                                        <ButtonEditar onPress={() => actions.showConfirmDialog(item)}>
                                             <FontAwesome name={'trash'} size={30} style={{ color: '#fff' }} />
                                         </ButtonEditar>
                                     </ViewTituloCardLine>
@@ -145,7 +142,7 @@ export default function WorkEquipmentList({ navigation, route }) {
                     />
                 </Content>
             )}
-            <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleNewWorkEquipment} />
+            <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleNewWorkEquipment} />
         </Container>
     )
 }

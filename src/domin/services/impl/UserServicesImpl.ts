@@ -1,19 +1,35 @@
-import HttpClientGateway from '../../application/gateways/HttpClientGateway'
+import { HttpClientGateway } from '../../application/gateways/HttpClientGateway'
 import UserEntity from '../../entity/user/UserEntity'
 import { HttpRequest } from '../../entity/http/dtos/HttpRequest'
 import { UserServices } from '../interfaces/UserServices'
+import UserDto from '../../entity/user/UserDto'
+import { UserRoles } from '../../../types'
+import { inject, injectable } from 'inversify'
+import { TYPES } from '../../../infra/ioc/types'
 
+@injectable()
 export class UserServicesImpl implements UserServices {
-    private httpClientGateway: HttpClientGateway<UserEntity>
+    constructor(@inject(TYPES.HttpClientGateway) private httpClient: HttpClientGateway) {}
 
-    constructor(httpClientGateway: HttpClientGateway<UserEntity>) {
-        this.httpClientGateway = httpClientGateway
-    }
-    async getAllRecordsByHttpRequest(request: HttpRequest, userRule: string): Promise<UserEntity[]> {
-        const response = await this.httpClientGateway.getAllRecordsByHttpRequest(request)
-        if (userRule === 'ADMIN') {
-            return response
+    async getAllRecordsByHttpRequest(request: HttpRequest, userRule: string): Promise<UserDto[]> {
+        const result = await this.httpClient.getAllRecordsByHttpRequest<UserEntity>(request)
+        if (userRule === UserRoles.ADMIN) {
+            const dtos = result.map((item) => {
+                return this.toDto(item)
+            })
+            return dtos
         }
         return Promise.resolve([])
+    }
+
+    private toDto(entity: UserEntity): UserDto {
+        return {
+            id: entity.id,
+            name: entity.name,
+            username: entity.username,
+            email: entity.email,
+            role: entity.role,
+            enterpriseId: entity.enterpriseId,
+        }
     }
 }

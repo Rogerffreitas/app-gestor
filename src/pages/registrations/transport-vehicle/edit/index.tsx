@@ -11,19 +11,14 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import ButtonActionLoading from '../../../../components/button/ButtonActionLoading'
 import useEditTransportVehicle from './UseEditTransportVehicle'
 
-export default function App({ navigation, route }) {
-    const { transportVehicle, transportVehicleServices } = route.params
-    const { states, errors, handleClickEditButton, _showConfirmDialog, onChange } = useEditTransportVehicle({
-        navigation,
-        transportVehicleServices,
-        transportVehicle,
-    })
+export default function App() {
+    const { states, errors, actions } = useEditTransportVehicle()
 
     return (
         <Container>
             <FormComponent
                 nomeForm={
-                    transportVehicle.serverId ? 'Código: ' + transportVehicle.serverId : 'Editar Caçamba'
+                    states.transportVehicle ? 'Código: ' + states.transportVehicle.serverId : 'Editar Caçamba'
                 }
             >
                 <DescriptionTextInput description={'Proprietário:* '} erroMenssage={errors.proprietaryName} />
@@ -34,7 +29,7 @@ export default function App({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('proprietaryName')(value)
+                        actions.onChange('proprietaryName')(value)
                     }}
                     autoFocus={true}
                     keyboardType={'default'}
@@ -50,7 +45,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('cpfCnpj')(value)
+                                actions.onChange('cpfCnpj')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -67,7 +62,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('tel')(value)
+                                actions.onChange('tel')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -85,7 +80,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('motorist')(value)
+                                actions.onChange('motorist')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -102,7 +97,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('plate')(value)
+                                actions.onChange('plate')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -119,7 +114,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('color')(value)
+                                actions.onChange('color')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -137,7 +132,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('capacity')(value)
+                                actions.onChange('capacity')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -146,12 +141,12 @@ export default function App({ navigation, route }) {
                 </View>
 
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleClickEditButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleClickEditButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}
                 <ViewButton>
-                    <ButtonEditar onPress={() => _showConfirmDialog()}>
+                    <ButtonEditar onPress={() => actions.showConfirmDialog()}>
                         <FontAwesome name={'trash'} size={20} style={{ color: '#fff' }} />
                     </ButtonEditar>
                 </ViewButton>

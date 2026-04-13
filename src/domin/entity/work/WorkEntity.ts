@@ -77,6 +77,9 @@ export default class WorkEntity extends AbstratcEntity {
     }
 
     dtoToEntity?(data: WorkDto): WorkEntity {
+        if (!data) {
+            return this
+        }
         this._name = data.name
         this._description = data.description
         this._pickets = +data.pickets

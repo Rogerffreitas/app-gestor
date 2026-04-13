@@ -15,11 +15,11 @@ export default class EquipmentDto {
     cpfCnpjProprietary: string
     telProprietary: string
 
-    serverId: number
+    serverId?: number
     userId: string
-    userAction: number
+    userAction?: number
     enterpriseId: string
-    isValid: boolean
+    isValid?: boolean
 
     bank?: string
     beneficiary?: string

@@ -7,6 +7,7 @@ import RentInformation from '../rent-information/RentInformation'
 import EquipmentDto from './EquipmentDto'
 
 export class EquipmentEntity extends AbstratcEntity {
+    private _hourMeterOrOdometer: number
     private _operatorMotorist: string
     private _isEquipment: boolean
     private _modelOrPlate: string
@@ -28,12 +29,12 @@ export class EquipmentEntity extends AbstratcEntity {
             data.telProprietary
         )
         this._rentInformation = new RentInformation(
-            +data.hourMeterOrOdometer,
             data.startRental,
             +data.monthlyPayment,
             +data.valuePerHourKm,
             +data.valuePerDay
         )
+        this._hourMeterOrOdometer = data.hourMeterOrOdometer
         this._operatorMotorist = data.operatorMotorist
         this._isEquipment = data.isEquipment
         this._modelOrPlate = data.modelOrPlate
@@ -50,6 +51,9 @@ export class EquipmentEntity extends AbstratcEntity {
     }
 
     dtoToEntity?(data: EquipmentDto): EquipmentEntity {
+        if (!data) {
+            this
+        }
         this._bankInformation = new BankInformation(
             data.bank,
             data.beneficiary,
@@ -63,12 +67,12 @@ export class EquipmentEntity extends AbstratcEntity {
             data.telProprietary
         )
         this._rentInformation = new RentInformation(
-            +data.hourMeterOrOdometer,
             data.startRental,
             +data.monthlyPayment,
             +data.valuePerHourKm,
             +data.valuePerDay
         )
+        this._hourMeterOrOdometer = data.hourMeterOrOdometer
         this._operatorMotorist = data.operatorMotorist
         this._isEquipment = data.isEquipment
         this._modelOrPlate = data.modelOrPlate
@@ -85,6 +89,27 @@ export class EquipmentEntity extends AbstratcEntity {
         console.log('validated entity [Equipment].')
         let errorMessages: ErrorMessages[] = []
 
+        if (this._hourMeterOrOdometer === undefined || this._hourMeterOrOdometer === null) {
+            errorMessages.push({
+                field: 'hourMeterOrOdometer',
+                message: 'O horímetro/hodômetro é obrigatório.',
+            })
+            changeErrorFields('hourMeterOrOdometer')('Obrigatório')
+        }
+
+        if (this._hourMeterOrOdometer <= 0) {
+            errorMessages.push({
+                field: 'hourMeterOrOdometer',
+                message: 'O horímetro/hodômetro não pode ser 0.',
+            })
+            changeErrorFields('hourMeterOrOdometer')('Obrigatório')
+        }
+
+        if (!Number.isInteger(this._hourMeterOrOdometer)) {
+            errorMessages.push({ field: 'hourMeterOrOdometer', message: 'Informe um Número Inteiro.' })
+            changeErrorFields('hourMeterOrOdometer')('Informe um Número Inteiro.')
+        }
+
         if (!this._operatorMotorist || this._operatorMotorist.trim().length === 0) {
             changeErrorFields('operatorMotorist')('Obrigatório.')
             errorMessages.push({ field: 'operatorMotorist', message: 'O nome do operador é obrigatório.' })
@@ -99,11 +124,14 @@ export class EquipmentEntity extends AbstratcEntity {
         errorMessages.push(...this._rentInformation.validate(changeErrorFields))
 
         if (errorMessages.length > 0) {
-            throw new Error('Entity validation failed', {
-                cause: 'Erros de validação:\n- ' + errorMessages.join('\n- '),
-            })
+            console.info('Validation Errors:', errorMessages)
+            const formattedErrors = errorMessages.map((err) => `[${err.field}]: ${err.message}`).join('\n- ')
+            throw new Error(
+                `[Equipment] Entity validation failed, cause: Erros de validação:\n- ${formattedErrors}`
+            )
         }
-        console.log('Entity valid [Equipment].')
+
+        console.log('[Equipment] Entity valid .')
     }
 
     get operatorMotorist(): string {
@@ -131,7 +159,7 @@ export class EquipmentEntity extends AbstratcEntity {
     }
 
     get hourMeterOrOdometer(): number {
-        return this._rentInformation.hourMeterOrOdometer
+        return this._hourMeterOrOdometer
     }
     get startRental(): string {
         return this._rentInformation.startRental

@@ -11,4 +11,8 @@ export interface WorkRepositoryGateway {
         userId: string
     ): Promise<WorkEntity[]>
     saveWorkServerId(entitys: WorkEntity[]): void
+    loadAllWorkByEnterpriseIdAndUserIdAndValidServerIdFromDatabase(
+        enterpriseId: string,
+        userId: string
+    ): Promise<WorkEntity[]>
 }

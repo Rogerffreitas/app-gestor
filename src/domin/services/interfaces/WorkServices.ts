@@ -9,4 +9,9 @@ export interface WorkServices {
     deleteWorkInLocalDatabase: (id: string, userId: string) => Promise<void>
     findWorkByIdInLocalDatabase: (id: string) => Promise<WorkDto>
     getAllRecordsByHttpRequest: (request: HttpRequest) => Promise<WorkDto[]>
+    loadAllWorkByEnterpriseIdAndUserIdAndValidServerIdFromDatabase(
+        enterpriseId: string,
+        userId: string,
+        userRole: string
+    ): Promise<WorkDto[]>
 }

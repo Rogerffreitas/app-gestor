@@ -9,14 +9,8 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import useNewWork from './UseNewWork'
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
-export default function CreateWork({ navigation, route }) {
-    const { userServices, workServices } = route.params
-    const { states, errors, usersSelectList, setSelected, onSelect, handlerSubmitButton, onChange } =
-        useNewWork({
-            navigation,
-            workServices,
-            userServices,
-        })
+export default function CreateWork() {
+    const { states, errors, usersSelectList, actions } = useNewWork()
     return (
         <Container>
             <FormComponent nomeForm="Cadastro de Nova obra">
@@ -30,7 +24,7 @@ export default function CreateWork({ navigation, route }) {
                     keyboardType={'default'}
                     autoFocus={true}
                     onChangeTextFunction={(value) => {
-                        onChange('name')(value)
+                        actions.onChange('name')(value)
                     }}
                 />
                 <DescriptionTextInput
@@ -45,7 +39,7 @@ export default function CreateWork({ navigation, route }) {
                     keyboardType={'default'}
                     autoFocus={false}
                     onChangeTextFunction={(value) => {
-                        onChange('description')(value)
+                        actions.onChange('description')(value)
                     }}
                 />
                 <DescriptionTextInput description={'Número de estacas:* '} erroMenssage={errors.pickets} />
@@ -57,28 +51,30 @@ export default function CreateWork({ navigation, route }) {
                     keyboardType={'numeric'}
                     autoFocus={false}
                     onChangeTextFunction={(value) => {
-                        onChange('pickets')(value)
+                        actions.onChange('pickets')(value)
                     }}
                 />
                 <DescriptionTextInput description={'Apontador da Obra:* '} erroMenssage={errors.usersList} />
-                <MultiListView>
-                    <MultipleSelectList
-                        data={usersSelectList}
-                        setSelected={(val) => setSelected(val)}
-                        onSelect={onSelect}
-                        save="key"
-                        label="Apontadores"
-                        searchPlaceholder="Buscar"
-                        placeholder={'Selecione um Usuário'}
-                        notFoundText="vazio"
-                        badgeStyles={{ backgroundColor: '#008', borderRadius: 5 }}
-                        inputStyles={{ color: '#00000040' }}
-                        boxStyles={{ borderRadius: 5, borderWidth: 0.9, borderColor: '#00000090' }}
-                    />
-                </MultiListView>
+                {usersSelectList && (
+                    <MultiListView>
+                        <MultipleSelectList
+                            data={usersSelectList}
+                            setSelected={(val) => actions.setSelected(val)}
+                            onSelect={actions.onSelect}
+                            save="key"
+                            label="Apontadores"
+                            searchPlaceholder="Buscar"
+                            placeholder={'Selecione um Usuário'}
+                            notFoundText="vazio"
+                            badgeStyles={{ backgroundColor: '#008', borderRadius: 5 }}
+                            inputStyles={{ color: '#00000040' }}
+                            boxStyles={{ borderRadius: 5, borderWidth: 0.9, borderColor: '#00000090' }}
+                        />
+                    </MultiListView>
+                )}
 
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handlerSubmitButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handlerSubmitButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}

@@ -5,7 +5,7 @@ import Container from '../../../components/Container'
 import styled from 'styled-components/native'
 import ListaVazia from '../../../components/List/ListaVazia'
 import Content from '../../../components/Content'
-import SyncButton from '../../../components/SyncButton'
+import SyncButton from '../../../components/sync-button'
 import CardLineContent from '../../../components/cardLine/CardLineContent'
 import CardLineContentLeft from '../../../components/cardLine/CardLineContentLeft'
 import CardLineContentRight from '../../../components/cardLine/CardLineContentRight'
@@ -15,18 +15,10 @@ import TextTituloCardLine from '../../../components/cardLine/TextTituloCardLine'
 import { useWorksList } from './UseWorksList'
 import ButtonNewRegister from '../../../components/button/ButtonNewRegister'
 
-export default function WorksList({ navigation, route }) {
-    const { workServices, userServices, depositServices, workRoutesServices } = route.params
-    const { works, loadingList, handleClickItemList, handleClickEditButton, handleClintNewButton } =
-        useWorksList({
-            depositServices,
-            userServices,
-            workRoutesServices,
-            navigation,
-            workServices,
-        })
+export default function WorksList() {
+    const { states, actions } = useWorksList()
 
-    if (loadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <ActivityIndicator size="large" color="#666" />
@@ -36,7 +28,7 @@ export default function WorksList({ navigation, route }) {
 
     return (
         <Container>
-            {works && works.length == 0 ? (
+            {states.works && states.works.length == 0 ? (
                 <Content>
                     <ListaVazia />
                 </Content>
@@ -46,13 +38,13 @@ export default function WorksList({ navigation, route }) {
                         flex: 1,
                         width: '100%',
                     }}
-                    data={works}
+                    data={states.works}
                     keyExtractor={(item) => {
                         return item.id
                     }}
                     renderItem={({ item }) => {
                         return (
-                            <Card onPress={() => handleClickItemList(item)}>
+                            <Card onPress={() => actions.handleClickItemList(item)}>
                                 <ViewTitulo>
                                     <TextTitulo>{item.name}</TextTitulo>
                                     <View
@@ -62,9 +54,9 @@ export default function WorksList({ navigation, route }) {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <SyncButton item={item} model={'work'} />
+                                        <SyncButton item={item} model={'works'} />
                                     </View>
-                                    <ButtonEditar onPress={() => handleClickEditButton(item)}>
+                                    <ButtonEditar onPress={() => actions.handleClickEditButton(item)}>
                                         <FontAwesome name={'edit'} size={20} style={{ color: '#fff' }} />
                                     </ButtonEditar>
                                 </ViewTitulo>
@@ -84,7 +76,7 @@ export default function WorksList({ navigation, route }) {
                     }}
                 />
             )}
-            <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleClintNewButton} />
+            <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClintNewButton} />
         </Container>
     )
 }

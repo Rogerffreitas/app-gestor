@@ -1,0 +1,108 @@
+import { useEffect, useState } from 'react'
+import WorkEquipmentDto from '../../../domin/entity/work-equipment/WorkEquipmentDto'
+import { ScreenNames } from '../../../types'
+import { useAuth } from '../../../contexts/AuthContext'
+import { HourMeterMonitoringServices } from '../../../domin/services/interfaces/HourMeterMonitoringServices'
+import { WorkEquipmentServices } from '../../../domin/services/interfaces/WorkEquipmentServices'
+import { errorVibration } from '../../../services/VibrationService'
+import { Alert } from 'react-native'
+import HourMeterMonitoringDto from '../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '../../../infra/hooks/useInjection'
+import { useApplicationContext } from '../../../contexts/ApplicationContext'
+
+export default function useHourMeterMonitoring() {
+    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
+    const hourMeterMonitoringServices = useInjection<HourMeterMonitoringServices>(
+        'HourMeterMonitoringServices'
+    )
+    const navigation = useNavigation()
+    const { user } = useAuth()
+    const { work } = useApplicationContext()
+    const [isLoadingList, setIsLoadingList] = useState(true)
+    const [workEquipments, setWorkEquipments] = useState<WorkEquipmentDto[]>([])
+    const [noteToday, setNoteToday] = useState<string[]>([])
+    const [dateNow, setDateNow] = useState(_getDateNow)
+    const [hourMeterMonitoringList, setHourMeterMonitoringList] = useState<HourMeterMonitoringDto[]>([])
+
+    async function loadData() {
+        try {
+            const [workEquipments, list] = await Promise.all([
+                workEquipmentServices.loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
+                    user.enterpriseId,
+                    work.id
+                ),
+                hourMeterMonitoringServices.loadAllHourMeterMonitoringByEnterpriseIdAndWorkIdAndDateFromLocalDatabase(
+                    user.enterpriseId,
+                    work.id,
+                    dateNow
+                ),
+            ])
+            setWorkEquipments(workEquipments)
+
+            setNoteToday(
+                list.map((item) => {
+                    return item.workEquipment.id
+                })
+            )
+            setHourMeterMonitoringList(list)
+        } catch (error) {
+            Alert.alert('Erro ao tentar buscar a lista', 'Menssagem: ' + error)
+            errorVibration()
+        } finally {
+            setIsLoadingList(false)
+        }
+    }
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadData()
+        })
+        return unsubscribe
+    }, [navigation])
+
+    function handleClickItemWorkEquipment(item: WorkEquipmentDto) {
+        navigation.navigate(ScreenNames.HOUR_METER_MONITORINGS_LIST, {
+            workId: work.id,
+            workEquipment: item,
+        })
+    }
+
+    function handlerClickNewButton(item: WorkEquipmentDto) {
+        navigation.navigate(ScreenNames.NEW_HOUR_METER_MONITORING, {
+            workEquipment: item,
+        })
+    }
+
+    function _getDateNow() {
+        const data = new Date()
+        var dd = data.getDate()
+        var mm = data.getMonth() + 1
+        var dia = dd + ''
+        var mes = mm + ''
+        if (dd < 10) {
+            dia = '0' + dd
+        }
+        if (mm < 10) {
+            mes = '0' + mm
+        }
+        return dia + '/' + mes + '/' + data.getFullYear()
+    }
+
+    function goBack() {
+        navigation.goBack()
+    }
+
+    return {
+        isLoadingList,
+        workEquipments,
+        noteToday,
+        hourMeterMonitoringList,
+        work,
+        actions: {
+            goBack,
+            handleClickItemWorkEquipment,
+            handlerClickNewButton,
+        },
+    }
+}

@@ -9,13 +9,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { InputStyled } from '../../../../components/input/InputStyled'
 import useEditDeposit from './UseEditDeposit'
 
-export default function ({ navigation, route }) {
-    const { deposit, depositServices } = route.params
-    const { erros, states, handleSubmitButton, showConfirmDialog, onChange } = useEditDeposit({
-        deposit,
-        navigation,
-        depositServices,
-    })
+export default function () {
+    const { erros, states, actions } = useEditDeposit()
 
     return (
         <Container>
@@ -28,7 +23,7 @@ export default function ({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('name')(value)
+                        actions.onChange('name')(value)
                     }}
                     keyboardType={'default'}
                     autoFocus={true}
@@ -41,18 +36,18 @@ export default function ({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('description')(value)
+                        actions.onChange('description')(value)
                     }}
                     keyboardType={'default'}
                     autoFocus={true}
                 />
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleSubmitButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleSubmitButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}
                 <ViewButton>
-                    <ButtonEditar onPress={() => showConfirmDialog()}>
+                    <ButtonEditar onPress={() => actions.showConfirmDialog()}>
                         <FontAwesome name={'trash'} size={20} style={{ color: '#fff' }} />
                     </ButtonEditar>
                 </ViewButton>

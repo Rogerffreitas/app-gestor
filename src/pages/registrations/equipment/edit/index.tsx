@@ -13,23 +13,15 @@ import { InputStyled } from '../../../../components/input/InputStyled'
 import InputMaskNumber2 from '../../../../components/input/InputMaskNumber2'
 import UseEditEquipment from './UseEditEquipment'
 
-export default function EditEquipment({ navigation, route }) {
-    const { equipmentServices, equipment } = route.params
-    if (equipment == null || equipment == undefined) {
-        Alert.alert('Erro', 'Equipamento não encontrado')
-        navigation.goBack()
-        return
-    }
-    const { states, erros, onChange, handleEditButton, showConfirmDialog } = UseEditEquipment({
-        equipment,
-        equipmentServices,
-        navigation,
-    })
+export default function EditEquipment() {
+    const { states, erros, actions } = UseEditEquipment()
 
     return (
         <Container>
             <FormComponent
-                nomeForm={equipment.serverId ? 'Código: ' + equipment.serverId : 'Editar Equipamento'}
+                nomeForm={
+                    states.equipment.serverId ? 'Código: ' + states.equipment.serverId : 'Editar Equipamento'
+                }
             >
                 <DescriptionTextInput description={'Proprietário:* '} erroMenssage={erros.proprietatyName} />
                 <InputStyled
@@ -39,7 +31,7 @@ export default function EditEquipment({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('proprietatyName')(value)
+                        actions.onChange('proprietatyName')(value)
                     }}
                     autoFocus={true}
                     keyboardType={'default'}
@@ -54,7 +46,7 @@ export default function EditEquipment({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('cpfCnpj')(value)
+                                actions.onChange('cpfCnpj')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -71,7 +63,7 @@ export default function EditEquipment({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('tel')(value)
+                                actions.onChange('tel')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -81,17 +73,17 @@ export default function EditEquipment({ navigation, route }) {
                 <View style={{ width: '100%', flexDirection: 'row' }}>
                     <View style={{ width: '48%', marginRight: 13 }}>
                         <DescriptionTextInput
-                            description={equipment.isEquipment ? 'Operador:* ' : 'Motorista:* '}
+                            description={states.equipment.isEquipment ? 'Operador:* ' : 'Motorista:* '}
                             erroMenssage={erros.operatorMotorist}
                         />
                         <InputStyled
                             value={states.operatorMotorist}
-                            placeholder={equipment.isEquipment ? 'Operador' : 'Motorista'}
+                            placeholder={states.equipment.isEquipment ? 'Operador' : 'Motorista'}
                             autoCapitalize={'characters'}
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('operatorMotorist')(value)
+                                actions.onChange('operatorMotorist')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -99,17 +91,17 @@ export default function EditEquipment({ navigation, route }) {
                     </View>
                     <View style={{ width: '48%', marginRight: 13 }}>
                         <DescriptionTextInput
-                            description={equipment.isEquipment ? 'Modelo:* ' : 'Modelo/Placa:* '}
+                            description={states.equipment.isEquipment ? 'Modelo:* ' : 'Modelo/Placa:* '}
                             erroMenssage={erros.modelOrPlate}
                         />
                         <InputStyled
                             value={states.modelOrPlate}
-                            placeholder={equipment.isEquipment ? 'Modelo ' : 'Modelo/Placa'}
+                            placeholder={states.equipment.isEquipment ? 'Modelo ' : 'Modelo/Placa'}
                             autoCapitalize={'characters'}
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('modelOrPlate')(value)
+                                actions.onChange('modelOrPlate')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -132,7 +124,7 @@ export default function EditEquipment({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('startRental')(value)
+                                actions.onChange('startRental')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -140,17 +132,17 @@ export default function EditEquipment({ navigation, route }) {
                     </View>
                     <View style={{ width: '48%' }}>
                         <DescriptionTextInput
-                            description={equipment.isEquipment ? 'Horimetro:*' : 'Hodômetro:*'}
+                            description={states.equipment.isEquipment ? 'Horimetro:*' : 'Hodômetro:*'}
                             erroMenssage={erros.hourMeterOrOdometer}
                         />
                         <InputMaskNumber2
                             value={states.hourMeterOrOdometer / 10}
-                            placeholder={equipment.isEquipment ? 'Horimetro ' : 'Hodômetro '}
+                            placeholder={states.equipment.isEquipment ? 'Horimetro ' : 'Hodômetro '}
                             autoCapitalize={'characters'}
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('hourMeterOrOdometer')(
+                                actions.onChange('hourMeterOrOdometer')(
                                     +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -171,7 +163,7 @@ export default function EditEquipment({ navigation, route }) {
                         <Content>
                             <TextError>{erros.valuePerHourKm}</TextError>
                             <TextDescription>
-                                {equipment.isEquipment ? 'Valor por hora:*' : 'Valor por km:*'}{' '}
+                                {states.equipment.isEquipment ? 'Valor por hora:*' : 'Valor por km:*'}{' '}
                             </TextDescription>
                         </Content>
                     </View>
@@ -192,7 +184,7 @@ export default function EditEquipment({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('monthlyPayment')(
+                                actions.onChange('monthlyPayment')(
                                     +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -203,12 +195,12 @@ export default function EditEquipment({ navigation, route }) {
                     <View style={{ width: '28%', marginRight: 13 }}>
                         <InputMaskMoney
                             value={states.valuePerHourKm / 100}
-                            placeholder={equipment.isEquipment ? 'Valor por hora' : 'Valor por km'}
+                            placeholder={states.equipment.isEquipment ? 'Valor por hora' : 'Valor por km'}
                             autoCapitalize={'none'}
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('valuePerHourKm')(
+                                actions.onChange('valuePerHourKm')(
                                     +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -224,7 +216,7 @@ export default function EditEquipment({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('valuePerDay')(
+                                actions.onChange('valuePerDay')(
                                     +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -235,12 +227,12 @@ export default function EditEquipment({ navigation, route }) {
                 </View>
 
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleEditButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleEditButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}
                 <ViewButton>
-                    <ButtonEditar onPress={() => showConfirmDialog()}>
+                    <ButtonEditar onPress={() => actions.showConfirmDialog()}>
                         <FontAwesome name={'trash'} size={20} style={{ color: '#fff' }} />
                     </ButtonEditar>
                 </ViewButton>

@@ -12,16 +12,14 @@ import Linha from '../../../components/cardLine/Line'
 import ListaVazia from '../../../components/List/ListaVazia'
 import Content from '../../../components/Content'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import SyncButton from '../../../components/SyncButton'
+import SyncButton from '../../../components/sync-button'
 import useMaterialsList from './UseDepositsList'
 import ButtonNewRegister from '../../../components/button/ButtonNewRegister'
 
-export default function Deposits({ navigation, route }) {
-    const { depositServices, materialServices } = route.params
-    const { loadingList, deposits, handleClickItemList, handleClickNewButton, handleClickEditButton } =
-        useMaterialsList({ depositServices, navigation, materialServices })
+export default function Deposits() {
+    const { states, actions } = useMaterialsList()
 
-    if (loadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <ActivityIndicator size="large" color="#666" />
@@ -31,11 +29,11 @@ export default function Deposits({ navigation, route }) {
 
     return (
         <Container>
-            {deposits.length == 0 ? (
+            {states.deposits.length == 0 ? (
                 <Content>
                     <ListaVazia />
                 </Content>
-            ) : loadingList ? (
+            ) : states.isLoadingList ? (
                 <ActivityIndicator size="large" color="#666" />
             ) : (
                 <Content>
@@ -44,13 +42,13 @@ export default function Deposits({ navigation, route }) {
                             flex: 1,
                             width: '90%',
                         }}
-                        data={deposits}
+                        data={states.deposits}
                         keyExtractor={(item) => {
                             return item.id
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <CardLine onPress={() => handleClickItemList(item)} opacity={0.5}>
+                                <CardLine onPress={() => actions.handleClickItemList(item)} opacity={0.5}>
                                     <ViewTituloCardLine>
                                         <TextTitlo>{item.name}</TextTitlo>
                                         <View
@@ -62,7 +60,7 @@ export default function Deposits({ navigation, route }) {
                                         >
                                             <SyncButton item={item} model={'jazida'} />
                                         </View>
-                                        <ButtonEditar onPress={() => handleClickEditButton(item)}>
+                                        <ButtonEditar onPress={() => actions.handleClickEditButton(item)}>
                                             <FontAwesome name={'edit'} size={24} style={{ color: '#fff' }} />
                                         </ButtonEditar>
                                     </ViewTituloCardLine>
@@ -81,7 +79,7 @@ export default function Deposits({ navigation, route }) {
                     />
                 </Content>
             )}
-            <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleClickNewButton} />
+            <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClickNewButton} />
         </Container>
     )
 }

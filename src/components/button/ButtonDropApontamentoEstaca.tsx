@@ -30,24 +30,23 @@ export default function ButtonDropApontamentoEstaca({
 }
 
 const Card = styled.TouchableOpacity`
-    height: 65px;
+    height: 60px;
     width: 100%;
     margin-top: 5px;
-    margin-left: 5px;
-    background-color: ${(props) => props.theme.colors.menu};
     flex-direction: row;
-    border-top-left-radius: 7px;
-    border-bottom-left-radius: 7px;
     justify-content: flex-start;
     align-items: center;
 `
-
 const CardContent = styled.View`
     width: 100%;
     height: 100%;
+    margin-left: 10px;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
+    background-color: ${(props) => props.theme.colors.menu};
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
 `
 
 const TextTitle = styled.Text`

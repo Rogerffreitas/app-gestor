@@ -5,11 +5,11 @@ import { schemas } from './schemas'
 import migrations from './migrations/migrations'
 import MaterialTransportModel from './model/MaterialTransportModel'
 import WorkModel from './model/WorkModel'
-import WorkRoutesModel from './model/WorkRoutesModel'
+import WorkRoutesModel from './model/WorkRouteModel'
 import TransportVehicleModel from './model/TransportVehicleModel'
 import MaterialModel from './model/MaterialModel'
 import DiscountModel from './model/DiscountModel'
-import FuelSupplyModel from './model/FuelSupplyModel'
+import FuelSupplesModel from './model/FuelSupplyModel'
 import EquipmentModel from './model/EquipmentModel'
 import HourMeterMonitoringModel from './model/HourMeterMonitoringModel'
 import MaintenanceTruckModel from './model/MaintenanceTruckModel'
@@ -40,7 +40,7 @@ export const database = new Database({
         WorkRoutesModel,
         MaterialModel,
         DiscountModel,
-        FuelSupplyModel,
+        FuelSupplesModel,
         EquipmentModel,
         HourMeterMonitoringModel,
         MaintenanceTruckModel,

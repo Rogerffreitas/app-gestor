@@ -5,9 +5,9 @@ export const discountSchema = tableSchema({
     columns: [
         { name: 'server_id', type: 'number', isOptional: true },
         { name: 'description', type: 'string' },
-        { name: 'valeu', type: 'number' },
-        { name: 'type', type: 'string' },
-        { name: 'transport_vehicle_or_equipment_id', type: 'string' },
+        { name: 'value', type: 'number' },
+        { name: 'discount_type', type: 'string' },
+        { name: 'transport_vehicle_or_work_equipment_id', type: 'string' },
         { name: 'work_id', type: 'string' },
         { name: 'invoice_id', type: 'number' },
         { name: 'invoice_status', type: 'string' },

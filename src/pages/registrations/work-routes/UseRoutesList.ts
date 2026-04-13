@@ -1,51 +1,80 @@
 import { useEffect, useState } from 'react'
 import { WorkRoutesServices } from '../../../domin/services/interfaces/WorkRoutesServices'
-import { DepositServices } from '../../../domin/services/interfaces/DepositServices'
-import WorkDto from '../../../domin/entity/work/WorkDto'
 import WorkRoutesDto from '../../../domin/entity/work-routes/WorkRoutesDto'
+import { useInjection } from '../../../infra/hooks/useInjection'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RootStackParamList, ScreenNames } from '../../../types'
+import { useAuth } from '../../../contexts/AuthContext'
+import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
+import WorkDto from '../../../domin/entity/work/WorkDto'
+import { Alert } from 'react-native'
+import { errorVibration } from '../../../services/VibrationService'
 
-type RoutesListProps = {
-    workRoutesServices: WorkRoutesServices
-    depositServices: DepositServices
-    work: WorkDto
-    navigation: any
-}
+type WorkRoutesProp = RouteProp<RootStackParamList, ScreenNames.WORK_ROUTES>
 
-export function useRoutesList({ navigation, workRoutesServices, work, depositServices }: RoutesListProps) {
+export function useRoutesList() {
+    const workRoutesServices = useInjection<WorkRoutesServices>('WorkRoutesServices')
+    const workServices = useInjection<WorkServices>('WorkServices')
+    const route = useRoute<WorkRoutesProp>()
+    const navigation = useNavigation()
+    const { workId } = route.params
     const [routes, setRoutes] = useState<WorkRoutesDto[]>([])
-    const [load, setLoad] = useState(true)
+    const [work, setWork] = useState<WorkDto>()
     const [loadingList, setLoadingList] = useState(true)
+    const { user } = useAuth()
 
     const getAll = async () => {
-        const result = await workRoutesServices.loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
-            work.enterpriseId,
-            work.id
-        )
-        setRoutes(result)
-        setLoadingList(false)
+        try {
+            const workPromise = workServices.findWorkByIdInLocalDatabase(workId)
+            const routesPromise =
+                workRoutesServices.loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
+                    user.enterpriseId,
+                    workId
+                )
+
+            const [workResult, routesResult] = await Promise.all([workPromise, routesPromise])
+
+            setWork(workResult)
+            setRoutes(routesResult)
+        } catch (error) {
+            Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
+            errorVibration()
+        } finally {
+            setLoadingList(false)
+        }
     }
 
     useEffect(() => {
-        navigation.addListener('focus', () => setLoad(!load))
-        getAll()
-    }, [load])
+        const unsubscribe = navigation.addListener('focus', () => {
+            getAll()
+        })
+        return unsubscribe
+    }, [navigation])
 
     function handleClickEditButton(item: WorkRoutesDto) {
-        navigation.navigate('Edit Route', {
-            work: work,
+        navigation.navigate(ScreenNames.EDIT_WORK_ROUTE, {
             workRoute: item,
-            workRoutesServices: workRoutesServices,
         })
     }
 
     function handleClintNewButton() {
-        navigation.navigate('New Route', { work, workRoutesServices, depositServices })
+        navigation.navigate(ScreenNames.NEW_WORK_ROUTE, { workId })
+    }
+
+    function goBack() {
+        navigation.goBack()
     }
 
     return {
-        routes,
-        loadingList,
-        handleClickEditButton,
-        handleClintNewButton,
+        states: {
+            routes,
+            work,
+            loadingList,
+        },
+        actions: {
+            goBack,
+            handleClickEditButton,
+            handleClintNewButton,
+        },
     }
 }

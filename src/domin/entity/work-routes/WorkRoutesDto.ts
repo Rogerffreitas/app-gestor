@@ -11,12 +11,12 @@ export default class WorkRoutesDto {
     isFixedValue: boolean
     work: WorkDto
     deposit: DepositDto
-
-    serverId: number
-    userId: string
-    userAction: number
     enterpriseId: string
-    isValid: boolean
+    userId: string
+
+    serverId?: number
+    userAction?: number
+    isValid?: boolean
     id?: string
     createdAt?: number
     updatedAt?: number

@@ -14,27 +14,14 @@ import TextTituloCardLine from '../../../components/cardLine/TextTituloCardLine'
 import ListaVazia from '../../../components/List/ListaVazia'
 import Content from '../../../components/Content'
 import ItemObra from '../../../components/List/ItemObra'
-import SyncButton from '../../../components/SyncButton'
+import SyncButton from '../../../components/sync-button'
 import ObraSelected from '../../../components/List/ObraSelected'
-import theme from '../../../global/styles/theme'
 import ButtonNewRegister from '../../../components/button/ButtonNewRegister'
 
-export default function TransportVehicles({ navigation, route }) {
-    const { workServices, transportVehicleServices } = route.params
+export default function TransportVehicles() {
+    const { states, work, actions } = useTransportVehicles()
 
-    const {
-        works,
-        work,
-        transportVehicles,
-        isLoadingList,
-        handleClickNewButton,
-        handleClickEditBankInfo,
-        handleClickEditButton,
-        handleSelectWork,
-        handleClickSelectedWork,
-    } = useTransportVehicles({ workServices, transportVehicleServices, navigation })
-
-    if (isLoadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -44,7 +31,7 @@ export default function TransportVehicles({ navigation, route }) {
         )
     }
 
-    if (works.length == 0) {
+    if (!work && states.works.length == 0) {
         return (
             <Container>
                 <Content>
@@ -62,7 +49,7 @@ export default function TransportVehicles({ navigation, route }) {
                         flex: 1,
                         width: '100%',
                     }}
-                    data={works}
+                    data={states.works}
                     keyExtractor={(item) => {
                         return item.id
                     }}
@@ -71,7 +58,7 @@ export default function TransportVehicles({ navigation, route }) {
                             <ItemObra
                                 active={0.2}
                                 onPress={() => {
-                                    handleSelectWork(item)
+                                    actions.handleSelectWork(item)
                                 }}
                                 titulo={item.name}
                                 descricao={item.description}
@@ -83,31 +70,31 @@ export default function TransportVehicles({ navigation, route }) {
         )
     }
 
-    if (work && transportVehicles.length == 0) {
+    if (work && states.transportVehicles.length == 0) {
         return (
             <Container>
                 <Content>
                     <ObraSelected
                         active={1}
-                        onPress={handleClickSelectedWork}
+                        onPress={actions.handleClickSelectedWork}
                         titulo={work.name}
                         descricao={work.description}
                     />
                     <View style={{ justifyContent: 'center', flex: 1, width: '95%' }}>
                         <ListaVazia />
                     </View>
-                    <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleClickNewButton} />
+                    <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClickNewButton} />
                 </Content>
             </Container>
         )
     }
-    if (work && transportVehicles.length > 0) {
+    if (work && states.transportVehicles.length > 0) {
         return (
             <Container>
                 <Content>
                     <ObraSelected
                         active={1}
-                        onPress={handleClickSelectedWork}
+                        onPress={actions.handleClickSelectedWork}
                         titulo={work.name}
                         descricao={work.description}
                     />
@@ -116,7 +103,7 @@ export default function TransportVehicles({ navigation, route }) {
                             flex: 1,
                             width: '90%',
                         }}
-                        data={transportVehicles}
+                        data={states.transportVehicles}
                         keyExtractor={(item) => {
                             return item.id
                         }}
@@ -132,12 +119,12 @@ export default function TransportVehicles({ navigation, route }) {
                                                 alignItems: 'center',
                                             }}
                                         >
-                                            <SyncButton item={item} model={'veiculo'} />
+                                            <SyncButton item={item} model={'transportVehicles'} />
                                         </View>
-                                        <ButtonEditar onPress={() => handleClickEditBankInfo(item)}>
+                                        <ButtonEditar onPress={() => actions.handleClickEditBankInfo(item)}>
                                             <FontAwesome name={'bank'} size={18} style={{ color: '#fff' }} />
                                         </ButtonEditar>
-                                        <ButtonEditar onPress={() => handleClickEditButton(item)}>
+                                        <ButtonEditar onPress={() => actions.handleClickEditButton(item)}>
                                             <FontAwesome name={'edit'} size={24} style={{ color: '#fff' }} />
                                         </ButtonEditar>
                                     </ViewTituloCardLine>
@@ -166,7 +153,7 @@ export default function TransportVehicles({ navigation, route }) {
                     />
                 </Content>
 
-                <ButtonNewRegister activeOpacity={0.7} onPressFunction={ButtonNewRegister} />
+                <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClickNewButton} />
             </Container>
         )
     }

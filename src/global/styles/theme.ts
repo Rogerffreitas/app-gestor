@@ -1,12 +1,35 @@
 import { DefaultTheme } from 'styled-components/native'
 
-export default {
+declare module 'styled-components/native' {
+    export interface DefaultTheme {
+        colors: {
+            btplus: string
+            primary: string
+            primarySelect: string
+            menu: string
+            secondary: string
+            backgroundcolor: string
+            selected: string
+        }
+        fontColors: {
+            primary: string
+        }
+
+        fonts: {
+            regular: string
+            medium: string
+            bold: string
+        }
+    }
+}
+
+export const theme: DefaultTheme = {
     colors: {
         btplus: '#ff0000',
         primary: '#009999',
         primarySelect: '#00008080',
         menu: '#000080',
-        secondery: '#008099',
+        secondary: '#008099',
         backgroundcolor: '#75757520',
         selected: '#ef6c00',
     },
@@ -22,16 +45,4 @@ export default {
     },
 }
 
-export const lightTheme: DefaultTheme = {
-    backgroundColor: '#FFFFFF',
-    primary: '#512DA8',
-    text: '#121212',
-    error: '#D32F2F',
-}
-
-export const darkTheme: DefaultTheme = {
-    backgroundColor: '#121212',
-    primary: '#B39DDB',
-    text: '#FFFFFF',
-    error: '#EF9A9A',
-}
+export default theme

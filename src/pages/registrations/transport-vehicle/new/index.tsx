@@ -10,13 +10,8 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import { InputStyled } from '../../../../components/input/InputStyled'
 import useNewTransportVehicle from './UseNewTransportVehicle'
 
-export default function NewTransportVehicle({ navigation, route }) {
-    const { work, transportVehicleServices } = route.params
-    const { states, errors, handleClickSubmitButton, onChange } = useNewTransportVehicle({
-        navigation,
-        transportVehicleServices,
-        work,
-    })
+export default function NewTransportVehicle() {
+    const { states, errors, actions } = useNewTransportVehicle()
 
     return (
         <Container>
@@ -28,7 +23,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeTextFunction={(value) => {
-                        onChange('proprietaryName')(value)
+                        actions.onChange('proprietaryName')(value)
                     }}
                     autoFocus={true}
                     keyboardType={'default'}
@@ -44,7 +39,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('cpfCnpj')(value)
+                                actions.onChange('cpfCnpj')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -61,7 +56,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('tel')(value)
+                                actions.onChange('tel')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -77,7 +72,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('motorist')(value)
+                                actions.onChange('motorist')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -94,7 +89,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('plate')(value)
+                                actions.onChange('plate')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -110,7 +105,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('color')(value)
+                                actions.onChange('color')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -128,7 +123,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('capacity')(value)
+                                actions.onChange('capacity')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -137,7 +132,7 @@ export default function NewTransportVehicle({ navigation, route }) {
                 </View>
 
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleClickSubmitButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleClickSubmitButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}

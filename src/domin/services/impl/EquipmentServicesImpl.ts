@@ -1,19 +1,28 @@
+import { inject, injectable } from 'inversify'
 import { ChangeErrorFields } from '../../../types'
 import { EquipmentRepositoryGateway } from '../../application/gateways/EquipmentRepositoryGateway'
 import { BankInformation } from '../../entity/bank-information/BankInformation'
 import EquipmentDto from '../../entity/equipment/EquipmentDto'
 import { EquipmentEntity } from '../../entity/equipment/EquipmentEntity'
 import { EquipmentServices } from '../interfaces/EquipmentServices'
+import { TYPES } from '../../../infra/ioc/types'
 
-export default class EquipmentServicesImpl implements EquipmentServices {
-    equipmentRepositoryGateway: EquipmentRepositoryGateway
-    constructor(equipmentRepositoryGateway: EquipmentRepositoryGateway) {
-        this.equipmentRepositoryGateway = equipmentRepositoryGateway
+@injectable()
+export class EquipmentServicesImpl implements EquipmentServices {
+    constructor(@inject(TYPES.EquipmentRepositoryGateway) private repository: EquipmentRepositoryGateway) {}
+
+    async updateHourMeterOrOdometerInLocalDatabase(
+        dto: EquipmentDto,
+        changeErrorFields: ChangeErrorFields
+    ): Promise<EquipmentDto> {
+        const entity = new EquipmentEntity().dtoToEntity(dto)
+        entity.validate(changeErrorFields)
+        return new EquipmentDto().entityToDto(
+            await this.repository.updateHourMeterOrOdometerInLocalDatabase(entity)
+        )
     }
     async loadAllEquipmentByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<EquipmentDto[]> {
-        const result = await this.equipmentRepositoryGateway.loadAllEquipmentByEnterpriseIdFromLocalDatabase(
-            enterpriseId
-        )
+        const result = await this.repository.loadAllEquipmentByEnterpriseIdFromLocalDatabase(enterpriseId)
         return result.map((item) => new EquipmentDto().entityToDto(item))
     }
 
@@ -23,7 +32,7 @@ export default class EquipmentServicesImpl implements EquipmentServices {
     ): Promise<EquipmentDto> {
         const entity = new EquipmentEntity().dtoToEntity(dto)
         entity.validate(changeErrorFields)
-        const result = await this.equipmentRepositoryGateway.createEquipmentInLocalDatabase(entity)
+        const result = await this.repository.createEquipmentInLocalDatabase(entity)
         return new EquipmentDto().entityToDto(result)
     }
     async updateEquipmentInLocalDatabase(
@@ -32,21 +41,18 @@ export default class EquipmentServicesImpl implements EquipmentServices {
     ): Promise<EquipmentDto> {
         const entity = new EquipmentEntity().dtoToEntity(dto)
         entity.validate(changeErrorFields)
-        const result = await this.equipmentRepositoryGateway.updateEquipmentInLocalDatabase(entity)
+        const result = await this.repository.updateEquipmentInLocalDatabase(entity)
         return new EquipmentDto().entityToDto(result)
     }
     async updateEquipmentBankInformation(
         id: string,
         bankInformation: BankInformation
     ): Promise<EquipmentDto> {
-        const result = await this.equipmentRepositoryGateway.updateEquipmentBankInformation(
-            id,
-            bankInformation
-        )
+        const result = await this.repository.updateEquipmentBankInformation(id, bankInformation)
         return new EquipmentDto().entityToDto(result)
     }
     deleteEquipmentInLocalDatabase(id: string, userId: string): Promise<void> {
-        return this.equipmentRepositoryGateway.deleteEquipmentInLocalDatabase(id, userId)
+        return this.repository.deleteEquipmentInLocalDatabase(id, userId)
     }
     findEquipmentByIdInLocalDatabase(id: string): Promise<EquipmentDto> {
         throw new Error('Method not implemented.')
@@ -58,11 +64,10 @@ export default class EquipmentServicesImpl implements EquipmentServices {
         enterpriseId: string,
         workId: string
     ): Promise<EquipmentDto[]> {
-        const result =
-            await this.equipmentRepositoryGateway.loadAllEquipmentByEnterpriseIdAndWorkIdFromLocalDatabase(
-                enterpriseId,
-                workId
-            )
+        const result = await this.repository.loadAllEquipmentByEnterpriseIdAndWorkIdFromLocalDatabase(
+            enterpriseId,
+            workId
+        )
         return result.map((item) => {
             return new EquipmentDto().entityToDto(item)
         })
@@ -71,7 +76,7 @@ export default class EquipmentServicesImpl implements EquipmentServices {
         enterpriseId: string
     ): Promise<EquipmentDto[]> {
         const result =
-            await this.equipmentRepositoryGateway.loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
+            await this.repository.loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
                 enterpriseId
             )
         return result.map((item) => new EquipmentDto().entityToDto(item))

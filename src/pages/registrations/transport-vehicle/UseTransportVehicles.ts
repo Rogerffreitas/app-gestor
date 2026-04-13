@@ -7,107 +7,108 @@ import { ScreenNames } from '../../../types'
 import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
 import { errorVibration } from '../../../services/VibrationService'
 import { Alert } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '../../../infra/hooks/useInjection'
+import { useApplicationContext } from '../../../contexts/ApplicationContext'
 
-type UseTransportVehiclesListProps = {
-    workServices: WorkServices
-    transportVehicleServices: TransportVehicleServices
-    navigation
-}
+export default function useTransportVehiclesList() {
+    const workServices = useInjection<WorkServices>('WorkServices')
 
-export default function useTransportVehiclesList({
-    navigation,
-    transportVehicleServices,
-    workServices,
-}: UseTransportVehiclesListProps) {
-    const [works, setWorks] = useState<WorkDto[]>([])
-    const [work, setWork] = useState<WorkDto>(null)
-    const [transportVehicles, setTransportVehicles] = useState<TransportVehicleDto[]>([])
+    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const navigation = useNavigation()
+    const { work, saveWork } = useApplicationContext()
+    const [states, setStates] = useState({
+        works: [] as WorkDto[],
+        isLoadingList: true,
+        transportVehicles: [] as TransportVehicleDto[],
+    })
+
     const { user } = useAuth()
-    const [isLoad, setIsLoad] = useState(true)
-    const [isLoadingList, setIsLoadingList] = useState(true)
 
     async function loadAll() {
         try {
-            navigation.addListener('focus', () => setIsLoad(!isLoad))
-            const result = await workServices.loadWorkListFromDatabase(user.enterpriseId, user.id, user.role)
-            setWorks(result)
+            const results = await workServices.loadAllWorkByEnterpriseIdAndUserIdAndValidServerIdFromDatabase(
+                user.enterpriseId,
+                user.id,
+                user.role
+            )
+            setStates((state) => ({ ...state, works: results, isLoadingList: false }))
         } catch (error) {
             Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
             errorVibration()
-        } finally {
-            setIsLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     useEffect(() => {
-        if (work) {
-            loadAllTranpostVehicles(work)
-            return
-        }
-        loadAll()
-    }, [isLoad])
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (work) {
+                navigation.setOptions({ title: 'Lista de Caçambas' })
+                loadAllTranpostVehicles(work)
+            } else {
+                loadAll()
+            }
+        })
+        return unsubscribe
+    }, [navigation, work])
 
     async function loadAllTranpostVehicles(item: WorkDto) {
         try {
-            navigation.addListener('focus', () => setIsLoad(!isLoad))
-            const result =
+            const results =
                 await transportVehicleServices.loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
                     user.enterpriseId,
                     item.id
                 )
-            setTransportVehicles(result)
+
+            setStates((state) => ({ ...state, transportVehicles: results, isLoadingList: false }))
         } catch (error) {
             Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
             errorVibration()
-        } finally {
-            setIsLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     function handleClickEditButton(item: TransportVehicleDto) {
         navigation.navigate(ScreenNames.EDIT_TRANSPORT_VEHICLE, {
-            transportVehicle: item,
-            transportVehicleServices: transportVehicleServices,
+            transportVehicleId: item.id,
         })
     }
 
     function handleClickEditBankInfo(item: TransportVehicleDto): void {
         navigation.navigate(ScreenNames.BANK_INFO_TRANSPORT_VEHICLE, {
-            transportVehicle: item,
-            transportVehicleServices: transportVehicleServices,
+            transportVehicleId: item.id,
         })
     }
 
     function handleClickNewButton() {
         navigation.navigate(ScreenNames.NEW_TRANSPORT_VEHICLE, {
-            work: work,
-            transportVehicleServices: transportVehicleServices,
+            workId: work.id,
         })
     }
 
     function handleSelectWork(workSelected: WorkDto) {
         navigation.setOptions({ title: 'Lista de Caçambas' })
-        setIsLoadingList(true)
-        setWork(workSelected)
+        setStates((state) => ({ ...state, isLoadingList: true }))
+        saveWork(workSelected)
         loadAllTranpostVehicles(workSelected)
     }
 
     function handleClickSelectedWork() {
-        setWork(null)
+        saveWork(null)
+        setStates((state) => ({ ...state, work: null }))
         navigation.setOptions({ title: 'Escolha uma obra!' })
     }
 
     return {
-        works,
+        states,
         work,
-        transportVehicles,
-        isLoadingList,
-        loadAllTranpostVehicles,
-        handleClickNewButton,
-        handleClickEditBankInfo,
-        handleClickEditButton,
-        setIsLoadingList,
-        handleClickSelectedWork,
-        handleSelectWork,
+        actions: {
+            loadAllTranpostVehicles,
+            handleClickNewButton,
+            handleClickEditBankInfo,
+            handleClickEditButton,
+            handleClickSelectedWork,
+            handleSelectWork,
+        },
     }
 }

@@ -24,7 +24,7 @@ export class WorkEquipmentEntity extends AbstratcEntity {
     }
 
     get hourMeterOrOdometer(): number {
-        return this._rentInformation.hourMeterOrOdometer
+        return this._equipment.hourMeterOrOdometer
     }
 
     get startRental(): string {
@@ -86,14 +86,13 @@ export class WorkEquipmentEntity extends AbstratcEntity {
     }
 
     public async modelToEntity(data: WorkEquipmentModel) {
+        this._equipment = new EquipmentEntity().modelToEntity(await data.equipment())
         this._rentInformation = new RentInformation(
-            +data.hourMeterOrOdometer,
             data.startRental,
             +data.monthlyPayment,
             +data.valuePerHourKm,
             +data.valuePerDay
         )
-        this._equipment = new EquipmentEntity().modelToEntity(await data.equipment())
         this._operatorMotorist = data.operatorMotorist
         this._workId = data.workId
         this.serverId = data.serverId
@@ -111,7 +110,6 @@ export class WorkEquipmentEntity extends AbstratcEntity {
     public dtoToEntity(data: WorkEquipmentDto): WorkEquipmentEntity {
         this._equipment = new EquipmentEntity().dtoToEntity(data.equipment)
         this._rentInformation = new RentInformation(
-            +data.hourMeterOrOdometer,
             data.startRental,
             +data.monthlyPayment,
             +data.valuePerHourKm,

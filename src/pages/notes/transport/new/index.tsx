@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native'
 import styled from 'styled-components/native'
 import theme from '../../../../global/styles/theme'
 import ButtonDropApontamento from '../../../../components/button/ButtonDropApontamento'
@@ -17,39 +17,10 @@ import { MaterialDto } from '../../../../domin/entity/material/MaterialDto'
 import { Reference } from '../../../../types'
 import { TextInputMask } from 'react-native-masked-text'
 
-export default function TransportNotes({ navigation, route }) {
-    const { work, transportVehicle, materialTransportServices, workRoutesServices, materialServices } =
-        route.params
-    const {
-        workRoute,
-        workRoutes,
-        material,
-        materials,
-        quantity,
-        picket,
-        state,
-        setState,
-        icon,
-        handleClickButtonWorkRoute,
-        handleClickButtonMaterial,
-        handlerClickButtonQuantity,
-        handlerClickButtonPicket,
-        handleSelectWorkRoute,
-        handleSelectMaterial,
-        handleSelectQuantity,
-        handlerSelectPicket,
-        handleResestItemsSelect,
-        handleSaveItemsSelect,
-    } = useNewTransport({
-        work,
-        transportVehicle,
-        workRoutesServices,
-        materialServices,
-        materialTransportServices,
-        navigation,
-    })
+export default function TransportNotes() {
+    const { transportVehicle, states, icon, work, actions } = useNewTransport()
 
-    if (state.isLoading) {
+    if (states.isLoading) {
         return (
             <Container>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -74,22 +45,26 @@ export default function TransportNotes({ navigation, route }) {
                 onPress={() => {}}
                 numero={'2'}
                 titulo={'VEÍCULO'}
-                conteudo={transportVehicle.nameProprietary + ' Placa: ' + transportVehicle.plate}
+                conteudo={
+                    transportVehicle
+                        ? transportVehicle.nameProprietary + ' Placa: ' + transportVehicle.plate
+                        : ''
+                }
                 corIcon={icon.transportVehicle == 'check' ? 'green' : theme.colors.menu}
                 nomeIcon={icon.transportVehicle}
                 tamanho={icon.transportVehicle == 'check' ? 15 : 30}
             />
             <ButtonDropApontamentoRota
-                onPress={handleClickButtonWorkRoute}
+                onPress={actions.handleClickButtonWorkRoute}
                 numero={'3'}
                 titulo={'ROTA:'}
-                saida={workRoute != null || undefined ? workRoute.arrivalLocation : 'Escolha uma rota'}
-                destino={workRoute?.departureLocation}
+                saida={states.workRoute?.arrivalLocation ?? 'Escolha uma rota'}
+                destino={states.workRoute?.departureLocation}
                 corIcon={icon.workRoute == 'check' ? 'green' : theme.colors.menu}
                 nomeIcon={icon.workRoute}
                 tamanho={icon.workRoute == 'check' ? 15 : 30}
             />
-            {workRoutes && (
+            {states.workRoutes && states.workRoutes.length > 0 && (
                 <View
                     style={{
                         flex: 1,
@@ -99,13 +74,13 @@ export default function TransportNotes({ navigation, route }) {
                 >
                     <FlatList
                         style={styles.list}
-                        data={workRoutes}
+                        data={states.workRoutes}
                         keyExtractor={(item: WorkRoutesDto) => {
                             return item.id
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <CardList onPress={() => handleSelectWorkRoute(item)}>
+                                <CardList onPress={() => actions.handleSelectWorkRoute(item)}>
                                     <CardListContent>
                                         <TextListTitle>LOCAL DE SAÍDA</TextListTitle>
                                         <TextListDescriptor>{item.arrivalLocation}</TextListDescriptor>
@@ -120,28 +95,28 @@ export default function TransportNotes({ navigation, route }) {
                     />
                 </View>
             )}
-            {workRoute && (
+            {states.workRoute && (
                 <ButtonDropApontamento
-                    onPress={handleClickButtonMaterial}
+                    onPress={actions.handleClickButtonMaterial}
                     numero={'4'}
                     titulo={'MATERIAL:'}
-                    conteudo={material != null || undefined ? material.name : 'Escolha um material'}
+                    conteudo={states.material?.name ?? 'Escolha um material'}
                     corIcon={icon.material == 'check' ? 'green' : theme.colors.menu}
                     nomeIcon={icon.material}
                     tamanho={icon.material == 'check' ? 15 : 30}
                 />
             )}
-            {materials && (
+            {states.materials && states.materials.length > 0 && (
                 <View style={{ flex: 1, width: '100%', alignItems: 'flex-end' }}>
                     <FlatList
                         style={styles.list}
-                        data={materials}
+                        data={states.materials}
                         keyExtractor={(item: MaterialDto) => {
                             return item.id
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <CardList onPress={() => handleSelectMaterial(item)}>
+                                <CardList onPress={() => actions.handleSelectMaterial(item)}>
                                     <CardListContent>
                                         <TextListTitle>MATERIAL</TextListTitle>
                                         <TextListDescriptor>{item.name}</TextListDescriptor>
@@ -152,19 +127,19 @@ export default function TransportNotes({ navigation, route }) {
                     />
                 </View>
             )}
-            {material && material.referenceMaterialCalculation === Reference.WEIGHT && (
+            {states.material && states.material.referenceMaterialCalculation === Reference.WEIGHT && (
                 <ButtonDropApontamento
-                    onPress={handlerClickButtonQuantity}
+                    onPress={actions.handlerClickButtonQuantity}
                     numero={'5'}
                     titulo={'QUANTIDADE:'}
-                    conteudo={!quantity ? 'Informe o peso (t)' : quantity / 100 + ' t'}
+                    conteudo={states.quantity ? states.quantity / 100 + ' t' : 'Informe o peso (t)'}
                     corIcon={icon.quantity == 'check' ? 'green' : theme.colors.menu}
                     nomeIcon={icon.quantity}
                     tamanho={icon.quantity == 'check' ? 15 : 30}
                 />
             )}
 
-            {state.quantity && (
+            {states.quantityVisibility && (
                 <View style={{ width: '100%', alignItems: 'flex-end' }}>
                     <View
                         style={{
@@ -179,7 +154,7 @@ export default function TransportNotes({ navigation, route }) {
                         <View style={{ width: '57%', marginRight: 10 }}>
                             <DescriptionTextInput
                                 description={'Quantidade:* '}
-                                erroMenssage={state.erroMessagePicket}
+                                erroMenssage={states.erroMessagePicket}
                             />
                             <InputMaskNumber
                                 value={null}
@@ -188,7 +163,7 @@ export default function TransportNotes({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    setState((state) => ({
+                                    actions.setStates((state) => ({
                                         ...state,
                                         quantityInputValue: value
                                             .replace('R$ ', '')
@@ -196,7 +171,7 @@ export default function TransportNotes({ navigation, route }) {
                                             .replace(',', ''),
                                     }))
 
-                                    setState((state) => ({ ...state, erroMessagePicket: '' }))
+                                    actions.setStates((state) => ({ ...state, erroMessagePicket: '' }))
                                 }}
                                 autoFocus={true}
                                 keyboardType={'numeric'}
@@ -208,19 +183,19 @@ export default function TransportNotes({ navigation, route }) {
                                 justifyContent: 'center',
                             }}
                         >
-                            <ButtonAction acao={'Salvar'} onPressFunction={handleSelectQuantity} />
+                            <ButtonAction acao={'Salvar'} onPressFunction={actions.handleSelectQuantity} />
                         </View>
                     </View>
                 </View>
             )}
 
-            {material != null && material.referenceMaterialCalculation === Reference.VOLUME ? (
+            {states.material != null && states.material.referenceMaterialCalculation === Reference.VOLUME ? (
                 <ButtonDropApontamentoEstaca
-                    onPress={handlerClickButtonPicket}
+                    onPress={actions.handlerClickButtonPicket}
                     numero={'5'}
                     titulo={'ESTACA:'}
                     conteudo={
-                        picket != null || undefined ? state.picketDescription : 'Informe o número da estaca'
+                        states.picketDescription ? states.picketDescription : 'Informe o número da estaca'
                     }
                     corIcon={icon.picket == 'check' ? 'green' : theme.colors.menu}
                     nomeIcon={icon.picket}
@@ -230,7 +205,7 @@ export default function TransportNotes({ navigation, route }) {
                 <></>
             )}
 
-            {state.picket && picket == null ? (
+            {states.picketVisibility && states.picket == null ? (
                 <FormInputEstaca>
                     <View
                         style={{
@@ -245,16 +220,16 @@ export default function TransportNotes({ navigation, route }) {
                         <View style={{ width: '57%', marginRight: 10 }}>
                             <DescriptionTextInput
                                 description={'Estaca:* '}
-                                erroMenssage={state.erroMessagePicket}
+                                erroMenssage={states.erroMessagePicket}
                             />
                             <TextInputMask
                                 type={'only-numbers'}
                                 onChangeText={(text) => {
-                                    setState((state) => ({
+                                    actions.setStates((state) => ({
                                         ...state,
-                                        picketInputValue: parseInt(text),
+                                        picketInputValue: text ? parseInt(text) : 0,
+                                        erroMessagePicket: '',
                                     }))
-                                    setState((state) => ({ ...state, erroMessagePicket: '' }))
                                 }}
                                 autoCapitalize={'characters'}
                                 placeholderTextColor="#00000040"
@@ -272,14 +247,17 @@ export default function TransportNotes({ navigation, route }) {
                                 justifyContent: 'center',
                             }}
                         >
-                            <ButtonAction acao={'Salvar'} onPressFunction={handlerSelectPicket} />
+                            <ButtonAction acao={'Salvar'} onPressFunction={actions.handlerSelectPicket} />
                         </View>
                     </View>
                 </FormInputEstaca>
             ) : (
                 <></>
             )}
-            {workRoute != null && material != null && picket != null && transportVehicle != null ? (
+            {states.workRoute &&
+            states.material &&
+            (states.picket != null || (states.quantity != 0 && states.quantity != null)) &&
+            transportVehicle ? (
                 <View style={styles.viewObservacao}>
                     <View style={styles.contentObservacao}>
                         <DescriptionTextInput description={'Observação:'} erroMenssage={null} />
@@ -289,7 +267,7 @@ export default function TransportNotes({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                setState((state) => ({ ...state, observation: value }))
+                                actions.setStates((state) => ({ ...state, observation: value }))
                             }}
                             autoFocus={false}
                             keyboardType={'default'}
@@ -301,15 +279,15 @@ export default function TransportNotes({ navigation, route }) {
             )}
 
             <ButtonView>
-                <ButtonRestart onPress={() => handleResestItemsSelect()}>
+                <ButtonRestart onPress={() => actions.handleResestItemsSelect()}>
                     <FontAwesome name={'trash'} size={30} style={{ color: '#fff' }} />
                 </ButtonRestart>
-                {workRoute != null &&
-                    material != null &&
-                    picket != null &&
+                {states.workRoute != null &&
+                    states.material != null &&
+                    (states.picket != null || (states.quantity != 0 && states.quantity != null)) &&
                     transportVehicle != null &&
-                    (!state.isLoading ? (
-                        <ButtonSave onPress={() => handleSaveItemsSelect()}>
+                    (!states.isLoading ? (
+                        <ButtonSave onPress={() => actions.handleSaveItemsSelect()}>
                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>CONFIRMAR</Text>
                             <FontAwesome name={'check'} size={30} style={{ color: '#fff', marginLeft: 10 }} />
                         </ButtonSave>

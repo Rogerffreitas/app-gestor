@@ -87,15 +87,16 @@ export class MaintenanceTruckEntity extends AbstratcEntity {
             errorMessages.push({ field: 'modelOrPlate', message: 'O modelo/placa é obrigatório.' })
         }
 
-        if (this._usersList && this._usersList.trim().length <= 0) {
+        if (!this._usersList || this._usersList.trim().length <= 0) {
             changeErrorFields('usersList')('Selecione um usuário')
             errorMessages.push({ field: 'userList', message: 'Selecione um usuário' })
         }
 
         if (errorMessages.length > 0) {
-            console.log(errorMessages)
+            console.info(errorMessages)
+            const formattedErrors = errorMessages.map((err) => `[${err.field}]: ${err.message}`).join('\n- ')
             throw new Error('Entity validation failed', {
-                cause: 'Erros de validação:\n- ' + errorMessages.join('\n- '),
+                cause: `Erros de validação:\n- ${formattedErrors}`,
             })
         }
 

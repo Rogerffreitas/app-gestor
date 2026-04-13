@@ -4,7 +4,7 @@ import { materialTransportSchema } from './MaterialTransportSchema'
 import { workRoutesSchema } from './WorkRoutesSchema'
 import { transportVehicleSchema } from './TransportVehicleSchema'
 import { materialSchema } from './MaterialShema'
-import { fuelSupplySchema } from './FuelSupplySchema'
+import { fuelSupplesSchema } from './FuelSupplesSchema'
 import { equipmentSchema } from './EquipmentSchema'
 import { hourMeterMonitoringSchema } from './HourMeterMonitoringSchema'
 import { maintenanceTruckSchema } from './MaintenanceTruckSchema'
@@ -21,7 +21,7 @@ export const schemas = appSchema({
         transportVehicleSchema,
         materialSchema,
         discountSchema,
-        fuelSupplySchema,
+        fuelSupplesSchema,
         equipmentSchema,
         hourMeterMonitoringSchema,
         maintenanceTruckSchema,

@@ -1,80 +1,83 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
 import { MaintenanceTruckServices } from '../../../../domin/services/interfaces/MaintenanceTruckServices'
 import { MaintenanceTruckDto } from '../../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { Alert } from 'react-native'
-import { WorkEquipmentServices } from '../../../../domin/services/interfaces/WorkEquipmentServices'
-import { UserServices } from '../../../../domin/services/interfaces/UserServices'
 import { errorVibration } from '../../../../services/VibrationService'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '../../../../infra/hooks/useInjection'
+import { WorkServices } from '../../../../domin/services/interfaces/WorkServices'
+import WorkDto from '../../../../domin/entity/work/WorkDto'
 
-type MaintenanceTruckProps = {
-    maintenanceTruckServices: MaintenanceTruckServices
-    workEquipmentServices: WorkEquipmentServices
-    userServices: UserServices
-    work: WorkDto
-    navigation
-}
-export default function useMaintenanceTrucks({
-    navigation,
-    work,
-    maintenanceTruckServices,
-    workEquipmentServices,
-    userServices,
-}: MaintenanceTruckProps) {
-    const [maintenanceTruck, setMaintenanceTruck] = useState<MaintenanceTruckDto[]>([])
+type MaintenanceTrucksProp = RouteProp<RootStackParamList, ScreenNames.MAINTENANCE_TRUCKS>
+
+export default function useMaintenanceTrucks() {
+    const maintenanceTruckServices = useInjection<MaintenanceTruckServices>('MaintenanceTruckServices')
+    const workServices = useInjection<WorkServices>('WorkServices')
+    const route = useRoute<MaintenanceTrucksProp>()
+    const navigation = useNavigation()
+    const { workId } = route.params
+
+    const [states, setStates] = useState({
+        maintenanceTrucks: [] as MaintenanceTruckDto[],
+        isLoadingList: true,
+        work: {} as WorkDto,
+    })
+
     const { user } = useAuth()
-    const [load, setLoad] = useState(true)
-    const [isLoadingList, setIsLoadingList] = useState(true)
 
     async function loadAll() {
         try {
-            navigation.addListener('focus', () => setLoad(!load))
-            const result =
-                await maintenanceTruckServices.loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
+            const workPromise = workServices.findWorkByIdInLocalDatabase(workId)
+            const maintenanceTrucksPromise =
+                maintenanceTruckServices.loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
                     user.enterpriseId,
-                    work.id
+                    workId
                 )
-            setMaintenanceTruck(result)
+            const [work, maintenanceTrucks] = await Promise.all([workPromise, maintenanceTrucksPromise])
+
+            setStates((state) => ({ ...state, maintenanceTrucks: maintenanceTrucks }))
+            setStates((state) => ({ ...state, work: work }))
         } catch (error) {
             Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
             errorVibration()
         } finally {
-            setIsLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     useEffect(() => {
-        loadAll()
-    }, [load])
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAll()
+        })
+        return unsubscribe
+    }, [navigation])
 
     function handleClickNewButton() {
-        const workEquipmentIds = maintenanceTruck.map((item) => item.workEquipmentId)
-        navigation.navigate('New Maintenance Trucks', {
-            work: work,
-            ids: workEquipmentIds,
-            maintenanceTruckServices: maintenanceTruckServices,
-            workEquipmentServices: workEquipmentServices,
-            userServices: userServices,
+        const workEquipmentIds = states.maintenanceTrucks.map((item) => item.workEquipmentId)
+        navigation.navigate(ScreenNames.NEW_MAINTENANCE_TRUCKS, {
+            workId: workId,
+            workEquipmentIds: workEquipmentIds,
         })
     }
 
-    function handleDelete(item: MaintenanceTruckDto) {
+    async function handleDelete(item: MaintenanceTruckDto) {
         try {
             maintenanceTruckServices.deleteMaintenanceTruckInLocalDatabase(
                 item.id,
                 item.workEquipmentId,
                 item.workEquipmentId
             )
-            let index = maintenanceTruck.findIndex((i) => i.id == item.id)
+            let index = states.maintenanceTrucks.findIndex((i) => i.id == item.id)
 
-            let arr = [...maintenanceTruck]
+            let arr = [...states.maintenanceTrucks]
 
             if (index != -1) {
                 arr.splice(index, 1)
             }
 
-            setMaintenanceTruck(arr)
+            setStates((state) => ({ ...state, maintenanceTrucks: arr }))
         } catch (error) {
             console.log('[MaintenanceTrucks]: ' + error.message)
             Alert.alert(error.message, 'Já existe registros de abastecimentos')
@@ -95,10 +98,17 @@ export default function useMaintenanceTrucks({
             },
         ])
     }
+
+    function goBack() {
+        navigation.goBack()
+    }
+
     return {
-        maintenanceTruck,
-        isLoadingList,
-        handleClickNewButton,
-        showConfirmDialog,
+        states,
+        actions: {
+            handleClickNewButton,
+            showConfirmDialog,
+            goBack,
+        },
     }
 }

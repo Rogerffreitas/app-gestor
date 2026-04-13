@@ -1,28 +1,16 @@
 import { ChangeErrorFields, ErrorMessages } from '../../../types'
 
 export default class RentInformation {
-    private _hourMeterOrOdometer: number
     private _startRental: string
     private _monthlyPayment: number
     private _valuePerHourKm: number
     private _valuePerDay: number
 
-    constructor(
-        hourMeterOrOdometer: number,
-        startRental: string,
-        monthlyPayment: number,
-        valuePerHourKm: number,
-        valuePerDay: number
-    ) {
-        this._hourMeterOrOdometer = hourMeterOrOdometer
+    constructor(startRental: string, monthlyPayment: number, valuePerHourKm: number, valuePerDay: number) {
         this._startRental = startRental
         this._monthlyPayment = monthlyPayment
         this._valuePerHourKm = valuePerHourKm
         this._valuePerDay = valuePerDay
-    }
-
-    get hourMeterOrOdometer(): number {
-        return this._hourMeterOrOdometer
     }
     get startRental(): string {
         return this._startRental
@@ -43,27 +31,6 @@ export default class RentInformation {
      */
     public validate(changeErrorFields: ChangeErrorFields): ErrorMessages[] {
         let errorMessages: ErrorMessages[] = []
-
-        if (this._hourMeterOrOdometer === undefined || this._hourMeterOrOdometer === null) {
-            errorMessages.push({
-                field: 'hourMeterOrOdometer',
-                message: 'O horímetro/hodômetro é obrigatório.',
-            })
-            changeErrorFields('hourMeterOrOdometer')('Obrigatório')
-        }
-
-        if (this._hourMeterOrOdometer <= 0) {
-            errorMessages.push({
-                field: 'hourMeterOrOdometer',
-                message: 'O horímetro/hodômetro não pode ser 0.',
-            })
-            changeErrorFields('hourMeterOrOdometer')('Obrigatório')
-        }
-
-        if (!Number.isInteger(this._hourMeterOrOdometer)) {
-            errorMessages.push({ field: 'hourMeterOrOdometer', message: 'Informe um Número Inteiro.' })
-            changeErrorFields('hourMeterOrOdometer')('Informe um Número Inteiro.')
-        }
 
         if (this._monthlyPayment === undefined || this._monthlyPayment === null) {
             errorMessages.push({ field: 'monthlyPayment', message: 'O pagamento mensal é obrigatório.' })

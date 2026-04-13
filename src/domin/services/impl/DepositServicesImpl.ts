@@ -1,39 +1,38 @@
+import { injectable, inject } from 'inversify'
 import { ChangeErrorFields } from '../../../types'
 import { DepositRepositoryGateway } from '../../application/gateways/DepositRepositoryGateway'
 import DepositDto from '../../entity/deposit/DepositDto'
 import DepositEntity from '../../entity/deposit/DepositEntity'
 import { DepositServices } from '../interfaces/DepositServices'
+import { TYPES } from '../../../infra/ioc/types'
 
+@injectable()
 export class DepositServicesImpl implements DepositServices {
-    private depositRepositoryGateway: DepositRepositoryGateway
-
-    constructor(depositRepository: DepositRepositoryGateway) {
-        this.depositRepositoryGateway = depositRepository
-    }
-    saveDepositServerId(dtos: DepositDto[]): void {
-        this.saveDepositServerId(dtos)
+    constructor(@inject(TYPES.DepositRepositoryGateway) private repository: DepositRepositoryGateway) {}
+    saveDepositServerId(dto: DepositDto): void {
+        this.saveDepositServerId(dto)
     }
     deleteDepositInLocalDatabase(id: string, userId: string) {
-        return this.depositRepositoryGateway.deleteDepositInLocalDatabase(id, userId)
+        return this.repository.deleteDepositInLocalDatabase(id, userId)
     }
 
     updateDepositInLocalDatabase(dto: DepositDto, changeErrorFields: ChangeErrorFields): Promise<DepositDto> {
         const deposit = new DepositEntity().dtoToEntity(dto)
         deposit.validate(changeErrorFields)
-        return this.depositRepositoryGateway.updateDepositInLocalDatabase(deposit)
+        return this.repository.updateDepositInLocalDatabase(deposit)
     }
 
     findDepositByIdInLocalDatabase(id: string): Promise<DepositDto | null> {
-        return this.depositRepositoryGateway.findDepositByIdInLocalDatabase(id)
+        return this.repository.findDepositByIdInLocalDatabase(id)
     }
 
     createDepositInLocalDatabase(dto: DepositDto, changeErrorFields: ChangeErrorFields): Promise<DepositDto> {
         const deposit = new DepositEntity().dtoToEntity(dto)
         deposit.validate(changeErrorFields)
-        return this.depositRepositoryGateway.createDepositInLocalDatabase(deposit)
+        return this.repository.createDepositInLocalDatabase(deposit)
     }
 
     loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<DepositDto[]> {
-        return this.depositRepositoryGateway.loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId)
+        return this.repository.loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId)
     }
 }

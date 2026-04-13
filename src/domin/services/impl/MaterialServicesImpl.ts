@@ -1,62 +1,68 @@
+import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { MaterialRepositoryGateway } from '../../application/gateways/MaterialRepositoryGateway'
 import { MaterialDto } from '../../entity/material/MaterialDto'
 import MaterialEntity from '../../entity/material/MaterialEntity'
 import { MaterialServices } from '../interfaces/MaterialServices'
+import { inject, injectable } from 'inversify'
 
+@injectable()
 export class MaterialServicesImpl implements MaterialServices {
-    private materialRepositoryGateway: MaterialRepositoryGateway
+    constructor(
+        @inject(TYPES.MaterialRepositoryGateway)
+        private repository: MaterialRepositoryGateway
+    ) {}
 
-    constructor(materialRepositoryGateway: MaterialRepositoryGateway) {
-        this.materialRepositoryGateway = materialRepositoryGateway
-    }
-
-    createMaterialInLocalDatabase(
+    async createMaterialInLocalDatabase(
         dto: MaterialDto,
         changeErrorFields: ChangeErrorFields
     ): Promise<MaterialDto> {
         const material = new MaterialEntity().dtoToEntity(dto)
         material.validate(changeErrorFields)
-        return this.materialRepositoryGateway.createMaterialInLocalDatabase(material)
+        return new MaterialDto().entityToDto(await this.repository.createMaterialInLocalDatabase(material))
     }
 
-    updateMaterialInLocalDatabase(
+    async updateMaterialInLocalDatabase(
         dto: MaterialDto,
         changeErrorFields: ChangeErrorFields
     ): Promise<MaterialDto> {
         const material = new MaterialEntity().dtoToEntity(dto)
         material.validate(changeErrorFields)
-        return this.materialRepositoryGateway.updateMaterialInLocalDatabase(material)
+        return new MaterialDto().entityToDto(await this.repository.updateMaterialInLocalDatabase(material))
     }
 
     deleteMaterialInLocalDatabase(id: string, userId: string) {
-        return this.materialRepositoryGateway.deleteMaterialInLocalDatabase(id, userId)
+        return this.repository.deleteMaterialInLocalDatabase(id, userId)
     }
 
-    findMaterialByIdInLocalDatabase(id: string): Promise<MaterialDto | null> {
-        return this.materialRepositoryGateway.findMaterialByIdInLocalDatabase(id)
+    async findMaterialByIdInLocalDatabase(id: string): Promise<MaterialDto | null> {
+        return new MaterialDto().entityToDto(await this.repository.findMaterialByIdInLocalDatabase(id))
     }
 
-    loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
+    async loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
         enterpriseId: string,
         depositId: string
     ): Promise<MaterialDto[]> {
-        return this.materialRepositoryGateway.loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
+        const result = await this.repository.loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
             enterpriseId,
             depositId
         )
+        return result.map((item) => {
+            return new MaterialDto().entityToDto(item)
+        })
     }
-    loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
+    async loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
         depositId: string
     ): Promise<MaterialDto[]> {
-        return this.materialRepositoryGateway.loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
+        const result = await this.repository.loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
             enterpriseId,
             depositId
         )
+        return result.map((item) => {
+            return new MaterialDto().entityToDto(item)
+        })
     }
 
-    saveMaterialServerId(dtos: MaterialDto[]): void {
-        this.materialRepositoryGateway.saveMaterialServerId(dtos)
-    }
+    saveMaterialServerId(dtos: MaterialDto[]): void {}
 }

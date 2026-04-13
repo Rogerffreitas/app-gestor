@@ -3,11 +3,14 @@ import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { useAuth } from './contexts/AuthContext'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
+import { useTheme } from 'styled-components'
+import { ScreenNames, ScreenTitles, UserRoles } from './types'
+
 import Home from './pages/home'
 import Login from './pages/login'
 import Welcome from './pages/welcome'
-import Configuracao from './pages/Configuracao'
-import Perfil from './pages/Perfil'
+import Configuracao from './pages/settings'
+import Perfil from './pages/profile'
 import ButtonTab from './components/button/ButtonTab'
 
 import TransportNote from './pages/notes/transport'
@@ -42,7 +45,6 @@ import WorkEquipmentList from './pages/registrations/equipment/work-equipment'
 import MaintenanceTrucks from './pages/registrations/equipment/maintenance-trucks'
 import EditMaintenanceTruck from './pages/registrations/equipment/maintenance-trucks/edit'
 import NewMaintenanceTruck from './pages/registrations/equipment/maintenance-trucks/new'
-import MaintenancetrucksList from './pages/registrations/equipment/maintenance-trucks/list'
 
 import Deposits from './pages/registrations/deposit'
 import Deposit from './pages/registrations/deposit/new'
@@ -54,15 +56,33 @@ import Works from './pages/registrations/works'
 import Work from './pages/registrations/works/new'
 import EditWork from './pages/registrations/works/edit'
 
-import { useTheme } from 'styled-components'
-import { ScreenNames, ScreenTitles } from './types'
-import { WorkServicesImpl } from './domin/services/impl/WorkServicesImpl'
-import { WorkWatermelonDbRepository } from './persistence/WorkWatermelonDbRepository'
-import { AxiosHttpClientAdapter } from './infra/adapter/AxiosHttpClientAdapter'
 import FuelSupples from './pages/notes/fuel-supply'
 import FuelSupplyList from './pages/notes/fuel-supply/list'
 import EditFuelSupply from './pages/notes/fuel-supply/edit'
 import NewFuelSupply from './pages/notes/fuel-supply/new'
+
+import MaintenanceTruckFuelSupplies from './pages/notes/maintenance-truck-fuel-tank/fuel-supples'
+import MaintenanceTruckFuelTank from './pages/notes/maintenance-truck-fuel-tank'
+
+import Discounts from './pages/notes/discount'
+import DiscountsList from './pages/notes/discount/list'
+import EditDiscount from './pages/notes/discount/edit'
+import NewDiscount from './pages/notes/discount/new'
+
+import HourMeterMonitoring from './pages/notes/hour-meter-monitoring'
+import HourMeterMonitoringList from './pages/notes/hour-meter-monitoring/list'
+import NewHourMeterMonitoring from './pages/notes/hour-meter-monitoring/new'
+import EditHourMeterMonitoring from './pages/notes/hour-meter-monitoring/edit'
+
+import MaintenanceTruckRefuelTank from './pages/notes/maintenance-truck-fuel-tank/refuel-tank'
+import NewMaintenanceTruckRefuelSupply from './pages/notes/maintenance-truck-fuel-tank/refuel-tank/new'
+import NewMaintenanceTruckFuelSupply from './pages/notes/maintenance-truck-fuel-tank/fuel-supples/new'
+
+import Financial from './pages/registrations/financial'
+import GenerateInvoice from './pages/registrations/financial/ generate-invoice'
+import NewInvoice from './pages/registrations/financial/ generate-invoice/new'
+import ManageInvoice from './pages/registrations/financial/manage-invoice'
+import InvoiceDetails from './pages/registrations/financial/manage-invoice/invoice-details'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -103,7 +123,7 @@ function Tabs() {
         <Tab.Navigator
             screenOptions={{
                 tabBarInactiveBackgroundColor: theme.colors.primary,
-                tabBarActiveBackgroundColor: theme.colors.secondery,
+                tabBarActiveBackgroundColor: theme.colors.secondary,
                 tabBarInactiveTintColor: '#fff',
                 tabBarActiveTintColor: '#fff',
                 tabBarIconStyle: { marginTop: 4 },
@@ -158,7 +178,7 @@ function Tabs() {
                     ),
                 }}
             />
-            {user.role === 'admin' ? (
+            {user.role === UserRoles.ADMIN ? (
                 <Tab.Screen
                     name="Configuracao"
                     component={Configuracao}
@@ -190,6 +210,7 @@ function Tabs() {
 
 export default function App() {
     const { signed, loading, firstAccess } = useAuth()
+    console.log('signed: ' + signed)
     const theme = useTheme()
 
     if (loading) {
@@ -199,6 +220,7 @@ export default function App() {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
+                    backgroundColor: '#FFFFF',
                 }}
             >
                 <ActivityIndicator size="large" color="#666" />
@@ -258,18 +280,7 @@ export default function App() {
             ) : signed ? (
                 <>
                     <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
-
-                    <Stack.Screen
-                        name={ScreenNames.NOTES}
-                        component={Notes}
-                        initialParams={{
-                            workServices: new WorkServicesImpl(
-                                new WorkWatermelonDbRepository(),
-                                new AxiosHttpClientAdapter()
-                            ),
-                        }}
-                    />
-
+                    <Stack.Screen name={ScreenNames.NOTES} component={Notes} />
                     <Stack.Screen
                         name={ScreenNames.TRANSPORT_NOTE}
                         component={TransportNote}
@@ -290,11 +301,10 @@ export default function App() {
                         component={TransportDetails}
                         options={{ title: ScreenTitles.TRANSPORT_DETAILS }}
                     />
-
                     <Stack.Screen
-                        name={ScreenNames.FUEL_SUPPLES}
+                        name={ScreenNames.FUEL_SUPPLIES}
                         component={FuelSupples}
-                        options={{ title: ScreenTitles.FUEL_SUPPLES }}
+                        options={{ title: ScreenTitles.FUEL_SUPPLIES }}
                     />
                     <Stack.Screen
                         name={ScreenNames.FUEL_SUPPLY_LIST}
@@ -311,7 +321,52 @@ export default function App() {
                         component={NewFuelSupply}
                         options={{ title: ScreenTitles.NEW_FUEL_SUPPLY }}
                     />
+                    <Stack.Screen
+                        name={ScreenNames.MAINTENANCE_TRUCK_FUEL_TANK}
+                        component={MaintenanceTruckFuelTank}
+                        options={{ title: ScreenTitles.MAINTENANCE_TRUCK_FUEL_TANK }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.MAINTENANCE_TRUCK_FUEL_SUPPLIES}
+                        component={MaintenanceTruckFuelSupplies}
+                        options={{ title: ScreenTitles.MAINTENANCE_TRUCK_FUEL_SUPPLIES }}
+                    />
 
+                    <Stack.Screen
+                        name={ScreenNames.NEW_MAINTENANCE_TRUCK_FUEL_SUPPLY}
+                        component={NewMaintenanceTruckFuelSupply}
+                        options={{ title: ScreenTitles.NEW_MAINTENANCE_TRUCK_FUEL_SUPPLY }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.MAINTENANCE_TRUCK_REFUEL_TANK}
+                        component={MaintenanceTruckRefuelTank}
+                        options={{ title: ScreenTitles.MAINTENANCE_TRUCK_REFUEL_TANK }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.NEW_MAINTENANCE_TRUCK_REFUEL_SUPPLY}
+                        component={NewMaintenanceTruckRefuelSupply}
+                        options={{ title: ScreenTitles.NEW_MAINTENANCE_TRUCK_REFUEL_SUPPLY }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.DISCOUNTS}
+                        component={Discounts}
+                        options={{ title: ScreenTitles.DISCOUNTS }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.DISCOUNTS_LIST}
+                        component={DiscountsList}
+                        options={{ title: ScreenTitles.DISCOUNTS_LIST }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.NEW_DISCOUNTS}
+                        component={NewDiscount}
+                        options={{ title: ScreenTitles.NEW_DISCOUNT }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_DISCOUNTS}
+                        component={EditDiscount}
+                        options={{ title: ScreenTitles.EDIT_DISCOUNT }}
+                    />
                     <Stack.Screen name="Cadastros" component={Cadastros} />
                     <Stack.Screen name="Perfil" component={Perfil} />
                     <Stack.Screen
@@ -339,85 +394,160 @@ export default function App() {
                         component={BankInfoTransportVehicle}
                         options={{ title: ScreenTitles.BANK_INFO_TRANSPORT_VEHICLE }}
                     />
-
-                    <Stack.Screen name="Works" component={Works} options={{ title: 'Obras' }} />
-                    <Stack.Screen name="New Work" component={Work} options={{ title: 'Nova Obra' }} />
-                    <Stack.Screen name="Edit Work" component={EditWork} options={{ title: 'Editar Obra' }} />
-
-                    <Stack.Screen name="Work Routes" options={{ title: 'Rotas' }} component={WorkRoutes} />
-                    <Stack.Screen name="New Route" options={{ title: 'Cadastrar rota' }} component={Route} />
                     <Stack.Screen
-                        name="Edit Route"
-                        options={{ title: 'Editar Rota' }}
+                        name={ScreenNames.HOUR_METER_MONITORINGS}
+                        component={HourMeterMonitoring}
+                        options={{ title: ScreenTitles.HOUR_METER_MONITORINGS }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.HOUR_METER_MONITORINGS_LIST}
+                        component={HourMeterMonitoringList}
+                        options={{ title: ScreenTitles.HOUR_METER_MONITORINGS_LIST }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_HOUR_METER_MONITORING}
+                        component={EditHourMeterMonitoring}
+                        options={{ title: ScreenTitles.EDIT_HOUR_METER_MONITORING }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.NEW_HOUR_METER_MONITORING}
+                        component={NewHourMeterMonitoring}
+                        options={{ title: ScreenTitles.NEW_HOUR_METER_MONITORING }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.WORKS}
+                        component={Works}
+                        options={{ title: ScreenTitles.WORKS }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.NEW_WORK}
+                        component={Work}
+                        options={{ title: ScreenTitles.NEW_WORK }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_WORK}
+                        component={EditWork}
+                        options={{ title: ScreenTitles.EDIT_WORK }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.WORK_ROUTES}
+                        component={WorkRoutes}
+                        options={{ title: ScreenTitles.WORK_ROUTES }}
+                    />
+
+                    <Stack.Screen
+                        name={ScreenNames.NEW_WORK_ROUTE}
+                        options={{ title: ScreenTitles.NEW_WORK_ROUTE }}
+                        component={Route}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_WORK_ROUTE}
+                        options={{ title: ScreenTitles.EDIT_WORK_ROUTE }}
                         component={EditRoute}
                     />
-
                     <Stack.Screen name="Usuarios" component={Usuarios} />
+
                     <Stack.Screen
-                        name="Deposits"
-                        component={Deposits}
-                        options={{ title: 'Escolha uma Jazida' }}
+                        name={ScreenNames.MATERIALS}
+                        options={{ title: ScreenTitles.MATERIALS }}
+                        component={Materials}
                     />
-                    <Stack.Screen name="Materials" options={{ title: 'Materiais' }} component={Materials} />
-                    <Stack.Screen name="New Material" options={{ title: 'Materiais' }} component={Material} />
                     <Stack.Screen
-                        name="Edit Material"
-                        options={{ title: 'Editar Material' }}
+                        name={ScreenNames.NEW_MATERIAL}
+                        options={{ title: ScreenTitles.NEW_MATERIAL }}
+                        component={Material}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_MATERIAL}
+                        options={{ title: ScreenTitles.EDIT_MATERIAL }}
                         component={EditarMaterial}
                     />
-
-                    <Stack.Screen name="New Deposit" options={{ title: 'Nova Jazida' }} component={Deposit} />
                     <Stack.Screen
-                        name="Edit Deposit"
-                        options={{ title: 'Editar Jazida' }}
-                        component={EditDeposit}
+                        name={ScreenNames.DEPOSITS}
+                        component={Deposits}
+                        options={{ title: ScreenTitles.DEPOSITS }}
                     />
 
-                    <Stack.Screen name="Equipment" component={EquipmentMenuOptions} />
                     <Stack.Screen
-                        name="Equipments"
-                        options={{ title: 'Equipamentos' }}
+                        name={ScreenNames.NEW_DEPOSIT}
+                        options={{ title: ScreenTitles.NEW_DEPOSIT }}
+                        component={Deposit}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.EDIT_DEPOSIT}
+                        options={{ title: ScreenTitles.EDIT_DISCOUNT }}
+                        component={EditDeposit}
+                    />
+                    <Stack.Screen name={ScreenNames.EQUIPMENT} component={EquipmentMenuOptions} />
+                    <Stack.Screen
+                        name={ScreenNames.EQUIPMENTS}
+                        options={{ title: ScreenTitles.EQUIPMENTS }}
                         component={Equipments}
                     />
                     <Stack.Screen
-                        name="New Equipment"
-                        options={{ title: 'Equipamentos' }}
+                        name={ScreenNames.NEW_EQUIPMENT}
+                        options={{ title: ScreenTitles.NEW_EQUIPMENT }}
                         component={NewEquipment}
                     />
-                    <Stack.Screen name="Edit Equipment" options={{ title: '' }} component={EditEquipment} />
                     <Stack.Screen
-                        name="Bank info Equipment"
-                        options={{ title: 'Dados Bancários' }}
+                        name={ScreenNames.EDIT_EQUIPMENT}
+                        options={{ title: ScreenTitles.EDIT_EQUIPMENT }}
+                        component={EditEquipment}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.BANK_INFO_EQUIPMENT}
+                        options={{ title: ScreenTitles.BANK_INFO_EQUIPMENT }}
                         component={BankInfo}
                     />
                     <Stack.Screen
-                        name="Work Equipment"
+                        name={ScreenNames.WORK_EQUIPMENTS}
                         options={{ title: ScreenTitles.WORK_EQUIPMENTS }}
                         component={WorkEquipment}
                     />
-
                     <Stack.Screen
-                        name="Work Equipment List"
+                        name={ScreenNames.WORK_EQUIPMENTS_LIST}
                         options={{ title: ScreenTitles.WORK_EQUIPMENTS_LIST }}
                         component={WorkEquipmentList}
                     />
-
                     <Stack.Screen
-                        name="Maintenance trucks"
+                        name={ScreenNames.MAINTENANCE_TRUCKS}
                         component={MaintenanceTrucks}
                         options={{ title: ScreenTitles.MAINTENANCE_TRUCKS }}
                     />
+
                     <Stack.Screen
-                        name="Maintenance trucks List"
-                        component={MaintenancetrucksList}
-                        options={{ title: ScreenTitles.MAINTENANCE_TRUCKS_LIST }}
-                    />
-                    <Stack.Screen
-                        name="New Maintenance Trucks"
+                        name={ScreenNames.NEW_MAINTENANCE_TRUCKS}
                         component={NewMaintenanceTruck}
-                        options={{ title: 'Cadastrar uma melosa' }}
+                        options={{ title: ScreenTitles.NEW_MAINTENANCE_TRUCKS }}
                     />
                     <Stack.Screen name="Edit Maintenance Trucks" component={EditMaintenanceTruck} />
+
+                    <Stack.Screen
+                        name={ScreenNames.FINANCIAL}
+                        component={Financial}
+                        options={{ title: ScreenTitles.FINANCIAL }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.GENERATE_INVOICE}
+                        component={GenerateInvoice}
+                        options={{ title: ScreenTitles.GENERATE_INVOICE }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.NEW_INVOICE}
+                        component={NewInvoice}
+                        options={{ title: ScreenTitles.NEW_INVOICE }}
+                    />
+
+                    <Stack.Screen
+                        name={ScreenNames.MANAGE_INVOICE}
+                        component={ManageInvoice}
+                        options={{ title: ScreenTitles.MANAGE_INVOICE }}
+                    />
+                    <Stack.Screen
+                        name={ScreenNames.INVOICE_DETAILS}
+                        component={InvoiceDetails}
+                        options={{ title: ScreenTitles.INVOICE_DETAILS }}
+                    />
                 </>
             ) : (
                 <>

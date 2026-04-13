@@ -3,27 +3,29 @@ import { WorkEquipmentEntity } from './WorkEquipmentEntity'
 
 export default class WorkEquipmentDto {
     equipment: EquipmentDto
-    hourMeterOrOdometer: number
     startRental: string
     monthlyPayment: number
     valuePerHourKm: number
     valuePerDay: number
     operatorMotorist: string
     workId: string
-    id?: string
-    serverId: number
     userId: string
-    userAction: number
     enterpriseId: string
-    isValid: boolean
+    userAction?: number
+    id?: string
+    serverId?: number
+    isValid?: boolean
     createdAt?: number
     updatedAt?: number
     status?: string
 
+    get currentHourMeterOrOdometer(): number {
+        return this.equipment.hourMeterOrOdometer
+    }
+
     entityToDto?(data: WorkEquipmentEntity) {
         const equipment = new EquipmentDto().entityToDto(data.equipment)
         this.equipment = equipment
-        this.hourMeterOrOdometer = +data.hourMeterOrOdometer
         this.startRental = data.startRental
         this.monthlyPayment = +data.monthlyPayment
         this.valuePerHourKm = +data.valuePerHourKm

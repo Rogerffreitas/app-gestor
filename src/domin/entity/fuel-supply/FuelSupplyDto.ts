@@ -1,4 +1,4 @@
-import { UserAction } from '../../../types'
+import { FuelSupplyTypes, InvoiceStatus, UserAction } from '../../../types'
 import { FuelSupplyEntity } from './FuelSupplyEntity'
 
 export class FuelSupplyDto {
@@ -6,12 +6,12 @@ export class FuelSupplyDto {
     valuePerLiter: number
 
     description: string
-    type: string
+    supplyType: FuelSupplyTypes
     transportVehicleOrWorkEquipmentId: string
     observation: string
     isGasStation: boolean
     isDiscount: boolean
-    hourMeterOrKmMeter: number
+    hourMeterOrOdometer: number
 
     workId: string
     userId: string
@@ -20,7 +20,8 @@ export class FuelSupplyDto {
     userAction?: UserAction
     isValid?: boolean
     invoiceId?: number
-    invoiceStatus?: string
+    invoiceStatus?: InvoiceStatus
+    //Deve ser mudado para maintenanceTruckId
     maintenanceTrucksWorkEquipmentId?: string
     value?: number
     id?: string
@@ -28,31 +29,30 @@ export class FuelSupplyDto {
     updatedAt?: number
     status?: string
 
-    public static entityToDto?(data: FuelSupplyEntity): FuelSupplyDto {
-        const dto = new FuelSupplyDto()
-        dto.quantity = data.quantity
-        dto.valuePerLiter = data.valuePerLiter
-        dto.value = data.value
-        dto.description = data.description
-        dto.type = data.type
-        dto.transportVehicleOrWorkEquipmentId = data.transportVehicleOrEquipmentId
-        dto.observation = data.observation
-        dto.isGasStation = data.isGasStation
-        dto.maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
-        dto.hourMeterOrKmMeter = data.hourMeterOrKmMeter
-        dto.isDiscount = data.isDiscount
-        dto.invoiceId = data.invoiceId
-        dto.invoiceStatus = data.invoiceStatus
-        dto.workId = data.workId
-        dto.serverId = data.serverId
-        dto.userId = data.userId
-        dto.userAction = data.userAction
-        dto.enterpriseId = data.enterpriseId
-        dto.isValid = data.isValid
-        dto.id = data.id
-        dto.createdAt = data.createdAt
-        dto.updatedAt = data.updatedAt
-        dto.status = data.status
-        return dto
+    public entityToDto?(data: FuelSupplyEntity): FuelSupplyDto {
+        this.quantity = +data.quantity
+        this.valuePerLiter = +data.valuePerLiter
+        this.value = +data.value
+        this.description = data.description
+        this.supplyType = data.supplyType
+        this.transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
+        this.observation = data.observation
+        this.isGasStation = data.isGasStation
+        this.maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
+        this.hourMeterOrOdometer = +data.hourMeterOrOdometer
+        this.isDiscount = data.isDiscount
+        this.invoiceId = data.invoiceId
+        this.invoiceStatus = data.invoiceStatus
+        this.workId = data.workId
+        this.serverId = data.serverId
+        this.userId = data.userId
+        this.userAction = data.userAction
+        this.enterpriseId = data.enterpriseId
+        this.isValid = data.isValid
+        this.id = data.id
+        this.createdAt = +data.createdAt
+        this.updatedAt = +data.updatedAt
+        this.status = data.status
+        return this
     }
 }

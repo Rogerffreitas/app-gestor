@@ -1,16 +1,19 @@
+import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
-import { TransportVehicleGateway } from '../../application/gateways/TransportVehicleReposirotyGateway'
+import { TransportVehicleReposirotyGateway } from '../../application/gateways/TransportVehicleReposirotyGateway'
 import { BankInformation } from '../../entity/bank-information/BankInformation'
 import TransportVehicleDto from '../../entity/transport-vehicle/TransportVehicleDto'
 import { TransportVehicleEntity } from '../../entity/transport-vehicle/TransportVehicleEntity'
 import { TransportVehicleServices } from '../interfaces/TransportVehicleServices'
+import { inject, injectable } from 'inversify'
 
+@injectable()
 export class TransportVehicleServicesImpl implements TransportVehicleServices {
-    private repository: TransportVehicleGateway
+    constructor(
+        @inject(TYPES.TransportVehicleReposirotyGateway)
+        private repository: TransportVehicleReposirotyGateway
+    ) {}
 
-    constructor(transportVehicleGateway: TransportVehicleGateway) {
-        this.repository = transportVehicleGateway
-    }
     async updateTransportVehicleBankInformation(
         id: string,
         bankInformation: BankInformation

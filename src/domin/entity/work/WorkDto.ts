@@ -7,11 +7,12 @@ export default class WorkDto {
     pickets: number
     usersList: string
 
-    serverId: number
     userId: string
-    userAction: UserAction
     enterpriseId: string
-    isValid: boolean
+
+    serverId?: number
+    userAction?: UserAction
+    isValid?: boolean
     id?: string
     createdAt?: number
     updatedAt?: number

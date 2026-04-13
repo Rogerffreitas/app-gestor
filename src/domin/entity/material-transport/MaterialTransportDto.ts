@@ -1,12 +1,13 @@
+import { InvoiceStatus } from '../../../types'
 import { MaterialDto } from '../material/MaterialDto'
 import TransportVehicleDto from '../transport-vehicle/TransportVehicleDto'
 import WorkRoutesDto from '../work-routes/WorkRoutesDto'
 import { MaterialTransportEntity } from './MaterialTransportEntity'
 
 export default class MaterialTransportDto {
-    workRoutesDto: WorkRoutesDto
-    transportVehicleDto: TransportVehicleDto
-    materialDto: MaterialDto
+    workRoutes: WorkRoutesDto
+    transportVehicle: TransportVehicleDto
+    material: MaterialDto
 
     quantity: number
     deliveryPicket: string
@@ -21,7 +22,7 @@ export default class MaterialTransportDto {
     userAction?: number
     isValid?: boolean
     invoiceId?: number
-    invoiceStatus?: string
+    invoiceStatus?: InvoiceStatus
     value?: number
     isReferenceCapacity?: boolean
     distanceTraveledWithinTheWork?: number
@@ -30,32 +31,30 @@ export default class MaterialTransportDto {
     updatedAt?: number
     status?: string
 
-    public static fromDto(entity: MaterialTransportEntity): MaterialTransportDto {
-        const dto = new MaterialTransportDto()
+    public fromDto?(entity: MaterialTransportEntity): MaterialTransportDto {
+        this.workRoutes = new WorkRoutesDto().entityToDto(entity.workRoutes)
+        this.transportVehicle = new TransportVehicleDto().entityToDto(entity.transportVehicle)
+        this.material = new MaterialDto().entityToDto(entity.material)
 
-        dto.workRoutesDto = new WorkRoutesDto().entityToDto(entity.workRoutes)
-        dto.transportVehicleDto = new TransportVehicleDto().entityToDto(entity.transportVehicle)
-        dto.materialDto = new MaterialDto().entityToDto(entity.material)
-
-        dto.value = entity.value
-        dto.isReferenceCapacity = entity.isReferenceCapacity
-        dto.quantity = entity.quantity
-        dto.deliveryPicket = entity.deliveryPicket
-        dto.totalPickets = entity.totalPickets
-        dto.distanceTraveledWithinTheWork = entity.distanceTraveledWithinTheWork
-        dto.observation = entity.observation
-        dto.invoiceId = entity.invoiceId
-        dto.invoiceStatus = entity.invoiceStatus
-        dto.workId = entity.workId
-        dto.serverId = entity.serverId
-        dto.userId = entity.userId
-        dto.userAction = entity.userAction
-        dto.enterpriseId = entity.enterpriseId
-        dto.isValid = entity.isValid
-        dto.id = entity.id
-        dto.createdAt = entity.createdAt
-        dto.updatedAt = entity.updatedAt
-        dto.status = entity.status
-        return dto
+        this.value = entity.value
+        this.isReferenceCapacity = entity.isReferenceCapacity
+        this.quantity = entity.quantity
+        this.deliveryPicket = entity.deliveryPicket
+        this.totalPickets = entity.totalPickets
+        this.distanceTraveledWithinTheWork = entity.distanceTraveledWithinTheWork
+        this.observation = entity.observation
+        this.invoiceId = entity.invoiceId
+        this.invoiceStatus = entity.invoiceStatus
+        this.workId = entity.workId
+        this.serverId = entity.serverId
+        this.userId = entity.userId
+        this.userAction = entity.userAction
+        this.enterpriseId = entity.enterpriseId
+        this.isValid = entity.isValid
+        this.id = entity.id
+        this.createdAt = entity.createdAt
+        this.updatedAt = entity.updatedAt
+        this.status = entity.status
+        return this
     }
 }

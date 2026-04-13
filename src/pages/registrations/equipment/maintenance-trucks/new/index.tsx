@@ -14,37 +14,14 @@ import FontAwesome from '@expo/vector-icons/FontAwesome'
 import theme from '../../../../../global/styles/theme'
 import FormComponent from '../../../../../components/form/FormComponent'
 import DescriptionTextInput from '../../../../../components/input/DescriptionTextInput'
-import InputMaskNumber2 from '../../../../../components/input/InputMaskNumber2'
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 import ButtonAction from '../../../../../components/button/ButtonAction'
 import ButtonActionLoading from '../../../../../components/button/ButtonActionLoading'
 import useNewMaintenanceTrucks from './UseNewMaintenanceTruck'
+import InputMaskNumber from '../../../../../components/input/InputMaskNumber'
 
-export default function ({ navigation, route }) {
-    const { work, ids, maintenanceTruckServices, workEquipmentServices, userServices } = route.params
-    const {
-        states,
-        errors,
-        workEquipments,
-        workEquipment,
-        selectedWorkEquipment,
-        usersSelectList,
-        onSelect,
-        setWorkEquipment,
-        setStates,
-        setSelected,
-        setSelectedWorkEquipment,
-        onChange,
-        handleSelectionConfirmation,
-        handleSubmitButton,
-    } = useNewMaintenanceTrucks({
-        navigation,
-        work,
-        ids,
-        maintenanceTruckServices,
-        workEquipmentServices,
-        userServices,
-    })
+export default function () {
+    const { states, errors, actions } = useNewMaintenanceTrucks()
     if (states.isLoadingList) {
         return (
             <Container>
@@ -54,27 +31,27 @@ export default function ({ navigation, route }) {
             </Container>
         )
     }
-
-    return (
-        <Container>
-            {workEquipment == null ? (
+    if (states.workEquipment == null) {
+        return (
+            <Container>
                 <Content>
                     <FlatList
                         style={{
                             flex: 1,
                             width: '90%',
                         }}
-                        data={workEquipments}
+                        data={states.workEquipments}
                         keyExtractor={(item) => {
                             return item.id
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <CardLine onPress={() => setSelectedWorkEquipment(item)} opacity={0.7}>
+                                <CardLine onPress={() => actions.selectWorkEquipment(item)} opacity={0.7}>
                                     <ViewTituloCardLine
                                         style={{
                                             backgroundColor:
-                                                selectedWorkEquipment && selectedWorkEquipment.id == item.id
+                                                states.selectedWorkEquipment &&
+                                                states.selectedWorkEquipment.id == item.id
                                                     ? '#ef6c00'
                                                     : '#000080',
                                         }}
@@ -99,7 +76,7 @@ export default function ({ navigation, route }) {
                     {!states.isLoading ? (
                         <TouchableOpacity
                             activeOpacity={0.7}
-                            onPress={() => handleSelectionConfirmation()}
+                            onPress={() => actions.handleSelectionConfirmation()}
                             style={[styles.touchableOpacityStyle, { flexDirection: 'row' }]}
                         >
                             <Text
@@ -124,15 +101,19 @@ export default function ({ navigation, route }) {
                         </TouchableOpacity>
                     )}
                 </Content>
-            ) : (
+            </Container>
+        )
+    }
+
+    if (states.workEquipment) {
+        return (
+            <Container>
                 <Content>
                     <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
                         <View style={{ width: '90%' }}>
                             <CardLine
                                 onPress={() => {
-                                    setStates((prev) => ({ ...prev, isLoading: false }))
-                                    setSelectedWorkEquipment(null)
-                                    setWorkEquipment(null)
+                                    actions.clearValues()
                                 }}
                                 opacity={0.7}
                             >
@@ -141,7 +122,9 @@ export default function ({ navigation, route }) {
                                         backgroundColor: '#ef6c00',
                                     }}
                                 >
-                                    <TextTitlo>{selectedWorkEquipment.equipment.modelOrPlate}</TextTitlo>
+                                    <TextTitlo>
+                                        {states.selectedWorkEquipment.equipment.modelOrPlate}
+                                    </TextTitlo>
                                     <ViewButtonCancel>
                                         <FontAwesome name="close" size={20} color={'#fff'} />
                                     </ViewButtonCancel>
@@ -154,11 +137,11 @@ export default function ({ navigation, route }) {
                                     </CardLineContentLeft>
                                     <CardLineContentRight>
                                         <TextConteudoCardLine
-                                            conteudo={selectedWorkEquipment.equipment.nameProprietary}
+                                            conteudo={states.selectedWorkEquipment.equipment.nameProprietary}
                                         />
 
                                         <TextConteudoCardLine
-                                            conteudo={selectedWorkEquipment.operatorMotorist}
+                                            conteudo={states.selectedWorkEquipment.operatorMotorist}
                                         />
                                     </CardLineContentRight>
                                 </CardLineContent>
@@ -170,14 +153,14 @@ export default function ({ navigation, route }) {
                                     description={'Capacidade do tanque(L):* '}
                                     erroMenssage={errors.capacity}
                                 />
-                                <InputMaskNumber2
+                                <InputMaskNumber
                                     value={states.capacity}
                                     placeholder={'Capacidade'}
                                     autoCapitalize={'characters'}
                                     autoCorrect={false}
                                     secureTextEntry={false}
                                     onChangeTextFunction={(value) => {
-                                        onChange('capacity')(
+                                        actions.onChange('capacity')(
                                             value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                         )
                                     }}
@@ -191,10 +174,10 @@ export default function ({ navigation, route }) {
                                 />
                                 <MultiListView>
                                     <MultipleSelectList
-                                        setSelected={(val) => setSelected(val)}
-                                        data={usersSelectList}
+                                        setSelected={(val) => actions.setSelected(val)}
+                                        data={states.usersSelectList}
                                         save="key"
-                                        onSelect={onSelect}
+                                        onSelect={() => actions.onSelect()}
                                         label="Apontadores"
                                         searchPlaceholder="Buscar"
                                         placeholder="Selecione um Usuário"
@@ -209,7 +192,10 @@ export default function ({ navigation, route }) {
                                     />
                                 </MultiListView>
                                 {!states.isLoading ? (
-                                    <ButtonAction acao={'Salvar'} onPressFunction={handleSubmitButton} />
+                                    <ButtonAction
+                                        acao={'Salvar'}
+                                        onPressFunction={actions.handleSubmitButton}
+                                    />
                                 ) : (
                                     <ButtonActionLoading onPressFunction={() => {}} />
                                 )}
@@ -217,9 +203,9 @@ export default function ({ navigation, route }) {
                         </View>
                     </View>
                 </Content>
-            )}
-        </Container>
-    )
+            </Container>
+        )
+    }
 }
 
 const ViewTituloCardLine = styled.View`

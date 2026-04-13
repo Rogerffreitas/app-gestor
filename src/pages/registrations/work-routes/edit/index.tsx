@@ -16,25 +16,21 @@ import InputMask from '../../../../components/input/InputMask'
 import useEditRoute from './UseEditRoute'
 import { useConfig } from '../../../../contexts/ConfigContext'
 
-export default function App({ navigation, route }) {
-    const { workRoutesServices, work, workRoute } = route.params
-    const { states, erros, handlerClickEditButton, showConfirmDialog, onChange } = useEditRoute({
-        navigation,
-        workRoute,
-        work,
-        workRoutesServices,
-    })
+export default function EditWorkRoute() {
+    const { states, erros, actions } = useEditRoute()
     const { config } = useConfig()
     return (
         <Container>
-            <FormComponent nomeForm={workRoute.server_id ? 'Código: ' + workRoute.server_id : 'Editar rota'}>
-                {!config.workRoutes.includes(workRoute.arrivalLocation) ? (
+            <FormComponent
+                nomeForm={states.workRoute.serverId ? 'Código: ' + states.workRoute.serverId : 'Editar rota'}
+            >
+                {!config.workRoutes.includes(states.workRoute.arrivalLocation) ? (
                     <View style={{ width: '100%' }}>
                         <DescriptionTextInput
                             description={'Local de Origem:* '}
                             erroMenssage={erros.arrivalLocation}
                         />
-                        <Text style={styles.textSaida}>{workRoute.arrivalLocation}</Text>
+                        <Text style={styles.textSaida}>{states.arrivalLocation}</Text>
 
                         <DescriptionTextInput
                             description={'Local de Destino:* '}
@@ -47,7 +43,7 @@ export default function App({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('departureLocation')(value)
+                                actions.onChange('departureLocation')(value)
                             }}
                             autoFocus={true}
                             keyboardType={'default'}
@@ -77,13 +73,13 @@ export default function App({ navigation, route }) {
                                 />
 
                                 <InputMaskNumber
-                                    value={workRoute.km / 100}
+                                    value={states.km / 100}
                                     placeholder={'Distância em KM'}
                                     autoCapitalize={'none'}
                                     autoCorrect={false}
                                     secureTextEntry={false}
                                     onChangeTextFunction={(value) => {
-                                        onChange('km')(
+                                        actions.onChange('km')(
                                             value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                         )
                                     }}
@@ -98,7 +94,7 @@ export default function App({ navigation, route }) {
                                 />
 
                                 <InputMask
-                                    value={workRoute.initialPicket}
+                                    value={states.initialPicket}
                                     type={'only-numbers'}
                                     mask={'defaults'}
                                     placeholder={'Estaca de destino:'}
@@ -106,7 +102,7 @@ export default function App({ navigation, route }) {
                                     autoCorrect={false}
                                     secureTextEntry={false}
                                     onChangeTextFunction={(value) => {
-                                        onChange('initialPicket')(value)
+                                        actions.onChange('initialPicket')(value)
                                     }}
                                     autoFocus={false}
                                     keyboardType={'numeric'}
@@ -118,13 +114,13 @@ export default function App({ navigation, route }) {
                         <View style={{ width: '100%', flexDirection: 'row' }}>
                             <View style={{ width: '60%' }}>
                                 <InputMaskMoneyPrecision3
-                                    value={workRoute.value / 1000}
+                                    value={states.value / 1000}
                                     placeholder={'Valor'}
                                     autoCapitalize={'none'}
                                     autoCorrect={false}
                                     secureTextEntry={false}
                                     onChangeTextFunction={(value) => {
-                                        onChange('value')(
+                                        actions.onChange('value')(
                                             value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                         )
                                     }}
@@ -135,7 +131,9 @@ export default function App({ navigation, route }) {
                             <View style={{ width: '30%', marginLeft: 10 }}>
                                 <CheckBox
                                     checked={states.isFixedValue}
-                                    onPressFunction={() => onChange('isFixedValue')(!states.isFixedValue)}
+                                    onPressFunction={() =>
+                                        actions.onChange('isFixedValue')(!states.isFixedValue)
+                                    }
                                     description={'Valor fixo?'}
                                 />
                             </View>
@@ -156,7 +154,7 @@ export default function App({ navigation, route }) {
                             }}
                         >
                             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
-                                {workRoute.arrivalLocation}
+                                {states.workRoute.arrivalLocation}
                             </Text>
                         </View>
                         <View>
@@ -168,7 +166,7 @@ export default function App({ navigation, route }) {
                                 autoCorrect={false}
                                 secureTextEntry={false}
                                 onChangeTextFunction={(value) => {
-                                    onChange('value')(
+                                    actions.onChange('value')(
                                         value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                     )
                                 }}
@@ -180,13 +178,13 @@ export default function App({ navigation, route }) {
                 )}
 
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar Edição'} onPressFunction={handlerClickEditButton} />
+                    <ButtonAction acao={'Salvar Edição'} onPressFunction={actions.handlerClickEditButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}
 
                 <ViewButton>
-                    <ButtonEditar onPress={showConfirmDialog}>
+                    <ButtonEditar onPress={actions.showConfirmDialog}>
                         <FontAwesome name={'trash'} size={20} style={{ color: '#fff' }} />
                     </ButtonEditar>
                 </ViewButton>

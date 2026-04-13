@@ -1,59 +1,60 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { MaterialDto } from '../../../domin/entity/material/MaterialDto'
-import DepositDto from '../../../domin/entity/deposit/DepositDto'
 import { MaterialServices } from '../../../domin/services/interfaces/MaterialServices'
+import { useInjection } from '../../../infra/hooks/useInjection'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RootStackParamList, ScreenNames } from '../../../types'
+import { ToastAndroid } from 'react-native'
 
-type MaterialsListPros = {
-    materialServices: MaterialServices
-    deposit: DepositDto
-    navigation: any
-}
+type MaterialsListProp = RouteProp<RootStackParamList, ScreenNames.MATERIALS>
 
-export default function useMaterialsList({
-    materialServices,
-    deposit,
-    navigation,
-}: MaterialsListPros) {
-    const [materials, setMaterials] = useState<MaterialDto[]>([])
+export default function useMaterialsList() {
+    const materialServices = useInjection<MaterialServices>('MaterialServices')
+    const navigation = useNavigation()
+    const route = useRoute<MaterialsListProp>()
+    const { depositId } = route.params
     const { user } = useAuth()
-    const [load, setLoad] = useState(true)
-    const [loadingList, setLoadingList] = useState(true)
+    const [states, setStates] = useState({
+        isLoadingList: true,
+        materials: [] as MaterialDto[],
+    })
 
-    async function getAllMaterials() {
-        setLoadingList(true)
-        navigation.addListener('focus', () => setLoad(!load))
-        const result =
-            await materialServices.loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
+    async function loadAll() {
+        try {
+            const results = await materialServices.loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
                 user.enterpriseId,
-                deposit.id
+                depositId
             )
-        setMaterials(result)
-        setLoadingList(false)
+            setStates((state) => ({ ...state, materials: results }))
+        } catch (error) {
+            console.log(error)
+            ToastAndroid.show('Erro ao carregar lista', ToastAndroid.LONG)
+        } finally {
+            setStates((state) => ({ ...state, isLoadingList: false }))
+        }
     }
 
     useEffect(() => {
-        getAllMaterials()
-    }, [load])
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAll()
+        })
+        return unsubscribe
+    }, [navigation])
 
     function handleClickEditButton(item: MaterialDto) {
-        navigation.navigate('Edit Material', {
-            material: item,
-            materialServices: materialServices,
-        })
+        navigation.navigate(ScreenNames.EDIT_MATERIAL, { material: item })
     }
 
     function handleClickNewButton() {
-        navigation.navigate('New Material', {
-            deposit: deposit,
-            materialServices: materialServices,
-        })
+        navigation.navigate(ScreenNames.NEW_MATERIAL, { depositId: depositId })
     }
 
     return {
-        materials,
-        loadingList,
-        handleClickEditButton,
-        handleClickNewButton,
+        states,
+        actions: {
+            handleClickEditButton,
+            handleClickNewButton,
+        },
     }
 }

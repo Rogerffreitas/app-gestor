@@ -11,30 +11,15 @@ import CardLineContentLeft from '../../../../../components/cardLine/CardLineCont
 import TextTituloCardLine from '../../../../../components/cardLine/TextTituloCardLine'
 import Linha from '../../../../../components/cardLine/Line'
 import ListaVazia from '../../../../../components/List/ListaVazia'
-import ItemObra from '../../../../../components/List/ItemObra'
 import theme from '../../../../../global/styles/theme'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import useNewWorkEquipment from './UseNewWorkEquipment'
 import ObraSelected from '../../../../../components/List/ObraSelected'
 
-export default function NewWorkEquipment({ navigation, route }) {
-    const { work, workEquipmentServices, equipmentServices, equipmentsSelectedIds } = route.params
-    const {
-        equipments,
-        selectedWorkEquipments,
-        handleSelectEquipment,
-        handlerSubmitButton,
-        isLoading,
-        isLoadingList,
-    } = useNewWorkEquipment({
-        work,
-        workEquipmentServices,
-        equipmentServices,
-        navigation,
-        equipmentsSelectedIds: equipmentsSelectedIds,
-    })
+export default function NewWorkEquipment() {
+    const { states, actions } = useNewWorkEquipment()
 
-    if (isLoadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>
@@ -46,15 +31,15 @@ export default function NewWorkEquipment({ navigation, route }) {
 
     return (
         <Container>
-            {equipments.length == 0 ? (
+            {states.equipments.length == 0 ? (
                 <Content>
                     <ObraSelected
                         active={1}
                         onPress={() => {
-                            navigation.goBack()
+                            actions.goBack()
                         }}
-                        titulo={work.name}
-                        descricao={work.description}
+                        titulo={states.work.name}
+                        descricao={states.work.description}
                     />
                     <View style={{ justifyContent: 'center', flex: 1, width: '95%' }}>
                         <ListaVazia />
@@ -67,17 +52,17 @@ export default function NewWorkEquipment({ navigation, route }) {
                             flex: 1,
                             width: '90%',
                         }}
-                        data={equipments}
+                        data={states.equipments}
                         keyExtractor={(item) => {
                             return item.id + '#'
                         }}
                         renderItem={({ item }) => {
                             return (
-                                <CardLine onPress={() => handleSelectEquipment(item)} opacity={0.7}>
+                                <CardLine onPress={() => actions.handleSelectEquipment(item)} opacity={0.7}>
                                     <ViewTituloCardLine
                                         style={{
                                             backgroundColor:
-                                                selectedWorkEquipments?.findIndex(
+                                                states.selectedWorkEquipments?.findIndex(
                                                     (i) => i.equipment.id == item.id
                                                 ) != -1
                                                     ? '#ef6c00'
@@ -133,10 +118,10 @@ export default function NewWorkEquipment({ navigation, route }) {
                             )
                         }}
                     />
-                    {!isLoading ? (
+                    {!states.isLoading ? (
                         <TouchableOpacity
                             activeOpacity={0.7}
-                            onPress={handlerSubmitButton}
+                            onPress={actions.handlerSubmitButton}
                             style={[styles.touchableOpacityStyle, { flexDirection: 'row' }]}
                         >
                             <Text

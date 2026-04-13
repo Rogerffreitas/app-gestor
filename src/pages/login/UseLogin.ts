@@ -1,9 +1,9 @@
-import { useState } from "react"
-import { useAuth } from "../../contexts/AuthContext"
+import { useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function useLogin() {
     const [username, setUsername] = useState('rogerffreitas')
-    const [password, setPassword] = useState('senha1234')
+    const [password, setPassword] = useState('apontador')
     const [erroMsgUsername, setErroMsgUsername] = useState(null)
     const [erroMsgPassword, setErroMsgPassword] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -42,6 +42,6 @@ export default function useLogin() {
         setErroMsgUsername,
         setErroMsgPassword,
         setUsername,
-        setPassword
+        setPassword,
     }
 }

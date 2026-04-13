@@ -29,8 +29,8 @@ export interface FuelSupplyServices {
     /**
      * Exclui um abastecimento
      *
-     * @param {id} string - ID do abastecimento a ser deletado.
-     * @param {userId} string - ID do Usuário que executou a exclusão.
+     * @param {string} id - ID do abastecimento a ser deletado.
+     * @param {string} userId - ID do Usuário que executou a exclusão.
      * @returns {void} Resultado.
      */
     deleteFuelSupplyInLocalDatabase(id: string, userId: string): Promise<void>
@@ -38,7 +38,7 @@ export interface FuelSupplyServices {
     /**
      * Salva os ID_SERVER retornado pela API
      *
-     * @param {FuelSupplyDto} DTOS - lista IDs retornados pela API.
+     * @param {FuelSupplyDto} dtos - lista IDs retornados pela API.
      * @returns {void} Resultado.
      */
     saveFuelSupplyServerId(dtos: FuelSupplyDto[]): void
@@ -79,14 +79,14 @@ export interface FuelSupplyServices {
      * @param {string} enterpriseId - Empresa.
      * @param {string} workId - Obra.
      * @param {string} transportVehicleOrWorkEquipmentId - Id do caminhão de transporte ou equipamento.
-     * @param {string} type - Tipo de abastecimento.
+     * @param {string} supplyType - Tipo de abastecimento.
      * @returns {FuelSupplyDto[]} Lista de abastecimentos.
      */
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndVehicleIdAndTypeFromLocalDatabase(
         enterpriseId: string,
         workId: string,
         transportVehicleOrWorkEquipmentId: string,
-        type: string
+        supplyType: string
     ): Promise<FuelSupplyDto[]>
 
     /**
@@ -95,14 +95,14 @@ export interface FuelSupplyServices {
      * @param {string} enterpriseId - Empresa.
      * @param {string} workId - Obra.
      * @param {string} maintenanceTrucksWorkEquipmentId - Id caminhão de manutenção.
-     * @param {string} type - Tipo de abastecimento.
+     * @param {string} supplyType - Tipo de abastecimento.
      * @returns {FuelSupplyDto[]} Lista de abastecimentos.
      */
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndTypeFromLocalDatabase(
         enterpriseId: string,
         workId: string,
         maintenanceTrucksWorkEquipmentId: string,
-        type: string
+        supplyType: string
     ): Promise<FuelSupplyDto[]>
 
     /**

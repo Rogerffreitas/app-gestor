@@ -1,36 +1,26 @@
 import { useEffect, useState } from 'react'
-import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import MaterialTransportDto from '../../../../domin/entity/material-transport/MaterialTransportDto'
 import { MaterialTransportServices } from '../../../../domin/services/interfaces/MaterialTransportServices'
 import { Alert } from 'react-native'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { useConfig } from '../../../../contexts/ConfigContext'
 import { errorVibration } from '../../../../services/VibrationService'
-import { ScreenNames } from '../../../../types'
-import { MaterialServices } from '../../../../domin/services/interfaces/MaterialServices'
-import { WorkRoutesServices } from '../../../../domin/services/interfaces/WorkRoutesServices'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { useInjection } from '../../../../infra/hooks/useInjection'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 
-type UseTransportListProps = {
-    work: WorkDto
-    transportVehicle: TransportVehicleDto
-    materialTransportServices: MaterialTransportServices
-    workRoutesServices: WorkRoutesServices
-    materialServices: MaterialServices
-    navigation: any
-}
+type TransportsListProp = RouteProp<RootStackParamList, ScreenNames.TRANSPORT_NOTE_LIST>
 
-export default function useTransportsList({
-    work,
-    transportVehicle,
-    materialTransportServices,
-    workRoutesServices,
-    materialServices,
-    navigation,
-}: UseTransportListProps) {
-    const [isLoad, setIsLoad] = useState(true)
-    const [isLoadingList, setIsLoadingList] = useState(true)
-    const [materialTransports, setMaterialTransports] = useState<MaterialTransportDto[]>([])
+export default function useTransportsList() {
+    const materialTransportServices = useInjection<MaterialTransportServices>('MaterialTransportServices')
+    const route = useRoute<TransportsListProp>()
+    const { workId, transportVehicle } = route.params
+    const navigation = useNavigation()
+
+    const [states, setStates] = useState({
+        materialTransports: [] as MaterialTransportDto[],
+        isLoadingList: true,
+    })
 
     const { user } = useAuth()
     const { config } = useConfig()
@@ -38,58 +28,53 @@ export default function useTransportsList({
 
     async function loadAllTransportsNotes() {
         try {
-            setIsLoadingList(true)
-            navigation.addListener('focus', () => setIsLoad(!isLoad))
-
             if (!transportVehicle) {
                 Alert.alert('Ocorreu um erro a selecionar a Caçamba, Tente novamente!')
                 return
             }
-            if (!work) {
+            if (!workId) {
                 Alert.alert('Ocorreu um erro a selecionar a Obra, Tente novamento')
                 return
             }
             const result =
                 await materialTransportServices.loadAllMaterialTransportByEnterpriseIdAndWorkIdAndVehicleIdFromLocalDatabase(
                     user.enterpriseId,
-                    work.id,
+                    workId,
                     transportVehicle.id
                 )
-            setMaterialTransports(result)
+            setStates((state) => ({ ...state, materialTransports: result }))
         } catch (error) {
             Alert.alert('Erro ao tentar buscar os Apontamentos', 'Menssagem: ' + error)
             errorVibration()
         } finally {
-            setIsLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     useEffect(() => {
-        loadAllTransportsNotes()
-    }, [isLoad])
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAllTransportsNotes()
+        })
+        return unsubscribe
+    }, [transportVehicle, workId])
 
     function handlerClickNewButton() {
         navigation.navigate(ScreenNames.NEW_TRANSPORT_NOTE, {
-            work: work,
             transportVehicle: transportVehicle,
-            materialTransportServices: materialTransportServices,
-            workRoutesServices: workRoutesServices,
-            materialServices: materialServices,
         })
     }
 
     const handlerclickItem = (item: MaterialTransportDto) => {
-        navigation.navigate('Detalhes Transporte', {
-            materialTransport: item,
-        })
+        navigation.navigate(ScreenNames.TRANSPORT_DETAILS, { materialTransport: item })
     }
 
     return {
-        transportVehicle,
-        materialTransports,
-        isLoadingList,
+        states,
         user,
         workRoutes,
-        handlerClickNewButton,
+        actions: {
+            handlerClickNewButton,
+            handlerclickItem,
+        },
     }
 }

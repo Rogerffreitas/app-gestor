@@ -55,14 +55,14 @@ export interface FuelSupplyRepositoryGateway {
      * @param {string} enterpriseId - Empresa.
      * @param {string} workId - Obra.
      * @param {string} transportVehicleOrWorkEquipmentId - Id do caminhão de transporte ou equipamento.
-     * @param {string} type - Tipo de abastecimento.
+     * @param {string} supplyType - Tipo de abastecimento.
      * @returns {FuelSupplyEntity[]} Lista de abastecimentos.
      */
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndVehicleIdAndTypeFromLocalDatabase(
         enterpriseId: string,
         workId: string,
         transportVehicleOrWorkEquipmentId: string,
-        type: string
+        supplyType: string
     ): Promise<FuelSupplyEntity[]>
 
     /**
@@ -71,14 +71,14 @@ export interface FuelSupplyRepositoryGateway {
      * @param {string} enterpriseId - Empresa.
      * @param {string} workId - Obra.
      * @param {string} maintenanceTrucksWorkEquipmentId - Id caminhão de manutenção.
-     * @param {string} type - Tipo de abastecimento.
+     * @param {string} supplyType - Tipo de abastecimento.
      * @returns {FuelSupplyEntity[]} Lista de abastecimentos.
      */
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndTypeFromLocalDatabase(
         enterpriseId: string,
         workId: string,
         maintenanceTrucksWorkEquipmentId: string,
-        type: string
+        supplyType: string
     ): Promise<FuelSupplyEntity[]>
 
     /**

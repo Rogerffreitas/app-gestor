@@ -7,31 +7,34 @@ import { errorVibration, successVibration } from '../../../../../services/Vibrat
 import { Alert } from 'react-native'
 import { EquipmentServices } from '../../../../../domin/services/interfaces/EquipmentServices'
 import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
-import { StrictBuilder } from '../../../../../services/StrictBuilder'
-import { UserAction } from '../../../../../types'
+import { Builder } from '../../../../../services/Builder'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RootStackParamList, ScreenNames } from '../../../../../types'
+import { useInjection } from '../../../../../infra/hooks/useInjection'
+import { WorkServices } from '../../../../../domin/services/interfaces/WorkServices'
+import { useSync } from '@/src/infra/hooks/UseSync'
 
-type NewWorkEquipmentProps = {
-    work: WorkDto
-    navigation: any
-    equipmentServices: EquipmentServices
-    workEquipmentServices: WorkEquipmentServices
-    equipmentsSelectedIds: string[]
-}
+type NewWorkEquipmentProp = RouteProp<RootStackParamList, ScreenNames.WORK_EQUIPMENTS>
 
-export default function useNewWorkEquipment({
-    work,
-    workEquipmentServices,
-    equipmentsSelectedIds,
-    equipmentServices,
-    navigation,
-}: NewWorkEquipmentProps) {
-    const [selectedWorkEquipments, setSelectedWorkEquipments] = useState<WorkEquipmentDto[]>([])
-    const [equipments, setEquipments] = useState<EquipmentDto[]>([])
-    const [isLoading, setIsLoading] = useState(false)
-    const [isLoadingList, setIsLoadingList] = useState(true)
+export default function useNewWorkEquipment() {
+    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
+    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const workServices = useInjection<WorkServices>('WorkServices')
+    const navigation = useNavigation()
+    const route = useRoute<NewWorkEquipmentProp>()
+    const { workId, equipmentsSelectedIds } = route.params
+    const [states, setStates] = useState({
+        selectedWorkEquipments: [] as WorkEquipmentDto[],
+        equipments: [] as EquipmentDto[],
+        work: null as WorkDto,
+        isLoadingList: true,
+        isLoading: false,
+        sync: false,
+    })
+
     const { user } = useAuth()
-    const [syncState, setSyncState] = useState<boolean>(false)
-    const [load, setLoad] = useState(true)
+    const { performSync } = useSync()
+
     const [errors, setErrors] = useState({
         proprietatyName: '',
         cpfCnpj: '',
@@ -48,77 +51,72 @@ export default function useNewWorkEquipment({
 
     async function handlerSubmitButton() {
         try {
-            setIsLoading(true)
-            const createdEntities = selectedWorkEquipments.map((dto) => {
+            setStates((state) => ({ ...state, isLoading: false }))
+            const createdEntities = states.selectedWorkEquipments.map((dto) => {
                 return workEquipmentServices.createWorkEquipmentInLocalDatabase(dto, changeErrorFields)
             })
             await Promise.all(createdEntities)
             successVibration()
             Alert.alert('Equipamento(s) Cadastrado(s) na obra')
+            performSync()
             navigation.goBack()
         } catch (error) {
             console.log(error)
             Alert.alert('Ocorreu um erro ao tentar salvar a lista', error.massage)
         } finally {
-            setIsLoading(false)
+            setStates((state) => ({ ...state, isLoading: false }))
         }
     }
 
-    async function loadAllEquipmet() {
-        navigation.addListener('focus', () => setLoad(!load))
+    async function loadAll() {
         try {
-            /*await equipmentServices.loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-                user.enterpriseId
-            )*/
-
-            //usar somente para teste
-
-            const allEquipments = await equipmentServices.loadAllEquipmentByEnterpriseIdFromLocalDatabase(
-                user.enterpriseId
-            )
-
-            const equipmentList = allEquipments.filter((item) => !equipmentsSelectedIds.includes(item.id))
-
-            setEquipments(equipmentList)
+            const workPromise = workServices.findWorkByIdInLocalDatabase(workId)
+            const equipmentsPromise =
+                equipmentServices.loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
+                    user.enterpriseId
+                )
+            const [work, equipmentsResults] = await Promise.all([workPromise, equipmentsPromise])
+            const equipmentList = equipmentsResults.filter((item) => !equipmentsSelectedIds.includes(item.id))
+            setStates((state) => ({ ...state, equipments: equipmentList }))
+            setStates((state) => ({ ...state, work: work }))
         } catch (error) {
             console.log(error)
             Alert.alert('Ocorreu um erro ao carregar lista', error.massage)
             errorVibration()
         } finally {
-            setIsLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     useEffect(() => {
-        loadAllEquipmet()
-    }, [load])
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAll()
+        })
+        return unsubscribe
+    }, [navigation])
 
     function handleSelectEquipment(item: EquipmentDto) {
-        let existingIndex = selectedWorkEquipments.findIndex((i) => i.equipment.id == item.id)
+        let existingIndex = states.selectedWorkEquipments.findIndex((i) => i.equipment.id == item.id)
 
         let filteredEquipment: WorkEquipmentDto[]
 
         if (existingIndex != -1) {
-            filteredEquipment = selectedWorkEquipments.filter((_, index) => index !== existingIndex)
+            filteredEquipment = states.selectedWorkEquipments.filter((_, index) => index !== existingIndex)
         } else {
-            const newWorkEquipment = StrictBuilder<WorkEquipmentDto>()
+            const newWorkEquipment = Builder<WorkEquipmentDto>()
                 .equipment(item)
-                .hourMeterOrOdometer(item.hourMeterOrOdometer)
                 .startRental(item.startRental)
                 .monthlyPayment(item.monthlyPayment)
                 .valuePerDay(item.valuePerDay)
                 .valuePerHourKm(item.valuePerHourKm)
                 .operatorMotorist(item.operatorMotorist)
-                .workId(work.id)
-                .serverId(0)
+                .workId(workId)
                 .userId(user.id)
-                .userAction(UserAction.CREATE)
                 .enterpriseId(user.enterpriseId)
-                .isValid(true)
                 .build()
-            filteredEquipment = [...selectedWorkEquipments, newWorkEquipment]
+            filteredEquipment = [...states.selectedWorkEquipments, newWorkEquipment]
         }
-        setSelectedWorkEquipments(filteredEquipment)
+        setStates((state) => ({ ...state, selectedWorkEquipments: filteredEquipment }))
     }
 
     function changeErrorFields(name: string) {
@@ -144,12 +142,16 @@ export default function useNewWorkEquipment({
             }, 3000)
         }*/
 
+    function goBack() {
+        navigation.goBack()
+    }
+
     return {
-        equipments,
-        selectedWorkEquipments,
-        isLoading,
-        isLoadingList,
-        handlerSubmitButton,
-        handleSelectEquipment,
+        states,
+        actions: {
+            goBack,
+            handlerSubmitButton,
+            handleSelectEquipment,
+        },
     }
 }

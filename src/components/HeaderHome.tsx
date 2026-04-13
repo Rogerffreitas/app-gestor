@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import styled from 'styled-components/native'
 import { useAuth } from '../contexts/AuthContext'
 import LottieView from 'lottie-react-native'
-import SyncIndicator from './HomeIndicator'
+import SyncIndicator from './sync-indicator'
 
 export default function HeaderHome() {
     const { user, enterprise } = useAuth()

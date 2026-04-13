@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import ButtonAction from '../../../../components/button/ButtonAction'
 import FormComponent from '../../../../components/form/FormComponent'
 import InputComponent from '../../../../components/input/InputComponent'
@@ -14,26 +14,23 @@ import InputMask from '../../../../components/input/InputMask'
 import { SelectList } from 'react-native-dropdown-select-list'
 import useNewRoute from './UseNewRoute'
 
-export default function NewRoute({ navigation, route }) {
-    const { work, workRoutesServices, depositServices } = route.params
+export default function NewRoute() {
+    const { states, erros, actions } = useNewRoute()
 
-    const {
-        depositsSelectedList,
-        states,
-        selected,
-        setSelected,
-        erros,
-        handleButtonSubmit,
-        onSelect,
-        onChange,
-    } = useNewRoute({ navigation, work, workRoutesServices, depositServices })
+    if (states.isLoadingList) {
+        return (
+            <Container>
+                <ActivityIndicator size="large" color="#666" />
+            </Container>
+        )
+    }
 
     return (
         <Container>
             <FormComponent>
                 <Card>
                     <Title>CADASTRO DE ROTA</Title>
-                    <Description>OBRA: {work.name}</Description>
+                    <Description>OBRA: {states.work.name}</Description>
                 </Card>
                 <DescriptionTextInput
                     description={'Local de Origem:* '}
@@ -41,14 +38,14 @@ export default function NewRoute({ navigation, route }) {
                 />
                 <View style={styles.multView}>
                     <SelectList
-                        setSelected={(val) => setSelected(val)}
-                        onSelect={onSelect}
-                        data={depositsSelectedList}
+                        setSelected={(val) => actions.setSelected(val)}
+                        onSelect={actions.onSelect}
+                        data={states.depositsSelectedList}
                         save="key"
                         searchPlaceholder="Buscar"
                         placeholder="Selecione uma jazida"
                         notFoundText="vazio"
-                        inputStyles={selected != null ? { color: '#000' } : { color: '#00000040' }}
+                        inputStyles={states.selected != null ? { color: '#000' } : { color: '#00000040' }}
                         boxStyles={{ borderRadius: 5, borderWidth: 0.9, borderColor: '#00000090' }}
                     />
                 </View>
@@ -62,7 +59,7 @@ export default function NewRoute({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeTextFunction={(value) => {
-                        onChange('departureLocation')(value)
+                        actions.onChange('departureLocation')(value)
                     }}
                     autoFocus={true}
                     keyboardType={'default'}
@@ -92,7 +89,9 @@ export default function NewRoute({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('km')(value.replace('R$ ', '').replace(/\./g, '').replace(',', ''))
+                                actions.onChange('km')(
+                                    value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
+                                )
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -110,7 +109,7 @@ export default function NewRoute({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('initialPicket')(value)
+                                actions.onChange('initialPicket')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -127,7 +126,7 @@ export default function NewRoute({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('value')(
+                                actions.onChange('value')(
                                     value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -139,7 +138,7 @@ export default function NewRoute({ navigation, route }) {
                         <CheckBox
                             checked={states.isFixedValue}
                             onPressFunction={() => {
-                                onChange('isFixedValue')(!states.isFixedValue)
+                                actions.onChange('isFixedValue')(!states.isFixedValue)
                             }}
                             description={'Valor fixo?'}
                         />
@@ -147,7 +146,7 @@ export default function NewRoute({ navigation, route }) {
                 </View>
 
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleButtonSubmit} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleButtonSubmit} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}

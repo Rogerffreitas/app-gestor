@@ -10,11 +10,12 @@ export class MaintenanceTruckDto {
 
     workEquipmentId: string
     workId: string
-    serverId: number
+
     userId: string
-    userAction: UserAction
     enterpriseId: string
-    isValid: boolean
+    userAction?: UserAction
+    serverId?: number
+    isValid?: boolean
     id?: string
     createdAt?: number
     updatedAt?: number

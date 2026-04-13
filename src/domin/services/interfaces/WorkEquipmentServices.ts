@@ -9,11 +9,11 @@ export interface WorkEquipmentServices {
     deleteWorkEquipmentInLocalDatabase(id: string, userId: string): Promise<void>
     saveWorkEquipmentServerId(dtos: WorkEquipmentDto[]): void
     loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-        workId: string,
-        enterpriseId: string
+        enterpriseId: string,
+        workId: string
     ): Promise<WorkEquipmentDto[]>
     loadAllWorkEquipmentByEnterpriseIdFromLocalDatabase(
-        workId: string,
-        enterpriseId: string
+        enterpriseId: string,
+        workId: string
     ): Promise<WorkEquipmentDto[]>
 }

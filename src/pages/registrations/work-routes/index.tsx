@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
+import { FlatList, StyleSheet, ActivityIndicator } from 'react-native'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import styled from 'styled-components/native'
 import Container from '../../../components/Container'
@@ -11,25 +11,18 @@ import CardLineContentLeft from '../../../components/cardLine/CardLineContentLef
 import CardLineContentRight from '../../../components/cardLine/CardLineContentRight'
 import TextConteudoCardLine from '../../../components/cardLine/TextConteudoCardLine'
 import TextTituloCardLine from '../../../components/cardLine/TextTituloCardLine'
-import ItemObra from '../../../components/List/ItemObra'
 import Content from '../../../components/Content'
 import ListaVazia from '../../../components/List/ListaVazia'
 import { View } from 'react-native'
-import SyncButton from '../../../components/SyncButton'
+import SyncButton from '../../../components/sync-button'
 import ObraSelected from '../../../components/List/ObraSelected'
 import { useRoutesList } from './UseRoutesList'
 import ButtonNewRegister from '../../../components/button/ButtonNewRegister'
 
-export default function WorkRoutes({ navigation, route }) {
-    const { depositServices, workRoutesServices, work } = route.params
-    const { routes, loadingList, handleClickEditButton, handleClintNewButton } = useRoutesList({
-        navigation,
-        workRoutesServices,
-        work,
-        depositServices,
-    })
+export default function WorkRoutes() {
+    const { states, actions } = useRoutesList()
 
-    if (loadingList) {
+    if (states.loadingList) {
         return (
             <Container>
                 <ActivityIndicator size="large" color="#666" />
@@ -39,16 +32,16 @@ export default function WorkRoutes({ navigation, route }) {
 
     return (
         <Container>
-            {routes.length == 0 ? (
+            {states.routes.length == 0 ? (
                 <Content>
                     <View style={{ justifyContent: 'flex-start', flex: 1, width: '95%' }}>
                         <ObraSelected
                             active={1}
                             onPress={() => {
-                                navigation.goBack()
+                                actions.goBack()
                             }}
-                            titulo={work.name}
-                            descricao={work.description}
+                            titulo={states.work.name}
+                            descricao={states.work.description}
                         />
                         <ListaVazia />
                     </View>
@@ -58,14 +51,14 @@ export default function WorkRoutes({ navigation, route }) {
                     <ObraSelected
                         active={1}
                         onPress={() => {
-                            navigation.goBack()
+                            actions.goBack()
                         }}
-                        titulo={work.name}
-                        descricao={work.description}
+                        titulo={states.work.name}
+                        descricao={states.work.description}
                     />
                     <FlatList
                         style={{ flex: 1, width: '90%' }}
-                        data={routes}
+                        data={states.routes}
                         keyExtractor={(item) => {
                             return item.id
                         }}
@@ -89,9 +82,9 @@ export default function WorkRoutes({ navigation, route }) {
                                                 alignItems: 'center',
                                             }}
                                         >
-                                            <SyncButton item={item} model={'rota'} />
+                                            <SyncButton item={item} model={'WorkRoutes'} />
                                         </View>
-                                        <ButtonEditar onPress={() => handleClickEditButton(item)}>
+                                        <ButtonEditar onPress={() => actions.handleClickEditButton(item)}>
                                             <FontAwesome name={'edit'} size={20} style={{ color: '#fff' }} />
                                         </ButtonEditar>
                                     </ViewTituloCardLine>
@@ -131,7 +124,7 @@ export default function WorkRoutes({ navigation, route }) {
                     />
                 </Content>
             )}
-            <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleClintNewButton} />
+            <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClintNewButton} />
         </Container>
     )
 }

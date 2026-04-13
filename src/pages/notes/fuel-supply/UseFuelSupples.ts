@@ -1,54 +1,38 @@
 import { useEffect, useState } from 'react'
-import { FuelSupplyServices } from '../../../domin/services/interfaces/FuelSupplyServices'
 import { useAuth } from '../../../contexts/AuthContext'
-import WorkDto from '../../../domin/entity/work/WorkDto'
 import TransportVehicleDto from '../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import WorkEquipmentDto from '../../../domin/entity/work-equipment/WorkEquipmentDto'
-import { FuelSupplyTypes, ScreenNames } from '../../../types'
+import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'
 import { Alert } from 'react-native'
-import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
 import { WorkEquipmentServices } from '../../../domin/services/interfaces/WorkEquipmentServices'
+import { useInjection } from '../../../infra/hooks/useInjection'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
 
-type UseFuelSupplesProps = {
-    work: WorkDto
-    fuelSupplyServices: FuelSupplyServices
-    transportVehicleServices: TransportVehicleServices
-    workEquipmentServices: WorkEquipmentServices
-    type: string
-    navigation
-}
+type FuelSuppliesProp = RouteProp<RootStackParamList, ScreenNames.FUEL_SUPPLIES>
 
-export default function useFuelSupples({
-    navigation,
-    work,
-    transportVehicleServices,
-    fuelSupplyServices,
-    workEquipmentServices,
-    type,
-}: UseFuelSupplesProps) {
+export default function useFuelSupplies() {
+    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
+    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const route = useRoute<FuelSuppliesProp>()
+    const { type } = route.params
+    const navigation = useNavigation()
     const { user } = useAuth()
-    const [isLoad, setIsLoad] = useState(true)
-    const [transportVehicles, setTransportVehicles] = useState<TransportVehicleDto[]>([])
-    const [workEquipments, setWorkEquipments] = useState<WorkEquipmentDto[]>([])
+    const { work } = useApplicationContext()
+    const [dataList, setDataList] = useState<WorkEquipmentDto[] | TransportVehicleDto[]>([])
     const [isLoadingList, setIsLoadingList] = useState(true)
-    const { saveWork } = useApplicationContext()
 
     useEffect(() => {
-        if (type && type === FuelSupplyTypes.EQUIPMENT) {
-            loadAllWorkEquipments()
-            navigation.setOptions({ title: 'Escolha um equipamento' })
-        }
-        if (type && type === FuelSupplyTypes.TRANSPORT_VEHICLE) {
-            loadAllTransportVehicle()
-            navigation.setOptions({ title: 'Escolha uma caçamba' })
-        }
-    }, [isLoad])
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadData()
+        })
+        return unsubscribe
+    }, [navigation])
 
     function handleClickItemTransportVehicle(tratsportVehicle: TransportVehicleDto) {
         navigation.navigate(ScreenNames.FUEL_SUPPLY_LIST, {
-            fuelSupplyServices: fuelSupplyServices,
             transportVehicleOrWorkEquipmentId: tratsportVehicle.id,
             workId: work.id,
             type: FuelSupplyTypes.TRANSPORT_VEHICLE,
@@ -57,55 +41,55 @@ export default function useFuelSupples({
 
     function handleClickItemWorkEquipment(workEquipment: WorkEquipmentDto) {
         navigation.navigate(ScreenNames.FUEL_SUPPLY_LIST, {
-            fuelSupplyServices: fuelSupplyServices,
             transportVehicleOrWorkEquipmentId: workEquipment.id,
             workId: work.id,
             type: FuelSupplyTypes.EQUIPMENT,
         })
     }
 
-    async function loadAllTransportVehicle() {
-        navigation.addListener('focus', () => setIsLoad(!isLoad))
-        setIsLoadingList(true)
+    async function loadData() {
         try {
-            const result =
-                await transportVehicleServices.loadAllTransportVehicleByEnterpriseIdAndServerIdValidFromLocalDatabase(
-                    user.enterpriseId,
-                    work.id
+            if (type === FuelSupplyTypes.EQUIPMENT) {
+                navigation.setOptions({ title: 'Escolha um equipamento' })
+                setDataList(
+                    await workEquipmentServices.loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
+                        user.enterpriseId,
+                        work.id
+                    )
                 )
-            setTransportVehicles(result)
+            }
+
+            if (type === FuelSupplyTypes.TRANSPORT_VEHICLE) {
+                navigation.setOptions({ title: 'Escolha uma caçamba' })
+                setDataList(
+                    await transportVehicleServices.loadAllTransportVehicleByEnterpriseIdAndServerIdValidFromLocalDatabase(
+                        user.enterpriseId,
+                        work.id
+                    )
+                )
+            }
         } catch (error) {
-            Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
+            console.error(error)
             errorVibration()
+            Alert.alert('Erro', 'Não foi possível carregar os dados.')
         } finally {
             setIsLoadingList(false)
         }
     }
 
-    async function loadAllWorkEquipments() {
-        navigation.addListener('focus', () => setIsLoad(!isLoad))
-        setIsLoadingList(true)
-        try {
-            const result =
-                await workEquipmentServices.loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-                    user.enterpriseId,
-                    work.id
-                )
-            setWorkEquipments(result)
-        } catch (error) {
-            Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
-            errorVibration()
-        } finally {
-            setIsLoadingList(false)
-        }
+    function goBack() {
+        navigation.goBack()
     }
 
     return {
         isLoadingList,
-        transportVehicles,
-        workEquipments,
-        handleClickItemTransportVehicle,
-        handleClickItemWorkEquipment,
-        saveWork,
+        dataList,
+        type,
+        work,
+        actions: {
+            goBack,
+            handleClickItemTransportVehicle,
+            handleClickItemWorkEquipment,
+        },
     }
 }

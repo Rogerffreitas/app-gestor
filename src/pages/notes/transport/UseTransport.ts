@@ -1,75 +1,69 @@
 import { useEffect, useState } from 'react'
-import WorkDto from '../../../domin/entity/work/WorkDto'
 import TransportVehicleDto from '../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import { Alert } from 'react-native'
 import { useAuth } from '../../../contexts/AuthContext'
 import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
 import { ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'
-import { MaterialTransportServices } from '../../../domin/services/interfaces/MaterialTransportServices'
-import { MaterialServices } from '../../../domin/services/interfaces/MaterialServices'
-import { WorkRoutesServices } from '../../../domin/services/interfaces/WorkRoutesServices'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
+import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '../../../infra/hooks/useInjection'
 
-type UseTransportProps = {
-    work: WorkDto
-    transportVehicleServices: TransportVehicleServices
-    materialTransportServices: MaterialTransportServices
-    workRoutesServices: WorkRoutesServices
-    materialServices: MaterialServices
-    navigation
-}
-
-export default function useTransport({
-    navigation,
-    transportVehicleServices,
-    materialTransportServices,
-    workRoutesServices,
-    materialServices,
-    work,
-}: UseTransportProps) {
-    const [isLoad, setIsLoad] = useState(true)
-    const [isLoadingList, setIsLoadingList] = useState(true)
-    const [transportVehicles, setTransportVehicles] = useState<TransportVehicleDto[]>([])
+export default function useTransport() {
+    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const navigation = useNavigation()
     const { user } = useAuth()
-    const { saveWork } = useApplicationContext()
+
+    const [states, setStates] = useState({
+        isLoadingList: true,
+        transportVehicles: [] as TransportVehicleDto[],
+    })
+
+    const { saveWork, work } = useApplicationContext()
 
     async function loadAllTransportVehicles() {
         try {
-            setIsLoadingList(true)
             const allTransportVehicles =
                 await transportVehicleServices.loadAllTransportVehicleByEnterpriseIdAndServerIdValidFromLocalDatabase(
                     user.enterpriseId,
                     work.id
                 )
-            setTransportVehicles(allTransportVehicles)
+            setStates((state) => ({ ...state, transportVehicles: allTransportVehicles }))
         } catch (error) {
             Alert.alert('Erro ao tentar buscar as Caçambas', 'Menssagem: ' + error)
             errorVibration()
         } finally {
-            setIsLoadingList(false)
+            setStates((state) => ({ ...state, isLoadingList: false }))
         }
     }
 
     useEffect(() => {
-        loadAllTransportVehicles()
-    }, [isLoad])
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (!work) {
+                navigation.goBack()
+                return
+            }
+            loadAllTransportVehicles()
+        })
+        return unsubscribe
+    }, [work])
 
     function handleClickItemTransportVehicle(item: TransportVehicleDto) {
         navigation.navigate(ScreenNames.TRANSPORT_NOTE_LIST, {
-            work: work,
+            workId: work.id,
             transportVehicle: item,
-            materialTransportServices: materialTransportServices,
-            workRoutesServices: workRoutesServices,
-            materialServices: materialServices,
         })
     }
+    function goBack() {
+        navigation.goBack()
+    }
     return {
+        states,
         work,
-        transportVehicles,
-        isLoadingList,
-        setIsLoad,
-        handleClickItemTransportVehicle,
-        saveWork,
+        actions: {
+            goBack,
+            handleClickItemTransportVehicle,
+            saveWork,
+        },
     }
 }

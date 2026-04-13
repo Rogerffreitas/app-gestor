@@ -15,8 +15,6 @@ export default class WorkEquipmentModel extends Model {
 
     @field('operator_motorist') public operatorMotorist: string
 
-    @field('hour_meter_or_odometer') hourMeterOrOdometer: number
-
     @field('start_rental') startRental: string
 
     @field('monthly_payment') monthlyPayment: number

@@ -1,24 +1,22 @@
 import { useState } from 'react'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
 import { TransportVehicleServices } from '../../../../domin/services/interfaces/TransportVehicleServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import { UserAction } from '../../../../types'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { useInjection } from '../../../../infra/hooks/useInjection'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 
-type UseNewTransportVehicleProps = {
-    work: WorkDto
-    transportVehicleServices: TransportVehicleServices
-    navigation
-}
+type NewTransportVehicleProp = RouteProp<RootStackParamList, ScreenNames.NEW_TRANSPORT_VEHICLE>
 
-export default function useNewTransportVehicle({
-    navigation,
-    transportVehicleServices,
-    work,
-}: UseNewTransportVehicleProps) {
+export default function useNewTransportVehicle() {
+    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const navigation = useNavigation()
+    const route = useRoute<NewTransportVehicleProp>()
+    const { workId } = route.params
+
     const [states, setStates] = useState({
         motorist: '',
         plate: '',
@@ -60,12 +58,9 @@ export default function useNewTransportVehicle({
                 .nameProprietary(states.proprietaryName)
                 .cpfCnpjProprietary(states.cpfCnpj)
                 .telProprietary(states.tel)
-                .workId(work.id)
-                .serverId(0)
+                .workId(workId)
                 .userId(user.id)
-                .userAction(UserAction.CREATE)
                 .enterpriseId(user.enterpriseId)
-                .isValid(true)
                 .build()
 
             const createdEntity = await transportVehicleServices.createTransportVehicleInLocalDatabase(
@@ -129,7 +124,9 @@ export default function useNewTransportVehicle({
     return {
         states,
         errors,
-        handleClickSubmitButton,
-        onChange,
+        actions: {
+            handleClickSubmitButton,
+            onChange,
+        },
     }
 }

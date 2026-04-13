@@ -1,22 +1,25 @@
+import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { WorkEquipmentRepositoryGateway } from '../../application/gateways/WorkEquipmentRepositoryGateway'
 import WorkEquipmentDto from '../../entity/work-equipment/WorkEquipmentDto'
 import { WorkEquipmentEntity } from '../../entity/work-equipment/WorkEquipmentEntity'
 import { WorkEquipmentServices } from '../interfaces/WorkEquipmentServices'
+import { inject, injectable } from 'inversify'
 
-export default class WorkEquipmentServicesImpl implements WorkEquipmentServices {
-    repository: WorkEquipmentRepositoryGateway
-    constructor(workEquipmenRepositoryGateway: WorkEquipmentRepositoryGateway) {
-        this.repository = workEquipmenRepositoryGateway
-    }
+@injectable()
+export class WorkEquipmentServicesImpl implements WorkEquipmentServices {
+    constructor(
+        @inject(TYPES.WorkEquipmentRepositoryGateway) private repository: WorkEquipmentRepositoryGateway
+    ) {}
+
     async loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-        workId: string,
-        enterpriseId: string
+        enterpriseId: string,
+        workId: string
     ): Promise<WorkEquipmentDto[]> {
         const result =
             await this.repository.loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-                workId,
-                enterpriseId
+                enterpriseId,
+                workId
             )
         return result.map((item) => new WorkEquipmentDto().entityToDto(item))
     }
@@ -40,12 +43,12 @@ export default class WorkEquipmentServicesImpl implements WorkEquipmentServices 
     }
 
     async loadAllWorkEquipmentByEnterpriseIdFromLocalDatabase(
-        workId: string,
-        enterpriseId: string
+        enterpriseId: string,
+        workId: string
     ): Promise<WorkEquipmentDto[]> {
         const result = await this.repository.loadAllWorkEquipmentByEnterpriseIdFromLocalDatabase(
-            workId,
-            enterpriseId
+            enterpriseId,
+            workId
         )
         return result.map((item) => new WorkEquipmentDto().entityToDto(item))
     }

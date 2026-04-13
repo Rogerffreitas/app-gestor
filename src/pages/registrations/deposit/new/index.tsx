@@ -7,12 +7,8 @@ import ButtonActionLoading from '../../../../components/button/ButtonActionLoadi
 import DescriptionTextInput from '../../../../components/input/DescriptionTextInput'
 import useNewDeposit from './UseNewDeposit'
 
-export default function NewDeposit({ navigation, route }) {
-    const { depositServices } = route.params
-    const { erros, states, handleSubmitButton, onChange } = useNewDeposit({
-        navigation,
-        depositServices,
-    })
+export default function NewDeposit() {
+    const { erros, states, actions } = useNewDeposit()
     return (
         <Container>
             <FormComponent nomeForm="Cadastro de Nova Jazida">
@@ -23,7 +19,7 @@ export default function NewDeposit({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeTextFunction={(value) => {
-                        onChange('name')(value)
+                        actions.onChange('name')(value)
                     }}
                     keyboardType={'default'}
                     autoFocus={true}
@@ -35,13 +31,13 @@ export default function NewDeposit({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeTextFunction={(value) => {
-                        onChange('description')(value)
+                        actions.onChange('description')(value)
                     }}
                     keyboardType={'default'}
                     autoFocus={false}
                 />
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleSubmitButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleSubmitButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}

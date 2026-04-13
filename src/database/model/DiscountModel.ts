@@ -13,11 +13,11 @@ export default class DiscountModel extends Model {
     @field('description')
     public description: string
 
-    @field('type')
-    public type: string
+    @field('discount_type')
+    public discountType: string
 
-    @field('transport_vehicle_or_equipment_id')
-    transportVehicleOrEquipmentId: string
+    @field('transport_vehicle_or_work_equipment_id')
+    transportVehicleOrWorkEquipmentId: string
 
     @field('invoice_id')
     public invoiceId: number

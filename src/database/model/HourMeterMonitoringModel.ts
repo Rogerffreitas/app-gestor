@@ -1,9 +1,11 @@
 import Model from '@nozbe/watermelondb/Model'
 import { date, readonly } from '@nozbe/watermelondb/decorators'
 import field from '@nozbe/watermelondb/decorators/field'
+import WorkEquipmentModel from './WorkEquipmentModel'
+import { TableName } from '../../types'
 
 export default class HourMeterMonitoringModel extends Model {
-    static table = 'hour_meter_monitorings'
+    static table = TableName.HOUR_METER_MONITORINGS
 
     @field('server_id')
     serverId: number
@@ -18,7 +20,7 @@ export default class HourMeterMonitoringModel extends Model {
     currentHourMeterValue: number
 
     @field('observation')
-    observacao: string
+    observation: string
 
     @field('total_calculated_in_the_period_informed')
     totalCalculatedInThePeriodInformed: number
@@ -56,4 +58,10 @@ export default class HourMeterMonitoringModel extends Model {
 
     @date('updated_at')
     updatedAt: number
+
+    async workEquipment(): Promise<WorkEquipmentModel> {
+        return await this.database
+            .get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS)
+            .find(this.workEquipmentId)
+    }
 }

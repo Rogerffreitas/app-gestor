@@ -10,12 +10,12 @@ export default class TransportVehicleDto {
     nameProprietary: string
     cpfCnpjProprietary: string
     telProprietary: string
-
-    serverId: number
     userId: string
-    userAction: number
     enterpriseId: string
-    isValid: boolean
+
+    serverId?: number
+    userAction?: number
+    isValid?: boolean
 
     bank?: string
     beneficiary?: string

@@ -3,33 +3,36 @@ import { EquipmentServices } from '../../../../domin/services/interfaces/Equipme
 import { BankInformation } from '../../../../domin/entity/bank-information/BankInformation'
 import { Alert } from 'react-native'
 import { Builder } from '../../../../services/Builder'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { useInjection } from '../../../../infra/hooks/useInjection'
 
-type BankInfoProps = {
-    equipmentId: string
-    bankInfo: BankInformation
-    equipmentServices: EquipmentServices
-    navigation: any
-}
+type BankInfoProp = RouteProp<RootStackParamList, ScreenNames.EDIT_EQUIPMENT>
 
-export default function useBankInfo({ equipmentId, bankInfo, equipmentServices, navigation }: BankInfoProps) {
+export default function useBankInfo() {
+    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const navigation = useNavigation()
+    const route = useRoute<BankInfoProp>()
+    const { equipment } = route.params
+
     const [bankInformation, setBankInformation] = useState({
-        bank: bankInfo.bank,
-        agency: bankInfo.agency,
-        account: bankInfo.account,
-        beneficiary: bankInfo.beneficiary,
-        pix: bankInfo.pix,
+        bank: equipment.bank,
+        agency: equipment.agency,
+        account: equipment.account,
+        beneficiary: equipment.beneficiary,
+        pix: equipment.pix,
     })
     const [isLoading, setIsLoading] = useState(false)
 
     async function handleClickEditButton() {
-        if (equipmentId == undefined || null) {
+        if (equipment.id == undefined || null) {
             Alert.alert('Error  ')
             navigation.goBack()
         }
         try {
             setIsLoading(true)
             await equipmentServices.updateEquipmentBankInformation(
-                equipmentId,
+                equipment.id,
                 Builder<BankInformation>()
                     .bank(bankInformation.bank)
                     .agency(bankInformation.agency)
@@ -60,7 +63,9 @@ export default function useBankInfo({ equipmentId, bankInfo, equipmentServices, 
     return {
         bankInformation,
         isLoading,
-        handleClickEditButton,
-        onChange,
+        actions: {
+            handleClickEditButton,
+            onChange,
+        },
     }
 }

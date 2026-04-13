@@ -6,6 +6,7 @@ import { useAuth } from '../../../contexts/AuthContext'
 import { InputStyled } from '../../../components/input/InputStyled'
 import Container from '../../../components/Container'
 import ErroMsd from '../../../components/ErroMsg'
+import { UserRoles } from '../../../types'
 
 export default function Cadastros() {
     const [nome, setNome] = useState('')
@@ -60,7 +61,7 @@ export default function Cadastros() {
     function _validar() {
         let valido = true
 
-        if (user.role !== 'admin') {
+        if (user.role !== UserRoles.ADMIN) {
             Alert.alert('Você não tem permissão para fazer cadastro de usuário')
             valido = false
         }

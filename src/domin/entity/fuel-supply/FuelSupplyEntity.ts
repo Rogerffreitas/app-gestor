@@ -1,5 +1,5 @@
 import FuelSupplyModel from '../../../database/model/FuelSupplyModel'
-import { ChangeErrorFields, ErrorMessages, FuelSupplyTypes } from '../../../types'
+import { ChangeErrorFields, ErrorMessages, FuelSupplyTypes, InvoiceStatus } from '../../../types'
 import AbstratcEntity from '../AbstratcEntity'
 import { FuelSupplyDto } from './FuelSupplyDto'
 
@@ -8,66 +8,71 @@ export class FuelSupplyEntity extends AbstratcEntity {
     private _valuePerLiter: number
     private _value: number
     private _description: string
-    private _type: string
+    private _supplyType: FuelSupplyTypes
     private _transportVehicleOrWorkEquipmentId: string
     private _observation: string
     private _isGasStation: boolean
+    //Deve ser mudado para maintenanceTruckId
     private _maintenanceTrucksWorkEquipmentId: string
-    private _hourMeterOrKmMeter: number
+    private _hourMeterOrOdometer: number
     private _isDiscount: boolean
     private _invoiceId: number
-    private _invoiceStatus: string
+    private _invoiceStatus: InvoiceStatus
     private _workId: string
 
-    public static dtoToEntity(data: FuelSupplyDto): FuelSupplyEntity {
-        const entity = new FuelSupplyEntity()
-        entity._quantity = data.quantity
-        entity._valuePerLiter = data.valuePerLiter
-        entity._value = parseInt(
+    public dtoToEntity?(data: FuelSupplyDto): FuelSupplyEntity {
+        if (!Object.values(FuelSupplyTypes).includes(data.supplyType)) {
+            throw new Error(`O tipo de abastecimento é inválido: ${data.invoiceStatus}.`)
+        }
+
+        this._quantity = +data.quantity
+        this._valuePerLiter = +data.valuePerLiter
+        this._value = parseInt(
             ((data.quantity / 100) * (data.valuePerLiter / 100)).toFixed(2).replace('.', '')
         )
-        entity._description = data.description
-        entity._type = data.type
-        entity._transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
-        entity._observation = data.observation
-        entity._isGasStation = data.isGasStation
-        entity._maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
-        entity._hourMeterOrKmMeter = data.hourMeterOrKmMeter
-        entity._isDiscount = data.isDiscount
-        entity._invoiceId = data.invoiceId
-        entity._invoiceStatus = data.invoiceStatus
-        entity._workId = data.workId
-        entity.userId = data.userId
-        entity.enterpriseId = data.enterpriseId
-        return entity
+        this._description = data.description
+        this._supplyType = data.supplyType
+        this._transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
+        this._observation = data.observation
+        this._isGasStation =
+            data.supplyType === FuelSupplyTypes.MAINTENANCE_TRUCK_TANK ? true : data.isGasStation
+        this._maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
+        this._hourMeterOrOdometer = +data.hourMeterOrOdometer ?? 0
+        this._isDiscount = data.isDiscount
+        this._invoiceId = data.invoiceId
+        //this._invoiceStatus = data.invoiceStatus
+        this._workId = data.workId
+        this.userId = data.userId
+        this.enterpriseId = data.enterpriseId
+        this.id = data.id
+        return this
     }
 
-    public static modelToEntity(data: FuelSupplyModel): FuelSupplyEntity {
-        const entity = new FuelSupplyEntity()
-        entity._quantity = data.quantity
-        entity._valuePerLiter = data.valuePerLiter
-        entity._value = data.value
-        entity._description = data.description
-        entity._type = data.type
-        entity._transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
-        entity._observation = data.observation
-        entity._isGasStation = data.isGasStation
-        entity._maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
-        entity._hourMeterOrKmMeter = data.hourMeterOrKmMeter
-        entity._isDiscount = data.isDiscount
-        entity.userId = data.userId
-        entity.enterpriseId = data.enterpriseId
-        entity._invoiceId = data.invoiceId
-        entity._invoiceStatus = data.invoiceStatus
-        entity._workId = data.workId
-        entity.serverId = data.serverId
-        entity.userAction = data.userAction
-        entity.isValid = data.isValid
-        entity.id = data.id
-        entity.createdAt = data.createdAt
-        entity.updatedAt = data.updatedAt
-        entity.status = data._raw._status
-        return entity
+    public modelToEntity(data: FuelSupplyModel): FuelSupplyEntity {
+        this._quantity = +data.quantity
+        this._valuePerLiter = +data.valuePerLiter
+        this._value = +data.value
+        this._description = data.description
+        this._supplyType = data.supplyType as FuelSupplyTypes
+        this._transportVehicleOrWorkEquipmentId = data.transportVehicleOrWorkEquipmentId
+        this._observation = data.observation
+        this._isGasStation = data.isGasStation
+        this._maintenanceTrucksWorkEquipmentId = data.maintenanceTrucksWorkEquipmentId
+        this._hourMeterOrOdometer = +data.hourMeterOrOdometer
+        this._isDiscount = data.isDiscount
+        this.userId = data.userId
+        this.enterpriseId = data.enterpriseId
+        this._invoiceId = data.invoiceId
+        this._invoiceStatus = data.invoiceStatus as InvoiceStatus
+        this._workId = data.workId
+        this.serverId = data.serverId
+        this.userAction = data.userAction
+        this.isValid = data.isValid
+        this.id = data.id
+        this.createdAt = +data.createdAt
+        this.updatedAt = +data.updatedAt
+        this.status = data._raw._status
+        return this
     }
 
     get quantity(): number {
@@ -86,8 +91,8 @@ export class FuelSupplyEntity extends AbstratcEntity {
         return this._description
     }
 
-    get type(): string {
-        return this._type
+    get supplyType() {
+        return this._supplyType
     }
 
     get transportVehicleOrWorkEquipmentId(): string {
@@ -106,8 +111,8 @@ export class FuelSupplyEntity extends AbstratcEntity {
         return this._maintenanceTrucksWorkEquipmentId
     }
 
-    get hourMeterOrKmMeter(): number {
-        return this._hourMeterOrKmMeter
+    get hourMeterOrOdometer(): number {
+        return this._hourMeterOrOdometer
     }
 
     get isDiscount(): boolean {
@@ -118,7 +123,7 @@ export class FuelSupplyEntity extends AbstratcEntity {
         return this._invoiceId
     }
 
-    get invoiceStatus(): string {
+    get invoiceStatus() {
         return this._invoiceStatus
     }
 
@@ -127,35 +132,33 @@ export class FuelSupplyEntity extends AbstratcEntity {
     }
 
     validate?(changeErrorFields: ChangeErrorFields) {
-        console.log('validated entity [FuelSupplyEntity]')
         let errorMessages: ErrorMessages[] = []
 
         const addError = (field: string, message: string) => {
             errorMessages.push({ field, message })
             changeErrorFields(field)(message)
         }
+        if (!this._workId) addError('workId', 'Erro, ID obra da obrigatório')
 
-        if (!this._quantity || this._quantity <= 0) addError('quantity', 'Preencha o campo obrigatório')
+        if (!this._quantity || this._quantity <= 0) addError('quantity', 'Obrigatório')
         if (!this._valuePerLiter || this._valuePerLiter <= 0)
             addError('valuePerLiter', 'Preencha o campo obrigatório')
-        if (!this._value || this._value <= 0) addError('value', 'Preencha o campo obrigatório')
+        if (!this._value || this._value <= 0) addError('value', 'Obrigatório')
         if (
-            (!this._hourMeterOrKmMeter && this.type == FuelSupplyTypes.EQUIPMENT) ||
-            (this._hourMeterOrKmMeter <= 0 && this.type == FuelSupplyTypes.EQUIPMENT)
+            (!this._hourMeterOrOdometer && this._supplyType == FuelSupplyTypes.EQUIPMENT) ||
+            (this._hourMeterOrOdometer <= 0 && this._supplyType == FuelSupplyTypes.EQUIPMENT)
         )
-            addError('hourMeterOrKmMeter', 'Preencha o campo obrigatório')
+            addError('hourMeterOrOdometer', 'Preencha o campo obrigatório')
         if (!this._description?.trim()) addError('description', 'Preencha o campo obrigatório')
-        if (!this._type?.trim()) addError('type', 'Preencha o campo obrigatório')
+        if (!this._supplyType?.trim()) addError('supplyType', 'Preencha o campo obrigatório')
 
         if (errorMessages.length > 0) {
-            console.log(errorMessages)
+            console.info('[FuelSupply] Validation Errors:', errorMessages)
+            const formattedErrors = errorMessages.map((err) => `[${err.field}]: ${err.message}`).join('\n- ')
+            throw new Error(
+                `[FuelSupply] Entity validation failed, cause: Erros de validação:\n- ${formattedErrors}`
+            )
         }
-
-        if (errorMessages.length > 0) {
-            throw new Error('Entity validation failed', {
-                cause: 'Erros de validação:\n- ' + errorMessages.join('\n- '),
-            })
-        }
-        console.log('Entity valid')
+        console.log('[FuelSupply] Entity valid')
     }
 }

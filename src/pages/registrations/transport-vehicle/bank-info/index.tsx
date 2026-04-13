@@ -8,14 +8,8 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import { InputStyled } from '../../../../components/input/InputStyled'
 import useBankInfo from './UseBankInfo'
 
-export default function ({ navigation, route }) {
-    const { transportVehicle, transportVehicleServices } = route.params
-
-    const { bankInformation, isLoading, handleClickEditButton, onChange } = useBankInfo({
-        transportVehicle,
-        transportVehicleServices,
-        navigation,
-    })
+export default function () {
+    const { bankInformation, states, actions } = useBankInfo()
 
     return (
         <Container>
@@ -28,7 +22,7 @@ export default function ({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('bank')(value)
+                        actions.onChange('bank')(value)
                     }}
                     autoFocus={true}
                     keyboardType={'default'}
@@ -41,7 +35,7 @@ export default function ({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('beneficiary')(value)
+                        actions.onChange('beneficiary')(value)
                     }}
                     autoFocus={false}
                     keyboardType={'default'}
@@ -56,7 +50,7 @@ export default function ({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('agency')(value)
+                                actions.onChange('agency')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -71,7 +65,7 @@ export default function ({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeText={(value) => {
-                                onChange('account')(value)
+                                actions.onChange('account')(value)
                             }}
                             autoFocus={false}
                             keyboardType={'numeric'}
@@ -86,14 +80,14 @@ export default function ({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('pix')(value)
+                        actions.onChange('pix')(value)
                     }}
                     autoFocus={false}
                     keyboardType={'default'}
                 />
 
-                {!isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleClickEditButton} />
+                {!states.isLoading ? (
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleClickEditButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}

@@ -1,12 +1,12 @@
 import React from 'react'
-import { FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, View } from 'react-native'
+import { FlatList, StyleSheet, ActivityIndicator, View } from 'react-native'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import Container from '../../../components/Container'
 import styled from 'styled-components/native'
 import theme from '../../../global/styles/theme'
 import ListaVazia from '../../../components/List/ListaVazia'
 import Content from '../../../components/Content'
-import SyncButton from '../../../components/SyncButton'
+import SyncButton from '../../../components/sync-button'
 import CardLine from '../../../components/cardLine/CardLine'
 import CardLineContent from '../../../components/cardLine/CardLineContent'
 import Linha from '../../../components/cardLine/Line'
@@ -18,15 +18,10 @@ import useMaterialsList from './UseMaterialsList'
 import { Reference } from '../../../types'
 import ButtonNewRegister from '../../../components/button/ButtonNewRegister'
 
-export default function Matirials({ navigation, route }) {
-    const { deposit, materialServices } = route.params
-    const { loadingList, materials, handleClickNewButton, handleClickEditButton } = useMaterialsList({
-        navigation,
-        materialServices,
-        deposit,
-    })
+export default function Matirials() {
+    const { states, actions } = useMaterialsList()
 
-    if (loadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <ActivityIndicator size="large" color="#666" />
@@ -36,7 +31,7 @@ export default function Matirials({ navigation, route }) {
 
     return (
         <Container>
-            {materials.length == 0 ? (
+            {states.materials.length == 0 ? (
                 <Content>
                     <ListaVazia />
                 </Content>
@@ -46,7 +41,7 @@ export default function Matirials({ navigation, route }) {
                         flex: 1,
                         width: '90%',
                     }}
-                    data={materials}
+                    data={states.materials}
                     keyExtractor={(item) => {
                         return item.id
                     }}
@@ -70,7 +65,7 @@ export default function Matirials({ navigation, route }) {
                                     >
                                         <SyncButton item={item} model={'material'} />
                                     </View>
-                                    <ButtonEditar onPress={() => handleClickEditButton(item)}>
+                                    <ButtonEditar onPress={() => actions.handleClickEditButton(item)}>
                                         <FontAwesome name={'edit'} size={24} style={{ color: '#fff' }} />
                                     </ButtonEditar>
                                 </ViewTituloCardLine>
@@ -106,7 +101,7 @@ export default function Matirials({ navigation, route }) {
                     }}
                 />
             )}
-            <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleClickNewButton} />
+            <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClickNewButton} />
         </Container>
     )
 }

@@ -15,24 +15,15 @@ import {
 import formatarData from '../../../../services/formatarData'
 import Content from '../../../../components/Content'
 import ListaVazia from '../../../../components/List/ListaVazia'
-import SyncButton from '../../../../components/SyncButton'
+import SyncButton from '../../../../components/sync-button'
 import useTransportsList from './UseTransportsList'
 import { UserRoles } from '../../../../types'
 import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
 
-export default function ApontamentosLista({ navigation, route }) {
-    const { work, transportVehicle, materialTransportServices, workRoutesServices, materialServices } =
-        route.params
-    const { workRoutes, user, isLoadingList, materialTransports, handlerClickNewButton } = useTransportsList({
-        transportVehicle,
-        materialTransportServices,
-        workRoutesServices,
-        materialServices,
-        navigation,
-        work,
-    })
+export default function TransportList() {
+    const { workRoutes, user, states, actions } = useTransportsList()
 
-    if (isLoadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -42,26 +33,26 @@ export default function ApontamentosLista({ navigation, route }) {
         )
     }
 
-    if (transportVehicle && materialTransports.length == 0) {
+    if (states.materialTransports.length == 0) {
         return (
             <Container>
                 <Content>
                     <View style={{ justifyContent: 'flex-start', flex: 1, width: '95%' }}>
                         <ListaVazia />
                     </View>
-                    <ButtonNewRegister onPressFunction={handlerClickNewButton} activeOpacity={0.7} />
+                    <ButtonNewRegister onPressFunction={actions.handlerClickNewButton} activeOpacity={0.7} />
                 </Content>
             </Container>
         )
     }
 
-    if (transportVehicle && materialTransports.length > 0) {
+    if (states.materialTransports.length > 0) {
         return (
             <Container>
                 <Content>
                     <FlatList
                         style={{ width: '100%' }}
-                        data={materialTransports}
+                        data={states.materialTransports}
                         keyExtractor={(item) => {
                             return item.id
                         }}
@@ -71,12 +62,10 @@ export default function ApontamentosLista({ navigation, route }) {
                         renderItem={({ item }) => {
                             return (
                                 <View style={{ flex: 1 }}>
-                                    <Card onPress={() => console.log(item)}>
+                                    <Card onPress={() => actions.handlerclickItem(item)}>
                                         <ViewTitle>
                                             <View style={{ width: '80%' }}>
-                                                <TextTitulo>
-                                                    PLACA: {item.transportVehicleDto.plate}
-                                                </TextTitulo>
+                                                <TextTitulo>PLACA: {item.transportVehicle.plate}</TextTitulo>
                                                 <SubTextTitulo>ID: {item.id}</SubTextTitulo>
                                             </View>
 
@@ -94,16 +83,16 @@ export default function ApontamentosLista({ navigation, route }) {
                                             <ViewLeft>
                                                 <TextLabel>Local de origem: </TextLabel>
                                                 <TextDescricao>
-                                                    {item.workRoutesDto.arrivalLocation}
+                                                    {item.workRoutes.arrivalLocation}
                                                 </TextDescricao>
                                                 <TextLabel>Local de destino: </TextLabel>
                                                 <TextDescricao>
-                                                    {item.workRoutesDto.departureLocation}
+                                                    {item.workRoutes.departureLocation}
                                                 </TextDescricao>
                                                 <TextLabel>Estaca: </TextLabel>
                                                 <TextDescricao>{item.deliveryPicket}</TextDescricao>
                                                 <TextLabel>Material: </TextLabel>
-                                                <TextDescricao>{item.materialDto.name}</TextDescricao>
+                                                <TextDescricao>{item.material.name}</TextDescricao>
                                                 <TextLabel>Quantidade: </TextLabel>
                                                 <TextDescricao>
                                                     {item.isReferenceCapacity
@@ -115,17 +104,15 @@ export default function ApontamentosLista({ navigation, route }) {
                                                 <TextLabel>Data: </TextLabel>
                                                 <TextDescricao>{formatarData(item.createdAt)}</TextDescricao>
                                                 <TextLabel>Placa: </TextLabel>
-                                                <TextDescricao>
-                                                    {item.transportVehicleDto.plate}
-                                                </TextDescricao>
-                                                {workRoutes.includes(item.workRoutesDto.arrivalLocation) ? (
+                                                <TextDescricao>{item.transportVehicle.plate}</TextDescricao>
+                                                {workRoutes.includes(item.workRoutes.arrivalLocation) ? (
                                                     <View></View>
                                                 ) : (
                                                     <View>
                                                         <TextLabel>Distância percorrida: </TextLabel>
                                                         <TextDescricao>
                                                             {(
-                                                                (item.workRoutesDto.km +
+                                                                (item.workRoutes.km +
                                                                     item.distanceTraveledWithinTheWork) /
                                                                 100
                                                             ).toLocaleString('pt-br', {
@@ -163,7 +150,7 @@ export default function ApontamentosLista({ navigation, route }) {
                         }}
                     />
                 </Content>
-                <ButtonNewRegister onPressFunction={handlerClickNewButton} activeOpacity={0.7} />
+                <ButtonNewRegister onPressFunction={actions.handlerClickNewButton} activeOpacity={0.7} />
             </Container>
         )
     }

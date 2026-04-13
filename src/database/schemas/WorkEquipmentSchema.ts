@@ -11,7 +11,6 @@ export const workEquipmentSchema = tableSchema({
         { name: 'is_equipment', type: 'boolean' },
         { name: 'model_or_plate', type: 'string' },
         { name: 'start_rental', type: 'string' },
-        { name: 'hour_meter_or_odometer', type: 'number' },
         { name: 'monthly_payment', type: 'number' },
         { name: 'value_per_hour_km', type: 'number' },
         { name: 'value_per_day', type: 'number' },

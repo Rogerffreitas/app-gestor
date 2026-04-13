@@ -4,8 +4,7 @@ import { date, readonly, field } from '@nozbe/watermelondb/decorators'
 export default class EquipmentModel extends Model {
     static table = 'equipments'
 
-    @field('server_id')
-    public serverId: number
+    @field('server_id') serverId: number
 
     @field('name_proprietary') nameProprietary: string
 

@@ -13,20 +13,13 @@ import TextConteudoCardLine from '../../../../components/cardLine/TextConteudoCa
 import Content from '../../../../components/Content'
 import ListaVazia from '../../../../components/List/ListaVazia'
 import Linha from '../../../../components/cardLine/Line'
-import SyncButton from '../../../../components/SyncButton'
+import SyncButton from '../../../../components/sync-button'
 import useFuelSupplesList from './useFuelSupplesList'
 import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
 import { FuelSupplyTypes } from '../../../../types'
 
-export default function FuelSupplyList({ navigation, route }) {
-    const { fuelSupplyServices, transportVehicleOrWorkEquipmentId, workId, type } = route.params
-    const { isLoadingList, fuelSupples, handlerClickNewButton, handleClickEditButton } = useFuelSupplesList({
-        fuelSupplyServices,
-        transportVehicleOrWorkEquipmentId,
-        workId,
-        type,
-        navigation,
-    })
+export default function FuelSupplyList() {
+    const { isLoadingList, fuelSupples, actions } = useFuelSupplesList()
 
     if (isLoadingList) {
         return (
@@ -70,7 +63,9 @@ export default function FuelSupplyList({ navigation, route }) {
                                                 <SyncButton item={item} model={'abastecimento'} />
                                             </View>
                                             {index == 0 ? (
-                                                <ButtonEditar onPress={() => handleClickEditButton(item)}>
+                                                <ButtonEditar
+                                                    onPress={() => actions.handleClickEditButton(item)}
+                                                >
                                                     <FontAwesome
                                                         name={'edit'}
                                                         size={20}
@@ -87,7 +82,7 @@ export default function FuelSupplyList({ navigation, route }) {
                                                 <TextTituloCardLine conteudo={'Quantidade:'} />
                                                 <TextTituloCardLine conteudo={'Valor por litro:'} />
                                                 <TextTituloCardLine conteudo={'Total:'} />
-                                                {item.type != FuelSupplyTypes.EQUIPMENT ? (
+                                                {item.supplyType != FuelSupplyTypes.EQUIPMENT ? (
                                                     <TextTituloCardLine conteudo={'Descontar? '} />
                                                 ) : (
                                                     <></>
@@ -95,27 +90,39 @@ export default function FuelSupplyList({ navigation, route }) {
                                             </CardLineContentLeft>
                                             <CardLineContentRight>
                                                 <TextConteudoCardLine
-                                                    conteudo={item.quantity.toLocaleString('pt-BR', {
-                                                        style: 'decimal',
-                                                        maximumFractionDigits: 2,
-                                                    })}
+                                                    conteudo={
+                                                        item.quantity
+                                                            ? (item.quantity / 100).toLocaleString('pt-BR', {
+                                                                  style: 'decimal',
+                                                                  maximumFractionDigits: 2,
+                                                              })
+                                                            : 0
+                                                    }
                                                 />
                                                 <TextConteudoCardLine
-                                                    conteudo={(item.valuePerLiter / 100).toLocaleString(
-                                                        'pt-BR',
-                                                        {
-                                                            style: 'currency',
-                                                            currency: 'BRL',
-                                                        }
-                                                    )}
+                                                    conteudo={
+                                                        item.valuePerLiter
+                                                            ? (item.valuePerLiter / 100).toLocaleString(
+                                                                  'pt-BR',
+                                                                  {
+                                                                      style: 'currency',
+                                                                      currency: 'BRL',
+                                                                  }
+                                                              )
+                                                            : 0
+                                                    }
                                                 />
                                                 <TextConteudoCardLine
-                                                    conteudo={(item.value / 100).toLocaleString('pt-BR', {
-                                                        style: 'currency',
-                                                        currency: 'BRL',
-                                                    })}
+                                                    conteudo={
+                                                        item.value
+                                                            ? (item.value / 100).toLocaleString('pt-BR', {
+                                                                  style: 'currency',
+                                                                  currency: 'BRL',
+                                                              })
+                                                            : 0
+                                                    }
                                                 />
-                                                {item.type != FuelSupplyTypes.EQUIPMENT ? (
+                                                {item.supplyType != FuelSupplyTypes.EQUIPMENT ? (
                                                     <TextConteudoCardLine
                                                         conteudo={item.isDiscount ? 'Sim' : 'Não'}
                                                     />
@@ -132,7 +139,7 @@ export default function FuelSupplyList({ navigation, route }) {
                 </ContentCardList>
             )}
 
-            <ButtonNewRegister onPressFunction={handlerClickNewButton} activeOpacity={0.7} />
+            <ButtonNewRegister onPressFunction={actions.handlerClickNewButton} activeOpacity={0.7} />
         </Container>
     )
 }

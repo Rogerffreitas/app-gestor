@@ -1,72 +1,62 @@
 import { useEffect, useState } from 'react'
 import { DepositServices } from '../../../domin/services/interfaces/DepositServices'
 import DepositDto from '../../../domin/entity/deposit/DepositDto'
-import { MaterialDto } from '../../../domin/entity/material/MaterialDto'
 import { useAuth } from '../../../contexts/AuthContext'
-import { MaterialServices } from '../../../domin/services/interfaces/MaterialServices'
+import { useNavigation } from '@react-navigation/native'
+import { ScreenNames } from '../../../types'
+import { useInjection } from '../../../infra/hooks/useInjection'
+import { ToastAndroid } from 'react-native'
 
-type MaterialsListPros = {
-    depositServices: DepositServices
-    materialServices: MaterialServices
-    navigation: any
-}
-
-export default function useDepositsList({
-    depositServices,
-    navigation,
-    materialServices,
-}: MaterialsListPros) {
-    const [deposits, setDeposits] = useState<DepositDto[]>([])
-    const [deposit, setDeposit] = useState<DepositDto>()
-    const [materiais, setMateriais] = useState<MaterialDto[]>([])
+export default function useDepositsList() {
+    const depositServices = useInjection<DepositServices>('DepositServices')
+    const navigation = useNavigation()
     const { user } = useAuth()
-    const [load, setLoad] = useState(true)
-    const [loadingList, setLoadingList] = useState(true)
+    const [states, setStates] = useState({
+        isLoadingList: true,
+        deposits: [] as DepositDto[],
+    })
 
-    useEffect(() => {
-        getAllDeposit()
-    }, [load])
-
-    async function getAllDeposit() {
-        navigation.addListener('focus', () => setLoad(!load))
-        const result = await depositServices.loadAllDepositByEnterpriseIdFromLocalDatabase(
-            user.enterpriseId
-        )
-        setDeposits(result)
-        setLoadingList(false)
+    async function loadAll() {
+        try {
+            const results = await depositServices.loadAllDepositByEnterpriseIdFromLocalDatabase(
+                user.enterpriseId
+            )
+            setStates((state) => ({ ...state, deposits: results }))
+        } catch (error) {
+            console.log(error)
+            ToastAndroid.show('Erro ao carregar as Jazidas', ToastAndroid.LONG)
+        } finally {
+            setStates((state) => ({ ...state, isLoadingList: false }))
+        }
     }
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAll()
+        })
+        return unsubscribe
+    }, [navigation])
+
     function handleClickItemList(item: DepositDto) {
-        navigation.navigate('Materials', {
-            deposit: item,
-            materialServices: materialServices,
+        navigation.navigate(ScreenNames.MATERIALS, {
+            depositId: item.id,
         })
     }
 
-    /*async function getAllMaterials(id) {
-        setLoadingList(true)
-        const result = await getAllMateriais(user.enterpriseId, id)
-        setMateriais(result)
-        setLoadingList(false)
-    }*/
-
     function handleClickNewButton() {
-        navigation.navigate('New Deposit', { depositServices: depositServices })
+        navigation.navigate(ScreenNames.NEW_DEPOSIT)
     }
 
     function handleClickEditButton(item: DepositDto) {
-        navigation.navigate('Edit Deposit', {
-            deposit: item,
-            depositServices: depositServices,
-        })
+        navigation.navigate(ScreenNames.EDIT_DEPOSIT, { deposit: item })
     }
 
     return {
-        deposits,
-        loadingList,
-        setDeposit,
-        handleClickEditButton,
-        handleClickNewButton,
-        handleClickItemList,
+        states,
+        actions: {
+            handleClickEditButton,
+            handleClickNewButton,
+            handleClickItemList,
+        },
     }
 }

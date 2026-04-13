@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, StyleSheet, View, ActivityIndicator } from 'react-native'
+import { FlatList, View, ActivityIndicator } from 'react-native'
 import Container from '../../../components/Container'
 import Content from '../../../components/Content'
 import ListaVazia from '../../../components/List/ListaVazia'
@@ -14,24 +14,10 @@ import ViewTituloCardLine from '../../../components/cardLine/ViewTituloCardLine'
 import ObraSelected from '../../../components/List/ObraSelected'
 import useTransport from './UseTransport'
 
-export default function TransportNote({ navigation, route }) {
-    const {
-        work,
-        transportVehicleServices,
-        materialTransportServices,
-        workRoutesServices,
-        materialServices,
-    } = route.params
-    const { transportVehicles, isLoadingList, handleClickItemTransportVehicle, saveWork } = useTransport({
-        transportVehicleServices,
-        materialTransportServices,
-        workRoutesServices,
-        materialServices,
-        navigation,
-        work,
-    })
+export default function TransportNote() {
+    const { states, work, actions } = useTransport()
 
-    if (isLoadingList) {
+    if (states.isLoadingList) {
         return (
             <Container>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -41,7 +27,7 @@ export default function TransportNote({ navigation, route }) {
         )
     }
 
-    if (work && transportVehicles.length == 0) {
+    if (work && states.transportVehicles.length == 0) {
         return (
             <Container>
                 <Content>
@@ -49,8 +35,8 @@ export default function TransportNote({ navigation, route }) {
                         <ObraSelected
                             active={1}
                             onPress={() => {
-                                saveWork(null)
-                                navigation.goBack()
+                                actions.saveWork(null)
+                                actions.goBack()
                             }}
                             titulo={work.name}
                             descricao={work.description}
@@ -62,15 +48,14 @@ export default function TransportNote({ navigation, route }) {
         )
     }
 
-    if (work && transportVehicles.length > 0) {
+    if (work && states.transportVehicles.length > 0) {
         return (
             <Container>
                 <Content>
                     <ObraSelected
                         active={1}
                         onPress={() => {
-                            saveWork(null)
-                            navigation.goBack()
+                            actions.goBack()
                         }}
                         titulo={work.name}
                         descricao={work.description}
@@ -87,7 +72,7 @@ export default function TransportNote({ navigation, route }) {
                             style={{
                                 width: '90%',
                             }}
-                            data={transportVehicles}
+                            data={states.transportVehicles}
                             keyExtractor={(item) => {
                                 return item.id
                             }}
@@ -95,7 +80,7 @@ export default function TransportNote({ navigation, route }) {
                                 return (
                                     <CardLine
                                         onPress={() => {
-                                            handleClickItemTransportVehicle(item)
+                                            actions.handleClickItemTransportVehicle(item)
                                         }}
                                         opacity={0.7}
                                     >

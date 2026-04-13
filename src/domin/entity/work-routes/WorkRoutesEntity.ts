@@ -1,4 +1,4 @@
-import WorkRoutesModel from '../../../database/model/WorkRoutesModel'
+import WorkRoutesModel from '../../../database/model/WorkRouteModel'
 import { ChangeErrorFields, ErrorMessages } from '../../../types'
 import AbstratcEntity from '../AbstratcEntity'
 import DepositEntity from '../deposit/DepositEntity'
@@ -56,6 +56,7 @@ export default class WorkRoutesEntity extends AbstratcEntity {
         this._work = new WorkEntity().modelToEntity(await data.work())
         this._deposit = new DepositEntity().modelToEntity(await data.deposit())
         this.id = data.id
+        this.serverId = data.serverId
         this.userId = data.userId
         this.userAction = data.userAction
         this.enterpriseId = data.enterpriseId

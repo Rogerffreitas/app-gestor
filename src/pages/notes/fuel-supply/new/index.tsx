@@ -9,19 +9,12 @@ import InputMaskNumber from '../../../../components/input/InputMaskNumber'
 import DescriptionTextInput from '../../../../components/input/DescriptionTextInput'
 import CheckBox from '../../../../components/CheckBox'
 import { InputStyled } from '../../../../components/input/InputStyled'
-import useNewFuelSupply from './useNewFuelSupply'
+import useNewFuelSupply from './UseNewFuelSupply'
 import { FuelSupplyTypes } from '../../../../types'
 import InputMaskNumber2 from '../../../../components/input/InputMaskNumber2'
 
-export default function NewFuelSupply({ navigation, route }) {
-    const { fuelSupplyServices, workId, transportVehicleOrWorkEquipmentId, type } = route.params
-    const { states, erros, setStates, onChange, handleSubmitButton } = useNewFuelSupply({
-        navigation,
-        workId,
-        transportVehicleOrWorkEquipmentId,
-        fuelSupplyServices,
-        type,
-    })
+export default function NewFuelSupply() {
+    const { states, erros, type, actions } = useNewFuelSupply()
 
     return (
         <Container>
@@ -34,14 +27,14 @@ export default function NewFuelSupply({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('description')(value)
+                        actions.onChange('description')(value)
                     }}
-                    autoFocus={false}
+                    autoFocus={true}
                     keyboardType={'default'}
                 />
                 <View style={{ width: '100%', flexDirection: 'row' }}>
                     <View style={{ width: '47%', marginRight: 20 }}>
-                        <DescriptionTextInput description={'Quantidade: '} erroMenssage={erros.quantity} />
+                        <DescriptionTextInput description={'Quantidade:* '} erroMenssage={erros.quantity} />
                         <InputMaskNumber
                             value={states.quantity ? states.quantity / 100 : null}
                             placeholder={'Quantidade'}
@@ -49,7 +42,7 @@ export default function NewFuelSupply({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('quantity')(
+                                actions.onChange('quantity')(
                                     +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -59,7 +52,7 @@ export default function NewFuelSupply({ navigation, route }) {
                     </View>
                     <View style={{ width: '47%' }}>
                         <DescriptionTextInput
-                            description={'Valor por litro: '}
+                            description={'Valor por litro:* '}
                             erroMenssage={erros.valuePerLiter}
                         />
                         <InputMaskMoney
@@ -69,7 +62,7 @@ export default function NewFuelSupply({ navigation, route }) {
                             autoCorrect={false}
                             secureTextEntry={false}
                             onChangeTextFunction={(value) => {
-                                onChange('valuePerLiter')(
+                                actions.onChange('valuePerLiter')(
                                     +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                                 )
                             }}
@@ -78,22 +71,29 @@ export default function NewFuelSupply({ navigation, route }) {
                         />
                     </View>
                 </View>
-                <DescriptionTextInput
-                    description={type === FuelSupplyTypes.EQUIPMENT ? 'Horímetro' : 'Odômetro'}
-                    erroMenssage={erros.hourMeterOrKmMeter}
-                />
-                <InputMaskNumber2
-                    value={states.hourMeterOrKmMeter ? states.hourMeterOrKmMeter / 10 : null}
-                    placeholder={type === FuelSupplyTypes.EQUIPMENT ? 'Horímetro' : 'Odômetro'}
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    secureTextEntry={false}
-                    onChangeTextFunction={(value) => {
-                        onChange('hourMeterOrKmMeter')(+value.replace(/\./g, '').replace(',', ''))
-                    }}
-                    autoFocus={false}
-                    keyboardType={'numeric'}
-                />
+                {type != FuelSupplyTypes.MAINTENANCE_TRUCK_TANK && (
+                    <>
+                        <DescriptionTextInput
+                            description={type === FuelSupplyTypes.EQUIPMENT ? 'Horímetro' : 'Odômetro'}
+                            erroMenssage={erros.hourMeterOrOdometer}
+                        />
+
+                        <InputMaskNumber2
+                            value={states.hourMeterOrOdometer ? states.hourMeterOrOdometer / 10 : null}
+                            placeholder={type === FuelSupplyTypes.EQUIPMENT ? 'Horímetro' : 'Odômetro'}
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
+                            secureTextEntry={false}
+                            onChangeTextFunction={(value) => {
+                                actions.onChange('hourMeterOrOdometer')(
+                                    +value.replace(/\./g, '').replace(',', '')
+                                )
+                            }}
+                            autoFocus={false}
+                            keyboardType={'numeric'}
+                        />
+                    </>
+                )}
                 <DescriptionTextInput description={'Observação:'} erroMenssage={''} />
                 <InputStyled
                     value={states.observation}
@@ -102,7 +102,7 @@ export default function NewFuelSupply({ navigation, route }) {
                     autoCorrect={false}
                     secureTextEntry={false}
                     onChangeText={(value) => {
-                        onChange('observation')(value)
+                        actions.onChange('observation')(value)
                     }}
                     autoFocus={false}
                     keyboardType={'default'}
@@ -111,7 +111,7 @@ export default function NewFuelSupply({ navigation, route }) {
                     <CheckBox
                         checked={states.isDiscount}
                         onPressFunction={() =>
-                            setStates((state) => ({ ...state, isDiscount: !state.isDiscount }))
+                            actions.setStates((state) => ({ ...state, isDiscount: !state.isDiscount }))
                         }
                         description={'Descontar na fatura?'}
                     />
@@ -119,7 +119,7 @@ export default function NewFuelSupply({ navigation, route }) {
                     <></>
                 )}
                 {!states.isLoading ? (
-                    <ButtonAction acao={'Salvar'} onPressFunction={handleSubmitButton} />
+                    <ButtonAction acao={'Salvar'} onPressFunction={actions.handleSubmitButton} />
                 ) : (
                     <ButtonActionLoading onPressFunction={() => {}} />
                 )}

@@ -14,23 +14,59 @@ import Linha from '../../../components/cardLine/Line'
 import ObraSelected from '../../../components/List/ObraSelected'
 import useFuelSupples from './UseFuelSupples'
 
-export default function FuelSupples({ navigation, route }) {
-    const { work, type, transportVehicleServices, fuelSupplyServices, workEquipmentServices } = route.params
-    const {
-        isLoadingList,
-        transportVehicles,
-        workEquipments,
-        handleClickItemWorkEquipment,
-        handleClickItemTransportVehicle,
-        saveWork,
-    } = useFuelSupples({
-        work,
-        type,
-        fuelSupplyServices,
-        transportVehicleServices,
-        workEquipmentServices,
-        navigation,
-    })
+export default function FuelSupples() {
+    const { isLoadingList, type, work, dataList, actions } = useFuelSupples()
+
+    const renderItem = ({ item }) => {
+        if (type === FuelSupplyTypes.EQUIPMENT) {
+            return (
+                <CardLine
+                    onPress={() => {
+                        actions.handleClickItemWorkEquipment(item)
+                    }}
+                    opacity={0.7}
+                >
+                    <ViewTituloCardLine titulo={item.equipment.modelOrPlate} />
+                    <Linha />
+                    <CardLineContent>
+                        <CardLineContentLeft>
+                            <TextTituloCardLine conteudo="Proprietário:" />
+                            <TextTituloCardLine conteudo="Operador:" />
+                        </CardLineContentLeft>
+                        <CardLineContentRight>
+                            <TextConteudoCardLine conteudo={item.equipment.nameProprietary} />
+                            <TextConteudoCardLine conteudo={item.equipment.operatorMotorist} />
+                        </CardLineContentRight>
+                    </CardLineContent>
+                </CardLine>
+            )
+        }
+
+        return (
+            <CardLine
+                onPress={() => {
+                    actions.handleClickItemTransportVehicle(item)
+                }}
+                opacity={0.7}
+            >
+                <ViewTituloCardLine titulo={item.nameProprietary} />
+                <Linha />
+                <CardLineContent>
+                    <CardLineContentLeft>
+                        <TextTituloCardLine conteudo="Placa:" />
+                        <TextTituloCardLine conteudo="Cor:" />
+                        <TextTituloCardLine conteudo="Capacidade:" />
+                    </CardLineContentLeft>
+                    <CardLineContentRight>
+                        <TextConteudoCardLine conteudo={item.plate} />
+                        <TextConteudoCardLine conteudo={item.color} />
+                        <TextConteudoCardLine conteudo={`${item.capacity} m³`} />
+                    </CardLineContentRight>
+                </CardLineContent>
+            </CardLine>
+        )
+    }
+
     if (isLoadingList) {
         return (
             <Container>
@@ -41,115 +77,14 @@ export default function FuelSupples({ navigation, route }) {
         )
     }
 
-    if (type === FuelSupplyTypes.TRANSPORT_VEHICLE && transportVehicles.length != 0) {
-        return (
-            <Container>
-                <Content>
-                    <ObraSelected
-                        active={1}
-                        onPress={() => {
-                            saveWork(null)
-                            navigation.goBack()
-                        }}
-                        titulo={work.name}
-                        descricao={work.description}
-                    />
-                    <FlatList
-                        style={{
-                            flex: 1,
-                            width: '90%',
-                        }}
-                        data={transportVehicles}
-                        keyExtractor={(item) => {
-                            return item.id
-                        }}
-                        renderItem={({ item }) => {
-                            return (
-                                <CardLine onPress={() => handleClickItemTransportVehicle(item)} opacity={0.7}>
-                                    <ViewTituloCardLine titulo={item.nameProprietary} />
-                                    <Linha />
-                                    <CardLineContent>
-                                        <CardLineContentLeft>
-                                            <TextTituloCardLine conteudo={'Placa:'} />
-                                            <TextTituloCardLine conteudo={'Cor:'} />
-                                            <TextTituloCardLine conteudo={'Capacidade:'} />
-                                        </CardLineContentLeft>
-                                        <CardLineContentRight>
-                                            <TextConteudoCardLine conteudo={item.plate} />
-                                            <TextConteudoCardLine conteudo={item.color} />
-                                            <TextConteudoCardLine conteudo={item.capacity + ' m³'} />
-                                        </CardLineContentRight>
-                                    </CardLineContent>
-                                </CardLine>
-                            )
-                        }}
-                    />
-                </Content>
-            </Container>
-        )
-    }
-    if (type === FuelSupplyTypes.EQUIPMENT && workEquipments.length != 0) {
-        return (
-            <Container>
-                <Content>
-                    <ObraSelected
-                        active={1}
-                        onPress={() => {
-                            saveWork(null)
-                            navigation.goBack()
-                        }}
-                        titulo={work.name}
-                        descricao={work.description}
-                    />
-                    <FlatList
-                        style={{
-                            flex: 1,
-                            width: '90%',
-                        }}
-                        data={workEquipments}
-                        keyExtractor={(item) => {
-                            return item.id
-                        }}
-                        renderItem={({ item }) => {
-                            return (
-                                <CardLine
-                                    onPress={() => {
-                                        handleClickItemWorkEquipment(item)
-                                    }}
-                                    opacity={0.7}
-                                >
-                                    <ViewTituloCardLine titulo={item.equipment.modelOrPlate} />
-                                    <Linha />
-                                    <CardLineContent>
-                                        <CardLineContentLeft>
-                                            <TextTituloCardLine conteudo={'Proprietário:'} />
-                                            <TextTituloCardLine conteudo={'Operador:'} />
-                                        </CardLineContentLeft>
-                                        <CardLineContentRight>
-                                            <TextConteudoCardLine conteudo={item.equipment.nameProprietary} />
-                                            <TextConteudoCardLine
-                                                conteudo={item.equipment.operatorMotorist}
-                                            />
-                                        </CardLineContentRight>
-                                    </CardLineContent>
-                                </CardLine>
-                            )
-                        }}
-                    />
-                </Content>
-            </Container>
-        )
-    }
-
-    if (transportVehicles.length == 0 && workEquipments.length == 0) {
+    if (dataList.length == 0) {
         return (
             <Container>
                 <Content style={{ justifyContent: 'flex-start' }}>
                     <ObraSelected
                         active={1}
                         onPress={() => {
-                            saveWork(null)
-                            navigation.goBack()
+                            actions.goBack()
                         }}
                         titulo={work.name}
                         descricao={work.description}
@@ -159,6 +94,27 @@ export default function FuelSupples({ navigation, route }) {
             </Container>
         )
     }
+
+    return (
+        <Container>
+            <Content>
+                <ObraSelected
+                    active={1}
+                    onPress={() => {
+                        actions.goBack()
+                    }}
+                    titulo={work.name}
+                    descricao={work.description}
+                />
+                <FlatList
+                    style={{ width: '90%' }}
+                    data={dataList}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderItem}
+                />
+            </Content>
+        </Container>
+    )
 }
 
 const Content = styled.View`

@@ -1,6 +1,7 @@
 import { HttpRequest } from '../../entity/http/dtos/HttpRequest'
-export default interface HttpClientGateway<T> {
-    getAllRecordsByHttpRequest: (request: HttpRequest) => Promise<T[]>
-    getRecordsByHttpRequest: (request: HttpRequest) => Promise<T>
-    httpRequestPost: (request: HttpRequest) => Promise<T>
+export interface HttpClientGateway {
+    getAllRecordsByHttpRequest: <T>(request: HttpRequest) => Promise<T[]>
+    getRecordsByHttpRequest: <T>(request: HttpRequest) => Promise<T>
+    httpRequestPost: <T>(request: HttpRequest) => Promise<T>
+    httpRequesUpdate: <T>(request: HttpRequest) => Promise<T>
 }

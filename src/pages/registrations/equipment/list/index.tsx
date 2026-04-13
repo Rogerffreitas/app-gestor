@@ -12,15 +12,13 @@ import TextConteudoCardLine from '../../../../components/cardLine/TextConteudoCa
 import TextTituloCardLine from '../../../../components/cardLine/TextTituloCardLine'
 import ListaVazia from '../../../../components/List/ListaVazia'
 import Content from '../../../../components/Content'
-import SyncButton from '../../../../components/SyncButton'
+import SyncButton from '../../../../components/sync-button'
 import useEquipmentList from './UseEquipmentList'
 import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
 
-export default function Equipments({ navigation, route }) {
-    const { equipmentServices } = route.params
-    const { isLoadingList, equipments, handleNewEquipment, handleEditEquipment, handleUpdateBankInfo } =
-        useEquipmentList({ equipmentServices, navigation })
-    if (isLoadingList) {
+export default function Equipments() {
+    const { states, actions } = useEquipmentList()
+    if (states.isLoadingList) {
         return (
             <Container>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -32,7 +30,7 @@ export default function Equipments({ navigation, route }) {
 
     return (
         <Container>
-            {equipments.length == 0 ? (
+            {states.equipments.length == 0 ? (
                 <Content>
                     <View style={{ justifyContent: 'center', flex: 1, width: '95%' }}>
                         <ListaVazia />
@@ -45,7 +43,7 @@ export default function Equipments({ navigation, route }) {
                             flex: 1,
                             width: '90%',
                         }}
-                        data={equipments}
+                        data={states.equipments}
                         keyExtractor={(item) => {
                             return item.id
                         }}
@@ -61,12 +59,12 @@ export default function Equipments({ navigation, route }) {
                                                 alignItems: 'center',
                                             }}
                                         >
-                                            <SyncButton item={item} model={'equipamento'} />
+                                            <SyncButton item={item} model={'equipment'} />
                                         </View>
-                                        <ButtonEditar onPress={() => handleUpdateBankInfo(item)}>
+                                        <ButtonEditar onPress={() => actions.handleUpdateBankInfo(item)}>
                                             <FontAwesome name={'bank'} size={18} style={{ color: '#fff' }} />
                                         </ButtonEditar>
-                                        <ButtonEditar onPress={() => handleEditEquipment(item)}>
+                                        <ButtonEditar onPress={() => actions.handleEditEquipment(item)}>
                                             <FontAwesome name={'edit'} size={24} style={{ color: '#fff' }} />
                                         </ButtonEditar>
                                     </ViewTituloCardLine>
@@ -140,7 +138,7 @@ export default function Equipments({ navigation, route }) {
                     />
                 </Content>
             )}
-            <ButtonNewRegister activeOpacity={0.7} onPressFunction={handleNewEquipment} />
+            <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleNewEquipment} />
         </Container>
     )
 }

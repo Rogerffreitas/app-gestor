@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { ToastAndroid, Alert } from 'react-native'
 import { useAuth } from '../../../../contexts/AuthContext'
 import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
 import { MaterialTransportServices } from '../../../../domin/services/interfaces/MaterialTransportServices'
 import WorkRoutesDto from '../../../../domin/entity/work-routes/WorkRoutesDto'
 import { WorkRoutesServices } from '../../../../domin/services/interfaces/WorkRoutesServices'
@@ -11,31 +10,22 @@ import { MaterialServices } from '../../../../domin/services/interfaces/Material
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import MaterialTransportDto from '../../../../domin/entity/material-transport/MaterialTransportDto'
+import { useInjection } from '../../../../infra/hooks/useInjection'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { useApplicationContext } from '../../../../contexts/ApplicationContext'
 
-type UseTransportListProps = {
-    work: WorkDto
-    transportVehicle: TransportVehicleDto
-    materialTransportServices: MaterialTransportServices
-    workRoutesServices: WorkRoutesServices
-    materialServices: MaterialServices
-    navigation: any
-}
+type NewTransportProp = RouteProp<RootStackParamList, ScreenNames.NEW_TRANSPORT_NOTE>
 
-export default function useNewTransport({
-    work,
-    transportVehicle,
-    materialTransportServices,
-    workRoutesServices,
-    materialServices,
-    navigation,
-}: UseTransportListProps) {
+export default function useNewTransport() {
+    const materialServices = useInjection<MaterialServices>('MaterialServices')
+    const workRoutesServices = useInjection<WorkRoutesServices>('WorkRoutesServices')
+    const materialTransportServices = useInjection<MaterialTransportServices>('MaterialTransportServices')
+    const navigation = useNavigation()
+    const route = useRoute<NewTransportProp>()
+    const { transportVehicle } = route.params
     const { user } = useAuth()
-    const [workRoute, setWorkRoute] = useState<WorkRoutesDto>(null)
-    const [workRoutes, setWorkRoutes] = useState<WorkRoutesDto[]>()
-    const [material, setMaterial] = useState<MaterialDto>(null)
-    const [materials, setMaterials] = useState<MaterialDto[]>()
-    const [quantity, setQuantity] = useState(null)
-    const [picket, setPicket] = useState(null)
+    const { work } = useApplicationContext()
 
     const [erros, setErros] = useState({
         value: '',
@@ -44,189 +34,169 @@ export default function useNewTransport({
         distanceTraveledWithinTheWork: '',
     })
 
-    const [state, setState] = useState({
+    const [states, setStates] = useState({
+        workRoute: null as WorkRoutesDto,
+        workRoutes: [] as WorkRoutesDto[],
+        material: null as MaterialDto,
+        materials: [] as MaterialDto[],
         isLoad: false,
         isLoadingList: false,
         isLoading: false,
         picketInputValue: 0,
         quantityInputValue: 0,
         picketDescription: '',
-        quantity: false,
-        picket: false,
+        quantity: null,
+        picket: null,
+        quantityVisibility: false,
+        picketVisibility: false,
         observation: '',
         erroMessagePicket: '',
     })
 
-    const [dropButton, setDropButton] = useState({
-        route: false,
-        material: false,
-        quantity: false,
-        picket: false,
-    })
-
-    const [icon, setIcon] = useState({
+    const icon = {
         work: 'check',
-        workRoute: 'caret-left',
-        material: 'caret-left',
         transportVehicle: 'check',
-        quantity: 'caret-left',
-        picket: 'caret-left',
-    })
-
-    useEffect(() => {
-        async function config() {
-            if (!workRoute && work && user) {
-                if (dropButton.route) {
-                    const result =
-                        await workRoutesServices.loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
-                            user.enterpriseId,
-                            work.id
-                        )
-                    setWorkRoutes(result)
-                    setIcon((state) => ({ ...state, workRoute: 'caret-down' }))
-                } else {
-                    setWorkRoutes(null)
-                    setIcon((state) => ({ ...state, workRoute: 'caret-left' }))
-                }
-            }
-            if (!material && user) {
-                if (dropButton.material) {
-                    const result =
-                        await materialServices.loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
-                            user.enterpriseId,
-                            workRoute.deposit.id
-                        )
-                    setMaterials(result)
-                    setIcon((state) => ({ ...state, material: 'caret-down' }))
-                } else {
-                    setMaterials(null)
-                    setIcon((state) => ({ ...state, material: 'caret-left' }))
-                }
-            }
-            if (!quantity) {
-                if (dropButton.quantity) {
-                    setState((state) => ({ ...state, quantity: true }))
-                    setIcon((state) => ({ ...state, quantity: 'caret-down' }))
-                } else {
-                    setState((state) => ({ ...state, quantity: false }))
-                    setIcon((state) => ({ ...state, quantity: 'caret-left' }))
-                }
-            }
-            if (!picket) {
-                if (dropButton.picket) {
-                    setState((state) => ({ ...state, picket: true }))
-                    setIcon((state) => ({ ...state, picket: 'caret-down' }))
-                } else {
-                    setState((state) => ({ ...state, picket: false }))
-                    setIcon((state) => ({ ...state, picket: 'caret-left' }))
-                }
-            }
-        }
-        config()
-    }, [dropButton])
-
-    function handleClickButtonWorkRoute() {
-        setDropButton((state) => ({ ...state, route: !dropButton.route }))
+        workRoute: states.workRoute ? 'check' : states.workRoutes.length > 0 ? 'caret-down' : 'caret-left',
+        material: states.material ? 'check' : states.materials.length > 0 ? 'caret-down' : 'caret-left',
+        quantity: states.quantity > 0 ? 'check' : states.quantityVisibility ? 'caret-down' : 'caret-left',
+        picket:
+            states.picket > 0 || states.picketDescription
+                ? 'check'
+                : states.picketVisibility
+                  ? 'caret-down'
+                  : 'caret-left',
     }
 
-    function handleClickButtonMaterial() {
-        setDropButton((state) => ({ ...state, material: !dropButton.material }))
+    async function handleClickButtonWorkRoute() {
+        if (states.workRoute) {
+            return
+        }
+
+        try {
+            const results =
+                await workRoutesServices.loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
+                    user.enterpriseId,
+                    work.id
+                )
+            setStates((states) => ({ ...states, workRoutes: results }))
+        } catch (error) {
+            Alert.alert('Erro', 'Falha ao carregar rotas')
+        }
+    }
+
+    async function handleClickButtonMaterial() {
+        if (states.material) {
+            return
+        }
+
+        try {
+            const results =
+                await materialServices.loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
+                    user.enterpriseId,
+                    states.workRoute.deposit.id
+                )
+            setStates((states) => ({ ...states, materials: results }))
+        } catch (error) {
+            Alert.alert('Erro', 'Falha ao carregar material')
+        }
+        //setDropButton((state) => ({ ...state, material: !dropButton.material }))
     }
 
     function handlerClickButtonQuantity() {
-        setDropButton((state) => ({ ...state, quantity: !dropButton.quantity }))
+        if (states.quantity) {
+            return
+        }
+        setStates((state) => ({ ...state, quantityVisibility: !states.quantityVisibility }))
     }
 
     function handlerClickButtonPicket() {
-        setDropButton((state) => ({ ...state, picket: !dropButton.picket }))
+        if (states.picket) {
+            return
+        }
+        setStates((state) => ({ ...state, picketVisibility: !states.picketVisibility }))
     }
 
     function handleSelectWorkRoute(item: WorkRoutesDto) {
-        setWorkRoute(item)
-        setIcon((state) => ({ ...state, workRoute: 'check' }))
-        setWorkRoutes(null)
+        setStates((states) => ({
+            ...states,
+            workRoute: item,
+            workRoutes: [],
+        }))
     }
 
     function handleSelectMaterial(item: MaterialDto) {
-        setMaterial(item)
-        setIcon((state) => ({ ...state, material: 'check' }))
-        setMaterials(null)
-        if (workRoute.isFixedValue) {
-            setPicket(0)
-            setState((state) => ({ ...state, picketDescription: '0' }))
-            setIcon((state) => ({ ...state, picket: 'check' }))
-            setState((state) => ({ ...state, picket: false }))
+        if (states.workRoute && states.workRoute.isFixedValue) {
+            setStates((state) => ({
+                ...state,
+                material: item,
+                materials: [],
+                picket: 0,
+                picketDescription: '0',
+                picketVisibility: false,
+            }))
+            return
         }
+        setStates((state) => ({
+            ...state,
+            material: item,
+            materials: [],
+        }))
     }
 
     function handleSelectQuantity() {
-        setPicket(0)
-        setQuantity(state.quantityInputValue)
-        setIcon((state) => ({ ...state, quantity: 'check' }))
-        setDropButton((state) => ({ ...state, quantity: !dropButton.quantity }))
-        setState((state) => ({ ...state, quantity: null }))
+        setStates((state) => ({
+            ...state,
+            picket: 0,
+            quantity: states.quantityInputValue,
+            quantityVisibility: false,
+        }))
     }
 
     function handlerSelectPicket() {
-        let e = state.picketInputValue
+        const input = Math.min(states.picketInputValue, work.pickets)
+        const initial = states.workRoute.initialPicket
+        const diff = Math.abs(input - initial)
 
-        if (state.picketInputValue > work.pickets) {
-            e = work.pickets
-        }
-
-        if (e > workRoute.initialPicket) {
-            setPicket(e - workRoute.initialPicket)
-            setState((state) => ({ ...state, picketDescription: workRoute.initialPicket + ' à ' + e }))
-        }
-
-        if (e < workRoute.initialPicket) {
-            setPicket(workRoute.initialPicket - e)
-            setState((state) => ({ ...state, picketDescription: workRoute.initialPicket + ' à ' + e }))
-            setState((state) => ({ ...state, picket: false }))
-        }
-
-        if (e == workRoute.initialPicket) {
-            setPicket(0)
-            setState((state) => ({ ...state, picketDescription: 'Estaca ' + e }))
-        }
-        setIcon((state) => ({ ...state, picket: 'check' }))
-        setDropButton((state) => ({ ...state, picket: !dropButton.quantity }))
-        setState((state) => ({ ...state, picket: false }))
+        setStates((state) => ({
+            ...state,
+            picket: diff,
+            picketDescription: diff === 0 ? `Estaca ${input}` : `${initial} à ${input}`,
+            picketVisibility: false,
+        }))
     }
 
     function handleResestItemsSelect() {
-        setWorkRoute(null)
-        setWorkRoutes(null)
-        setMaterial(null)
-        setMaterials(null)
-        setState((state) => ({ ...state, quantityInputValue: null }))
-        setQuantity(0)
-        setState((state) => ({ ...state, quantity: false }))
-        setPicket(null)
-        setState((state) => ({ ...state, picketInputValue: null }))
-        setState((state) => ({ ...state, picket: false }))
-        setDropButton((state) => ({ ...state, route: false }))
-        setDropButton((state) => ({ ...state, material: false }))
-        setDropButton((state) => ({ ...state, picket: false }))
-        setDropButton((state) => ({ ...state, quantity: false }))
+        setStates((state) => ({
+            ...state,
+            workRoute: null,
+            workRoutes: [],
+            material: null,
+            materials: [],
+            quantityInputValue: null,
+            quantity: null,
+            quantityVisibility: false,
+            picket: null,
+            picketVisibility: false,
+            picketInputValue: null,
+            picketDescription: '',
+        }))
     }
 
     async function handleSaveItemsSelect() {
         try {
-            setState((state) => ({ ...state, isLoading: true }))
+            setStates((state) => ({ ...state, isLoading: true }))
             const materialTransport = StrictBuilder<MaterialTransportDto>()
                 .workId(work.id)
-                .workRoutesDto(workRoute)
-                .transportVehicleDto(transportVehicle)
-                .materialDto(material)
-                .quantity(quantity)
-                .deliveryPicket(!picket ? 'DEPÓSITO' : state.picketInputValue.toString() + '+00')
-                .totalPickets(picket)
-                .observation(state.observation)
+                .workRoutes(states.workRoute)
+                .transportVehicle(transportVehicle)
+                .material(states.material)
+                .quantity(states.quantity)
+                .deliveryPicket(!states.picket ? 'DEPÓSITO' : states.picketInputValue.toString() + '+00')
+                .totalPickets(states.picket)
+                .observation(states.observation)
                 .userId(user.id)
                 .enterpriseId(user.enterpriseId)
                 .build()
-
             let response = await materialTransportServices.createMaterialTransportInLocalDatabase(
                 materialTransport,
                 changeErrorFields
@@ -235,7 +205,7 @@ export default function useNewTransport({
             if (response.id) {
                 successVibration()
                 //sincronizar()
-                Alert.alert('Equipamento Cadastrado')
+                Alert.alert('Apontamento Cadastrado')
                 navigation.goBack()
             }
         } catch (error) {
@@ -245,10 +215,10 @@ export default function useNewTransport({
                 ToastAndroid.show('Preencha todos os campos obrigatórios', ToastAndroid.LONG)
                 return
             }
-            Alert.alert('Erro ao tentar salvar o equipamento', error)
+            Alert.alert('Erro ao tentar salvar o Apontamento', `Menssagem: ${error}`)
             errorVibration()
         } finally {
-            setState((state) => ({ ...state, isLoading: false }))
+            setStates((state) => ({ ...state, isLoading: false }))
         }
     }
 
@@ -259,24 +229,22 @@ export default function useNewTransport({
     }
 
     return {
-        workRoute,
-        workRoutes,
-        material,
-        materials,
-        quantity,
-        picket,
-        state,
+        transportVehicle,
+        states,
         icon,
-        setState,
-        handleClickButtonWorkRoute,
-        handleClickButtonMaterial,
-        handlerClickButtonQuantity,
-        handlerClickButtonPicket,
-        handleSelectWorkRoute,
-        handleSelectMaterial,
-        handleSelectQuantity,
-        handlerSelectPicket,
-        handleResestItemsSelect,
-        handleSaveItemsSelect,
+        work,
+        actions: {
+            setStates,
+            handleClickButtonWorkRoute,
+            handleClickButtonMaterial,
+            handlerClickButtonQuantity,
+            handlerClickButtonPicket,
+            handleSelectWorkRoute,
+            handleSelectMaterial,
+            handleSelectQuantity,
+            handlerSelectPicket,
+            handleResestItemsSelect,
+            handleSaveItemsSelect,
+        },
     }
 }

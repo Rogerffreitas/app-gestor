@@ -16,7 +16,25 @@
             "expo-build-properties",
             "@morrowdigital/watermelondb-expo-plugin",
             "@react-native-community/datetimepicker",
-            "expo-secure-store"
+            "expo-secure-store",
+            [
+                "expo-splash-screen",
+                {
+                    "resizeMode": "contain",
+                    "backgroundColor": "#FFFFFF",
+                    "image": "./assets/image/splash.png",
+                    "imageWidth": 600
+                }
+            ],
+            [
+                "react-native-ble-manager",
+                {
+                    "isBleRequired": true,
+                    "neverForLocation": true,
+                    "companionDeviceEnabled": false,
+                    "bluetoothAlwaysPermission": "Allow BLE DEMO APP to connect to bluetooth devices"
+                }
+            ]
         ],
         "extra": {
             "eas": {
@@ -28,7 +46,7 @@
                 "foregroundImage": "./assets/image/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
             },
-            "package": "com.rogerffreitas.app-gestor",
+            "package": "com.rogerffreitas.appgestor",
             "runtimeVersion": "1.0.1-beta",
             "permissions": ["WRITE_EXTERNAL_STORAGE", "READ_EXTERNAL_STORAGE"],
             "versionCode": 2

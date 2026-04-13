@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import Container from '../../components/Container'
 import LottieView from 'lottie-react-native'
 import HeaderHome from '../../components/HeaderHome'
@@ -8,7 +8,6 @@ import { UserRoles } from '../../types'
 
 export default function Home({ navigation }) {
     const { user } = useAuth()
-    const theme = useTheme()
     const animation = useRef(null)
 
     const clickEventListener = (stack: any) => {

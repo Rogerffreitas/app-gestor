@@ -1,40 +1,16 @@
-import { StrictBuilder } from "../../../services/StrictBuilder";
-import HttpClientGateway from "../../application/gateways/HttpClientGateway";
-import { AuthHttpResponse } from "../../entity/http/dtos/AuthHttpResponse";
-import { HttpRequest } from "../../entity/http/dtos/HttpRequest";
-import AuthServices from "../interfaces/AuthServices";
+import { injectable, inject } from 'inversify'
+import { HttpClientGateway } from '../../application/gateways/HttpClientGateway'
+import { AuthHttpResponse } from '../../entity/http/dtos/AuthHttpResponse'
+import { HttpRequest } from '../../entity/http/dtos/HttpRequest'
+import { AuthServices } from '../interfaces/AuthServices'
+import { TYPES } from '../../../infra/ioc/types'
 
+@injectable()
 export class AuthServicesImpl implements AuthServices {
-  private httpClientGateway: HttpClientGateway<AuthHttpResponse>;
+    constructor(@inject(TYPES.HttpClientGateway) private httpClient: HttpClientGateway) {}
 
-  constructor(httpClientGateway: HttpClientGateway<AuthHttpResponse>) {
-    this.httpClientGateway = httpClientGateway;
-  }
-  async loginByUsernameAndPassword(
-    request: HttpRequest
-  ): Promise<AuthHttpResponse> {
-    console.log("teste");
-    //return await this.httpClientGateway.httpRequestPost(request)
-    return StrictBuilder<AuthHttpResponse>()
-      .user({
-        id: "5411d7d2",
-        enterpriseId: "96d535819056",
-        isValid: true,
-        createdAt: 1756995113000,
-        updatedAt: 1756995113000,
-        username: "roger",
-        role: "ADMIN",
-        name: "Roger",
-        email: "rogerf@outlook.com",
-        profilePic: "default.png",
-        isConnected: false,
-      })
-      .enterprise({ name: "empresa" })
-      .token({
-        token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.yIiOiJyb2dlcmZmcmVpdGFzIiwiZX.VvasrDzb-SRB6DvhMIQGfuozX4h6IzlJNOHsF7-jKm0",
-        type: "Bearer",
-      })
-      .build();
-  }
+    async loginByUsernameAndPassword(request: HttpRequest): Promise<AuthHttpResponse> {
+        //console.log(request.baseURL + request.url)
+        return await this.httpClient.httpRequestPost<AuthHttpResponse>(request)
+    }
 }
