@@ -71,7 +71,6 @@ container.bind<SyncRepositoryGateway>(TYPES.SyncRepositoryGateway).to(SyncWaterm
 container.bind<SyncAdapter>(TYPES.SyncAdapter).to(SynchronizeWatermelonDBAdapter)
 container.bind<SyncServices>(TYPES.SyncServices).to(SyncServicesImpl).inSingletonScope()
 
-container.bind<AuthServices>(TYPES.AuthServices).to(AuthServicesImpl)
 container.bind<UserServices>(TYPES.UserServices).to(UserServicesImpl)
 
 container.bind<WorkServices>(TYPES.WorkServices).to(WorkServicesImpl)
