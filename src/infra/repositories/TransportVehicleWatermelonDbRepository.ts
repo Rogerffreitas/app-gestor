@@ -5,9 +5,7 @@ import { BankInformation } from '../../domin/entity/bank-information/BankInforma
 import { TransportVehicleEntity } from '../../domin/entity/transport-vehicle/TransportVehicleEntity'
 import { TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
-import { injectable } from 'inversify'
 
-@injectable()
 export class TransportVehicleWatermelonDbRepository implements TransportVehicleReposirotyGateway {
     async updateTransportVehicleBankInformation(
         id: string,

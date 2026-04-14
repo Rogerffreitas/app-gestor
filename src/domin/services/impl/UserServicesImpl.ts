@@ -4,12 +4,9 @@ import { HttpRequest } from '../../entity/http/dtos/HttpRequest'
 import { UserServices } from '../interfaces/UserServices'
 import UserDto from '../../entity/user/UserDto'
 import { UserRoles } from '../../../types'
-import { inject, injectable } from 'inversify'
-import { TYPES } from '../../../infra/ioc/types'
 
-@injectable()
 export class UserServicesImpl implements UserServices {
-    constructor(@inject(TYPES.HttpClientGateway) private httpClient: HttpClientGateway) {}
+    constructor(private httpClient: HttpClientGateway) {}
 
     async getAllRecordsByHttpRequest(request: HttpRequest, userRule: string): Promise<UserDto[]> {
         const result = await this.httpClient.getAllRecordsByHttpRequest<UserEntity>(request)

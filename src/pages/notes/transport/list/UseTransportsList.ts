@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react'
 import MaterialTransportDto from '../../../../domin/entity/material-transport/MaterialTransportDto'
-import { MaterialTransportServices } from '../../../../domin/services/interfaces/MaterialTransportServices'
 import { Alert } from 'react-native'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { useConfig } from '../../../../contexts/ConfigContext'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type TransportsListProp = RouteProp<RootStackParamList, ScreenNames.TRANSPORT_NOTE_LIST>
 
 export default function useTransportsList() {
-    const materialTransportServices = useInjection<MaterialTransportServices>('MaterialTransportServices')
+    const materialTransportServices = useInjection('MaterialTransportServices')
     const route = useRoute<TransportsListProp>()
     const { workId, transportVehicle } = route.params
     const navigation = useNavigation()

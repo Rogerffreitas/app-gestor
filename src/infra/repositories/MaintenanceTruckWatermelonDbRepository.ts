@@ -4,9 +4,7 @@ import { MaintenanceTruckRepositoryGateway } from '../../domin/application/gatew
 import { MaintenanceTruckEntity } from '../../domin/entity/maintenance-truck/MaintenanceTruckEntity'
 import { TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
-import { injectable } from 'inversify'
 
-@injectable()
 export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckRepositoryGateway {
     async createMaintenanceTruckInLocalDatabase(
         entity: MaintenanceTruckEntity

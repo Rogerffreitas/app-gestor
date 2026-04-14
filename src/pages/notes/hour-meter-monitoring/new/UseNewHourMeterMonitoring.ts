@@ -1,23 +1,19 @@
 import { useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { HourMeterMonitoringServices } from '../../../../domin/services/interfaces/HourMeterMonitoringServices'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import HourMeterMonitoringDto from '../../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
-import { EquipmentServices } from '../../../../domin/services/interfaces/EquipmentServices'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useApplicationContext } from '../../../../contexts/ApplicationContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type NewHourMeterMonitoringProp = RouteProp<RootStackParamList, ScreenNames.NEW_HOUR_METER_MONITORING>
 
 export default function useNewHourMeterMonitoring() {
-    const hourMeterMonitoringServices = useInjection<HourMeterMonitoringServices>(
-        'HourMeterMonitoringServices'
-    )
-    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const hourMeterMonitoringServices = useInjection('HourMeterMonitoringServices')
+    const equipmentServices = useInjection('EquipmentServices')
     const route = useRoute<NewHourMeterMonitoringProp>()
     const { workEquipment } = route.params
     const { work } = useApplicationContext()

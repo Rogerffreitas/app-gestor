@@ -42,6 +42,7 @@ export default class HourMeterMonitoringDto {
         this.createdAt = data.createdAt
         this.updatedAt = data.updatedAt
         this.status = data.status
+        this.observation = data.observation
         return this
     }
 }

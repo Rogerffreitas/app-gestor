@@ -6,13 +6,13 @@ import Container from '../../../../components/Container'
 import styled from 'styled-components/native'
 import formatarData from '../../../../services/formatarData'
 import { InvoiceStatus, RootStackParamList, ScreenNames, UserRoles } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { MaterialTransportServices } from '../../../../domin/services/interfaces/MaterialTransportServices'
+import { useInjection } from '@/src/contexts/InjectionContext'
 type TransportDetailsProp = RouteProp<RootStackParamList, ScreenNames.TRANSPORT_DETAILS>
 
 export default function TransportDetails() {
-    const materialTransportServices = useInjection<MaterialTransportServices>('MaterialTransportServices')
+    const materialTransportServices = useInjection('MaterialTransportServices')
     const route = useRoute<TransportDetailsProp>()
     const { materialTransport } = route.params
     const navigation = useNavigation()

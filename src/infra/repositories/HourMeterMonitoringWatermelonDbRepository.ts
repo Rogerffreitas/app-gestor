@@ -4,9 +4,7 @@ import HourMeterMonitoringModel from '../../database/model/HourMeterMonitoringMo
 import { HourMeterMonitoringRepositoryGateway } from '../../domin/application/gateways/HourMeterMonitoringRepositoryGateway'
 import { HourMeterMonitoringEntity } from '../../domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonitoringRepositoryGateway {
     async createHourMeterMonitoringInLocalDatabase(
         entity: HourMeterMonitoringEntity

@@ -4,9 +4,7 @@ import { MaterialTransportRepositoryGateway } from '../../domin/application/gate
 import { MaterialTransportEntity } from '../../domin/entity/material-transport/MaterialTransportEntity'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
-import { injectable } from 'inversify'
 
-@injectable()
 export class MaterialTransportWatermelonDbRepository implements MaterialTransportRepositoryGateway {
     async createMaterialTransportInLocalDatabase(
         entity: MaterialTransportEntity

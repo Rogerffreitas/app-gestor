@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../contexts/AuthContext'
-import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
 import { ToastAndroid } from 'react-native'
 import WorkDto from '../../../domin/entity/work/WorkDto'
 import { useNavigation } from '@react-navigation/native'
 import { ScreenNames } from '../../../types'
-import { useInjection } from '../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export function useWorksList() {
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const workServices = useInjection('WorkServices')
     const navigation = useNavigation()
     const { user } = useAuth()
     const [states, setStates] = useState({

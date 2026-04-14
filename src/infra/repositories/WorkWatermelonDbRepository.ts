@@ -5,9 +5,7 @@ import { WorkRepositoryGateway } from '../../domin/application/gateways/WorkRepo
 import WorkEntity from '../../domin/entity/work/WorkEntity'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     async createWorkInLocalDatabase(entity: WorkEntity): Promise<WorkEntity> {
         try {

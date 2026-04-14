@@ -4,9 +4,7 @@ import MaterialEntity from '../../domin/entity/material/MaterialEntity'
 import MaterialModel from '../../database/model/MaterialModel'
 import { MaterialRepositoryGateway } from '../../domin/application/gateways/MaterialRepositoryGateway'
 import { TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway {
     async createMaterialInLocalDatabase(entity: MaterialEntity): Promise<MaterialEntity> {
         try {

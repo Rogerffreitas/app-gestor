@@ -3,9 +3,7 @@ import { SyncPushResponse } from '../../interfaces/SyncPushResponse'
 import { database } from '../../database'
 import { TableName } from '../../types'
 import { SyncRepositoryGateway } from '../../domin/application/gateways/SyncRepositoryGateway'
-import { injectable } from 'inversify'
 
-@injectable()
 export class SyncWatermelonDbRepository implements SyncRepositoryGateway {
     async saveAllServerIds(syncData: SyncPushResponse): Promise<void> {
         //console.log(syncData)

@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { MaterialDto } from '../../../domin/entity/material/MaterialDto'
-import { MaterialServices } from '../../../domin/services/interfaces/MaterialServices'
-import { useInjection } from '../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../types'
 import { ToastAndroid } from 'react-native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type MaterialsListProp = RouteProp<RootStackParamList, ScreenNames.MATERIALS>
 
 export default function useMaterialsList() {
-    const materialServices = useInjection<MaterialServices>('MaterialServices')
+    const materialServices = useInjection('MaterialServices')
     const navigation = useNavigation()
     const route = useRoute<MaterialsListProp>()
     const { depositId } = route.params

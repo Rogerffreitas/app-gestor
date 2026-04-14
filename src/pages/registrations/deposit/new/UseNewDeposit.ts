@@ -1,15 +1,14 @@
 import { useState } from 'react'
-import { DepositServices } from '../../../../domin/services/interfaces/DepositServices'
 import DepositDto from '../../../../domin/entity/deposit/DepositDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function useNewDeposit() {
-    const depositServices = useInjection<DepositServices>('DepositServices')
+    const depositServices = useInjection('DepositServices')
     const navigation = useNavigation()
 
     const [states, setStates] = useState({

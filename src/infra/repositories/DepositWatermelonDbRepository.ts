@@ -4,9 +4,7 @@ import DepositModel from '../../database/model/DepositModel'
 import DepositEntity from '../../domin/entity/deposit/DepositEntity'
 import { DepositRepositoryGateway } from '../../domin/application/gateways/DepositRepositoryGateway'
 import { TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
     async createDepositInLocalDatabase(entity: DepositEntity): Promise<DepositEntity> {
         try {

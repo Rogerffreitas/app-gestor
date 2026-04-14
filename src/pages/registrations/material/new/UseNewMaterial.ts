@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { MaterialServices } from '../../../../domin/services/interfaces/MaterialServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
@@ -7,14 +6,16 @@ import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { MaterialDto } from '../../../../domin/entity/material/MaterialDto'
 import { Reference, RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
+import { useSync } from '@/src/infra/hooks/UseSync'
 
 type NewMaterialProp = RouteProp<RootStackParamList, ScreenNames.NEW_MATERIAL>
 
 export default function useNewMaterial() {
-    const materialServices = useInjection<MaterialServices>('MaterialServices')
+    const materialServices = useInjection('MaterialServices')
     const navigation = useNavigation()
     const route = useRoute<NewMaterialProp>()
+    const { performSync } = useSync()
     const { depositId } = route.params
     const [states, setStates] = useState({
         name: '',
@@ -58,7 +59,7 @@ export default function useNewMaterial() {
             )
             if (response.id) {
                 Alert.alert('Material Cadastrado')
-                //sincronizar()
+                performSync()
                 successVibration()
                 navigation.goBack()
             }
@@ -89,21 +90,5 @@ export default function useNewMaterial() {
         }
     }
 
-    /*async function sincronizar() {
-        setSyncState(true)
-        ToastAndroid.show('Sincronizando dados', ToastAndroid.LONG)
-        setTimeout(function () {
-            sync(token, Config.urlApi, signOut)
-                .then(() => {
-                    setSyncState(false)
-
-                    Config.lastConectionServer = Date.now()
-                })
-                .catch((err) => {
-                    console.log('sync:' + err)
-                    setSyncState(false)
-                })
-        }, 3000)
-    }*/
     return { states, erros, actions: { handleSubmitButton, onChange } }
 }

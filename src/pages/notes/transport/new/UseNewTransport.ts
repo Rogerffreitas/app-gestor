@@ -1,26 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ToastAndroid, Alert } from 'react-native'
 import { useAuth } from '../../../../contexts/AuthContext'
-import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import { MaterialTransportServices } from '../../../../domin/services/interfaces/MaterialTransportServices'
 import WorkRoutesDto from '../../../../domin/entity/work-routes/WorkRoutesDto'
-import { WorkRoutesServices } from '../../../../domin/services/interfaces/WorkRoutesServices'
 import { MaterialDto } from '../../../../domin/entity/material/MaterialDto'
-import { MaterialServices } from '../../../../domin/services/interfaces/MaterialServices'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import MaterialTransportDto from '../../../../domin/entity/material-transport/MaterialTransportDto'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { useApplicationContext } from '../../../../contexts/ApplicationContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type NewTransportProp = RouteProp<RootStackParamList, ScreenNames.NEW_TRANSPORT_NOTE>
 
 export default function useNewTransport() {
-    const materialServices = useInjection<MaterialServices>('MaterialServices')
-    const workRoutesServices = useInjection<WorkRoutesServices>('WorkRoutesServices')
-    const materialTransportServices = useInjection<MaterialTransportServices>('MaterialTransportServices')
+    const materialServices = useInjection('MaterialServices')
+    const workRoutesServices = useInjection('WorkRoutesServices')
+    const materialTransportServices = useInjection('MaterialTransportServices')
     const navigation = useNavigation()
     const route = useRoute<NewTransportProp>()
     const { transportVehicle } = route.params

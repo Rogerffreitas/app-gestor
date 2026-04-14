@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 
 export default function useLogin() {
-    const [username, setUsername] = useState('rogerffreitas')
+    const [username, setUsername] = useState('apontador')
     const [password, setPassword] = useState('apontador')
     const [erroMsgUsername, setErroMsgUsername] = useState(null)
     const [erroMsgPassword, setErroMsgPassword] = useState(null)

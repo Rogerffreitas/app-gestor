@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
 import DiscountDto from '../../../../domin/entity/discount/DiscountDto'
-import { DiscountServices } from '../../../../domin/services/interfaces/DiscountServices'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { InvoiceStatus, RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useSync } from '@/src/infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type EditDiscountProp = RouteProp<RootStackParamList, ScreenNames.EDIT_DISCOUNTS>
 
 export default function useEditDiscount() {
-    const discountServices = useInjection<DiscountServices>('DiscountServices')
+    const discountServices = useInjection('DiscountServices')
     const route = useRoute<EditDiscountProp>()
     const { discountId } = route.params
     const navigation = useNavigation()

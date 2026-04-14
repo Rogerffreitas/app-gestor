@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
-import { EquipmentServices } from '../../../../domin/services/interfaces/EquipmentServices'
 import EquipmentDto from '../../../../domin/entity/equipment/EquipmentDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { ScreenNames } from '../../../../types'
 import { useNavigation } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function useEquipmentList() {
-    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const equipmentServices = useInjection('EquipmentServices')
     const navigation = useNavigation()
 
     const [states, setStates] = useState({

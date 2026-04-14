@@ -1,16 +1,11 @@
-import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { WorkEquipmentRepositoryGateway } from '../../application/gateways/WorkEquipmentRepositoryGateway'
 import WorkEquipmentDto from '../../entity/work-equipment/WorkEquipmentDto'
 import { WorkEquipmentEntity } from '../../entity/work-equipment/WorkEquipmentEntity'
 import { WorkEquipmentServices } from '../interfaces/WorkEquipmentServices'
-import { inject, injectable } from 'inversify'
 
-@injectable()
 export class WorkEquipmentServicesImpl implements WorkEquipmentServices {
-    constructor(
-        @inject(TYPES.WorkEquipmentRepositoryGateway) private repository: WorkEquipmentRepositoryGateway
-    ) {}
+    constructor(private repository: WorkEquipmentRepositoryGateway) {}
 
     async loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,

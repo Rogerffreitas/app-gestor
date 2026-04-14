@@ -1,4 +1,3 @@
-import 'reflect-metadata'
 import { Database } from '@nozbe/watermelondb'
 import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import { FuelSupplyTypes, TableName, UserAction } from '../../../types'
@@ -11,9 +10,9 @@ import {
     entityMaintenanceTruckTank,
     entityTransportVehicle,
 } from './feke-data/FuelSupplyData'
-import { useInjection } from '../../hooks/useInjection'
-import { Container, inject, injectable } from 'inversify'
+
 import { FuelSupplyRepositoryGateway } from '../../../domin/application/gateways/FuelSupplyRepositoryGateway'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 const adapter = new LokiJSAdapter({
     dbName: 'TEST-DB',
@@ -31,7 +30,7 @@ describe('FuelSupplyWatermelonDbRepository', () => {
     let repository
 
     beforeEach(async () => {
-        repository = useInjection<FuelSupplyRepositoryGateway>('FuelSupplyRepositoryGateway')
+        repository = useInjection('FuelSupplyRepositoryGateway')
         await database.write(async () => {
             await database.get(TableName.FUEL_SUPPLYS).query().destroyAllPermanently()
         })

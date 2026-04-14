@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../contexts/AuthContext'
-import { FuelSupplyServices } from '../../../domin/services/interfaces/FuelSupplyServices'
 import { MaintenanceTruckDto } from '../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../services/VibrationService'
-import { MaintenanceTruckServices } from '../../../domin/services/interfaces/MaintenanceTruckServices'
-import { useInjection } from '../../../infra/hooks/useInjection'
 import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function useMaintenanceTruckFuelTank() {
-    const maintenanceTruckServices = useInjection<MaintenanceTruckServices>('MaintenanceTruckServices')
-    const fuelSupplyServices = useInjection<FuelSupplyServices>('FuelSupplyServices')
+    const maintenanceTruckServices = useInjection('MaintenanceTruckServices')
+    const fuelSupplyServices = useInjection('FuelSupplyServices')
     const navigation = useNavigation()
     const { work } = useApplicationContext()
     const { user } = useAuth()

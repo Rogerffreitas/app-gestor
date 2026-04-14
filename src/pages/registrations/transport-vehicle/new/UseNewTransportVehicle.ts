@@ -1,18 +1,18 @@
 import { useState } from 'react'
-import { TransportVehicleServices } from '../../../../domin/services/interfaces/TransportVehicleServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type NewTransportVehicleProp = RouteProp<RootStackParamList, ScreenNames.NEW_TRANSPORT_VEHICLE>
 
 export default function useNewTransportVehicle() {
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
     const navigation = useNavigation()
     const route = useRoute<NewTransportVehicleProp>()
     const { workId } = route.params

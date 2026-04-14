@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react'
-import { HourMeterMonitoringServices } from '../../../../domin/services/interfaces/HourMeterMonitoringServices'
 import HourMeterMonitoringDto from '../../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type HourMeterMonitoringListProp = RouteProp<RootStackParamList, ScreenNames.HOUR_METER_MONITORINGS_LIST>
 
 export default function useHourMeterMonitoringList() {
-    const hourMeterMonitoringServices = useInjection<HourMeterMonitoringServices>(
-        'HourMeterMonitoringServices'
-    )
+    const hourMeterMonitoringServices = useInjection('HourMeterMonitoringServices')
     const route = useRoute<HourMeterMonitoringListProp>()
     const { workEquipment, workId } = route.params
     const navigation = useNavigation()

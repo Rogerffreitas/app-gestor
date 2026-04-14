@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { DiscountServices } from '../../../../domin/services/interfaces/DiscountServices'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import DiscountDto from '../../../../domin/entity/discount/DiscountDto'
 import { errorVibration } from '../../../../services/VibrationService'
 import { Alert } from 'react-native'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type DiscountsListProp = RouteProp<RootStackParamList, ScreenNames.DISCOUNTS_LIST>
 
 export default function useDiscountsList() {
-    const discountServices = useInjection<DiscountServices>('DiscountServices')
+    const discountServices = useInjection('DiscountServices')
     const route = useRoute<DiscountsListProp>()
     const { type, transportVehicleOrWorkEquipmentId, workId } = route.params
     const navigation = useNavigation()

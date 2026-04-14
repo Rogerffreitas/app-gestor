@@ -6,14 +6,11 @@ import { WorkServices } from '../interfaces/WorkServices'
 import { HttpRequest } from '../../entity/http/dtos/HttpRequest'
 import { UserRoles } from '../../../types'
 import { ChangeErrorFields } from '../../../types'
-import { inject, injectable } from 'inversify'
-import { TYPES } from '../../../infra/ioc/types'
 
-@injectable()
 export class WorkServicesImpl implements WorkServices {
     constructor(
-        @inject(TYPES.WorkRepositoryGateway) private workRepository: WorkRepositoryGateway,
-        @inject(TYPES.HttpClientGateway) private httpClient: HttpClientGateway
+        private workRepository: WorkRepositoryGateway,
+        private httpClient: HttpClientGateway
     ) {}
 
     deleteWorkInLocalDatabase(id: string, userId: string) {

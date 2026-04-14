@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { MaintenanceTruckServices } from '../../../../domin/services/interfaces/MaintenanceTruckServices'
 import { MaintenanceTruckDto } from '../../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
-import { WorkServices } from '../../../../domin/services/interfaces/WorkServices'
 import WorkDto from '../../../../domin/entity/work/WorkDto'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type MaintenanceTrucksProp = RouteProp<RootStackParamList, ScreenNames.MAINTENANCE_TRUCKS>
 
 export default function useMaintenanceTrucks() {
-    const maintenanceTruckServices = useInjection<MaintenanceTruckServices>('MaintenanceTruckServices')
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const maintenanceTruckServices = useInjection('MaintenanceTruckServices')
+    const workServices = useInjection('WorkServices')
     const route = useRoute<MaintenanceTrucksProp>()
     const navigation = useNavigation()
     const { workId } = route.params

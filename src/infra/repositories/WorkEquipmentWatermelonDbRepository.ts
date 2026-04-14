@@ -4,9 +4,7 @@ import WorkEquipmentModel from '../../database/model/WorkEquipmentModel'
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import { TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentRepositoryGateway {
     async createWorkEquipmentInLocalDatabase(entity: WorkEquipmentEntity): Promise<WorkEquipmentEntity> {
         console.log('Creating WorkEquipment in the database')
@@ -44,11 +42,11 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
                 .fetchCount(),
             database
                 .get(TableName.FUEL_SUPPLYS)
-                .query(Q.where('transport_vehicle_or_equipment_id', id))
+                .query(Q.where('transport_vehicle_or_work_equipment_id', id))
                 .fetchCount(),
             database
                 .get(TableName.DISCOUNTS)
-                .query(Q.where('transport_vehicle_or_equipment_id', id))
+                .query(Q.where('transport_vehicle_or_work_equipment_id', id))
                 .fetchCount(),
         ])
 

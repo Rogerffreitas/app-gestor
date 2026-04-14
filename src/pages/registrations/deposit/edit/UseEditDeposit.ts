@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { DepositServices } from '../../../../domin/services/interfaces/DepositServices'
 import DepositDto from '../../../../domin/entity/deposit/DepositDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Alert, ToastAndroid } from 'react-native'
@@ -7,14 +6,13 @@ import { errorVibration, successVibration } from '../../../../services/Vibration
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
-import { SyncServices } from '../../../../domin/services/interfaces/SyncService'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type EditDepositProp = RouteProp<RootStackParamList, ScreenNames.EDIT_DEPOSIT>
 
 export default function useEditDeposit() {
-    const depositServices = useInjection<DepositServices>('DepositServices')
-    const syncServices = useInjection<SyncServices>('SyncServices')
+    const depositServices = useInjection('DepositServices')
+    const syncServices = useInjection('SyncServices')
     const navigation = useNavigation()
     const route = useRoute<EditDepositProp>()
     const { deposit } = route.params

@@ -5,9 +5,7 @@ import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import EquipmentModel from '../../database/model/EquipmentModel'
 import { TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway {
     async updateHourMeterOrOdometerInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity> {
         console.log('Updating equipment in the database')

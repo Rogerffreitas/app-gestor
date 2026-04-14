@@ -1,17 +1,11 @@
-import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { MaterialTransportRepositoryGateway } from '../../application/gateways/MaterialTransportRepositoryGateway'
 import MaterialTransportDto from '../../entity/material-transport/MaterialTransportDto'
 import { MaterialTransportEntity } from '../../entity/material-transport/MaterialTransportEntity'
 import { MaterialTransportServices } from '../interfaces/MaterialTransportServices'
-import { inject, injectable } from 'inversify'
 
-@injectable()
 export class MaterialTransportServicesImpl implements MaterialTransportServices {
-    constructor(
-        @inject(TYPES.MaterialTransportRepositoryGateway)
-        private repository: MaterialTransportRepositoryGateway
-    ) {}
+    constructor(private repository: MaterialTransportRepositoryGateway) {}
     async createMaterialTransportInLocalDatabase(
         dto: MaterialTransportDto,
         changeErrorFields: ChangeErrorFields

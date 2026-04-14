@@ -1,27 +1,26 @@
 import { useEffect, useState } from 'react'
-import { WorkRoutesServices } from '../../../../domin/services/interfaces/WorkRoutesServices'
-import { DepositServices } from '../../../../domin/services/interfaces/DepositServices'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import WorkDto from '../../../../domin/entity/work/WorkDto'
 import DepositDto from '../../../../domin/entity/deposit/DepositDto'
 import WorkRoutesDto from '../../../../domin/entity/work-routes/WorkRoutesDto'
-import { RootStackParamList, ScreenNames, UserAction } from '../../../../types'
+import { RootStackParamList, ScreenNames } from '../../../../types'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native'
-import { WorkServices } from '../../../../domin/services/interfaces/WorkServices'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
+import { useSync } from '@/src/infra/hooks/UseSync'
 
 type NewWorkRouteProp = RouteProp<RootStackParamList, ScreenNames.NEW_WORK_ROUTE>
 
 export default function useNewRoute() {
-    const workRoutesServices = useInjection<WorkRoutesServices>('WorkRoutesServices')
-    const depositServices = useInjection<DepositServices>('DepositServices')
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const workRoutesServices = useInjection('WorkRoutesServices')
+    const depositServices = useInjection('DepositServices')
+    const workServices = useInjection('WorkServices')
     const route = useRoute<NewWorkRouteProp>()
     const { workId } = route.params
     const navigation = useNavigation()
+    const { performSync } = useSync()
     const [states, setStates] = useState({
         arrivalLocation: '',
         departureLocation: '',
@@ -103,14 +102,13 @@ export default function useNewRoute() {
 
             if (result.id) {
                 Alert.alert('Rota Cadastrada')
-                //sincronizar()
+                performSync()
                 successVibration()
                 navigation.goBack()
             }
         } catch (error) {
-            console.log(error)
             setStates((state) => ({ ...state, isLoading: false }))
-            if (error.message == 'Entity validation failed') {
+            if (error.message.includes('Entity validation failed')) {
                 errorVibration()
                 ToastAndroid.show('Preencha todos os campos obrigatórios', ToastAndroid.LONG)
                 return
@@ -148,23 +146,6 @@ export default function useNewRoute() {
             }),
         }))
     }
-
-    /*async function sincronizar() {
-        setSyncState(true)
-        ToastAndroid.show('Sincronizando dados', ToastAndroid.LONG)
-        setTimeout(function () {
-            sync(token, Config.urlApi, signOut)
-                .then(() => {
-                    setSyncState(false)
-
-                    Config.lastConectionServer = Date.now()
-                })
-                .catch((err) => {
-                    console.log('sync:' + err)
-                    setSyncState(false)
-                })
-        }, 3000)
-    }*/
 
     return {
         states,

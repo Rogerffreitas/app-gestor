@@ -1,14 +1,11 @@
-import { inject, injectable } from 'inversify'
 import Token from '../../../interfaces/Token'
 import { SyncAdapter } from '../../application/infra/SyncAdapter'
 import { SyncServices } from '../interfaces/SyncService'
-import { TYPES } from '../../../infra/ioc/types'
 
 export type SyncStatus = 'idle' | 'syncing' | 'error' | 'success'
 
-@injectable()
 export class SyncServicesImpl implements SyncServices {
-    constructor(@inject(TYPES.SyncAdapter) private adapter: SyncAdapter) {}
+    constructor(private adapter: SyncAdapter) {}
 
     private _isSyncing = false
     private _status: SyncStatus = 'idle'

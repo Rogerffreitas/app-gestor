@@ -2,17 +2,16 @@ import { useEffect, useState } from 'react'
 import { BankInformation } from '../../../../domin/entity/bank-information/BankInformation'
 import { Alert } from 'react-native'
 import { Builder } from '../../../../services/Builder'
-import { TransportVehicleServices } from '../../../../domin/services/interfaces/TransportVehicleServices'
 import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { errorVibration } from '../../../../services/VibrationService'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type BankInfoProp = RouteProp<RootStackParamList, ScreenNames.BANK_INFO_TRANSPORT_VEHICLE>
 
 export default function useBankInfo() {
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
     const navigation = useNavigation()
     const route = useRoute<BankInfoProp>()
     const { transportVehicleId } = route.params

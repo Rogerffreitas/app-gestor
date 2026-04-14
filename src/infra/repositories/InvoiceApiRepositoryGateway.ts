@@ -1,14 +1,11 @@
-import { inject, injectable } from 'inversify'
 import { HttpClientGateway } from '../../domin/application/gateways/HttpClientGateway'
 import { InvoiceRepositoryGateway } from '../../domin/application/gateways/InvoiceRepositoryGateway'
 import { InvoiceEntity } from '../../domin/entity/invoice/InvoiceEntity'
-import { TYPES } from '../ioc/types'
 import { InvoiceDto } from '../../domin/entity/invoice/InvoiceDto'
 import Token from '../../interfaces/Token'
 
-@injectable()
 export class InvoiceApiRepositoryGateway implements InvoiceRepositoryGateway {
-    constructor(@inject(TYPES.HttpClientGateway) private httpClient: HttpClientGateway) {}
+    constructor(private httpClient: HttpClientGateway) {}
 
     async generateInvoiceAnalyticPdfFormat(
         baseURL: string,

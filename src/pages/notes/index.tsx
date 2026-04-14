@@ -10,12 +10,11 @@ import ItemObra from '../../components/List/ItemObra'
 import { DiscountTypes, FuelSupplyTypes, MenuOptionsNotesTypes, ScreenNames, UserRoles } from '../../types'
 import { errorVibration } from '../../services/VibrationService'
 import WorkDto from '../../domin/entity/work/WorkDto'
-import { WorkServices } from '../../domin/services/interfaces/WorkServices'
-import { useInjection } from '../../infra/hooks/useInjection'
 import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function Notes() {
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const workServices = useInjection('WorkServices')
     const navigation = useNavigation()
     const animation = useRef(null)
     const [type, setType] = useState<MenuOptionsNotesTypes>(null)

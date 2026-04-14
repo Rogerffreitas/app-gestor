@@ -1,11 +1,8 @@
 import { useCallback, useRef, useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useConfig } from '../../contexts/ConfigContext'
-import { SyncServices } from '../../domin/services/interfaces/SyncService'
-import { HttpClientGateway } from '../../domin/application/gateways/HttpClientGateway'
 import { HttpRequest } from '../../domin/entity/http/dtos/HttpRequest'
-import { SyncRepositoryGateway } from '../../domin/application/gateways/SyncRepositoryGateway'
-import { useInjection } from '../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type SyncButtonProps = {
     item: any
@@ -13,9 +10,9 @@ type SyncButtonProps = {
 }
 
 export function useSyncButton({ item, model }: SyncButtonProps) {
-    const syncServices = useInjection<SyncServices>('SyncServices')
-    const repository = useInjection<SyncRepositoryGateway>('SyncRepositoryGateway')
-    const httpClient = useInjection<HttpClientGateway>('HttpClientGateway')
+    const syncServices = useInjection('SyncServices')
+    const repository = useInjection('SyncRepositoryGateway')
+    const httpClient = useInjection('HttpClientGateway')
 
     const { token, signOut } = useAuth()
     const { config } = useConfig()
@@ -23,6 +20,7 @@ export function useSyncButton({ item, model }: SyncButtonProps) {
     const animation = useRef(null)
 
     const handleClickSyncButton = useCallback(async () => {
+        console.log(syncServices)
         if (syncState === 'synchronizing' || syncServices.getIsSyncing()) return
 
         setSyncState('synchronizing')

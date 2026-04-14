@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import EquipmentDto from '../../../../domin/entity/equipment/EquipmentDto'
-import { EquipmentServices } from '../../../../domin/services/interfaces/EquipmentServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useSync } from '@/src/infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type EditEquipmentProp = RouteProp<RootStackParamList, ScreenNames.EDIT_EQUIPMENT>
 
 export default function UseEditEquipment() {
-    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const equipmentServices = useInjection('EquipmentServices')
     const navigation = useNavigation()
     const route = useRoute<EditEquipmentProp>()
     const { equipment } = route.params

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
-import { WorkRoutesServices } from '../../../domin/services/interfaces/WorkRoutesServices'
 import WorkRoutesDto from '../../../domin/entity/work-routes/WorkRoutesDto'
-import { useInjection } from '../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../types'
 import { useAuth } from '../../../contexts/AuthContext'
-import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
 import WorkDto from '../../../domin/entity/work/WorkDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../services/VibrationService'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type WorkRoutesProp = RouteProp<RootStackParamList, ScreenNames.WORK_ROUTES>
 
 export function useRoutesList() {
-    const workRoutesServices = useInjection<WorkRoutesServices>('WorkRoutesServices')
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const workRoutesServices = useInjection('WorkRoutesServices')
+    const workServices = useInjection('WorkServices')
     const route = useRoute<WorkRoutesProp>()
     const navigation = useNavigation()
     const { workId } = route.params

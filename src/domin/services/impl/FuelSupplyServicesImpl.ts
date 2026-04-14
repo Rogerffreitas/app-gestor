@@ -1,14 +1,11 @@
-import { inject, injectable } from 'inversify'
 import { ChangeErrorFields } from '../../../types'
 import { FuelSupplyRepositoryGateway } from '../../application/gateways/FuelSupplyRepositoryGateway'
 import { FuelSupplyDto } from '../../entity/fuel-supply/FuelSupplyDto'
 import { FuelSupplyEntity } from '../../entity/fuel-supply/FuelSupplyEntity'
 import { FuelSupplyServices } from '../interfaces/FuelSupplyServices'
-import { TYPES } from '../../../infra/ioc/types'
 
-@injectable()
 export class FuelSupplyServicesImpl implements FuelSupplyServices {
-    constructor(@inject(TYPES.FuelSupplyRepositoryGateway) private repository: FuelSupplyRepositoryGateway) {}
+    constructor(private repository: FuelSupplyRepositoryGateway) {}
 
     async createFuelSupplyInLocalDatabase(
         dto: FuelSupplyDto,

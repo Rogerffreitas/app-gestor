@@ -3,15 +3,13 @@ import { useAuth } from '../../../../contexts/AuthContext'
 import { useConfig } from '../../../../contexts/ConfigContext'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
-import { WorkServices } from '../../../../domin/services/interfaces/WorkServices'
-import { UserServices } from '../../../../domin/services/interfaces/UserServices'
 import WorkDto from '../../../../domin/entity/work/WorkDto'
 import { UserRoles } from '../../../../types'
 import UserDto from '../../../../domin/entity/user/UserDto'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { useNavigation } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useSync } from '@/src/infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type UserSelectionList = {
     key: string
@@ -19,8 +17,8 @@ type UserSelectionList = {
 }
 
 export default function useNewWork() {
-    const workServices = useInjection<WorkServices>('WorkServices')
-    const userServices = useInjection<UserServices>('UserServices')
+    const workServices = useInjection('WorkServices')
+    const userServices = useInjection('UserServices')
     const navigation = useNavigation()
     const { performSync } = useSync()
 

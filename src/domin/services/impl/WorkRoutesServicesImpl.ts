@@ -1,14 +1,11 @@
-import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { WorkRoutesRepositoryGateway } from '../../application/gateways/WorkRoutesRepositoryGateway'
 import WorkRoutesDto from '../../entity/work-routes/WorkRoutesDto'
 import WorkRoutesEntity from '../../entity/work-routes/WorkRoutesEntity'
 import { WorkRoutesServices } from '../interfaces/WorkRoutesServices'
-import { inject, injectable } from 'inversify'
 
-@injectable()
 export class WorkRoutesServicesImpl implements WorkRoutesServices {
-    constructor(@inject(TYPES.WorkRoutesRepositoryGateway) private repository: WorkRoutesRepositoryGateway) {}
+    constructor(private repository: WorkRoutesRepositoryGateway) {}
 
     saveWorkRoutesServerId(dtos: WorkRoutesDto[]): void {
         this.saveWorkRoutesServerId(dtos)

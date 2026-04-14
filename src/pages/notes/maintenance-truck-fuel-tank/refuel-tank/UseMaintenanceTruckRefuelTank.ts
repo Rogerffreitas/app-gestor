@@ -1,19 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
-import { MaintenanceTruckDto } from '../../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
-import { FuelSupplyServices } from '../../../../domin/services/interfaces/FuelSupplyServices'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { FuelSupplyDto } from '../../../../domin/entity/fuel-supply/FuelSupplyDto'
 import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../../types'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type MaintenanceTruckRefuelTankProp = RouteProp<RootStackParamList, ScreenNames.MAINTENANCE_TRUCK_REFUEL_TANK>
 
 export default function useMaintenanceTruckRefuelTank() {
-    const fuelSupplyServices = useInjection<FuelSupplyServices>('FuelSupplyServices')
+    const fuelSupplyServices = useInjection('FuelSupplyServices')
 
     const route = useRoute<MaintenanceTruckRefuelTankProp>()
     const { maintenanceTruck, workId } = route.params

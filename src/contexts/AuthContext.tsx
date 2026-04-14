@@ -3,14 +3,11 @@ import { Alert, PermissionsAndroid, Platform } from 'react-native'
 import User from '../interfaces/User'
 import * as SecureStore from 'expo-secure-store'
 import Token from '../interfaces/Token'
-import { AuthServices } from '../domin/services/interfaces/AuthServices'
 import { HttpRequest } from '../domin/entity/http/dtos/HttpRequest'
 import { jwtDecode } from 'jwt-decode'
 import UserDto from '../domin/entity/user/UserDto'
 import EnterpriseDto from '../interfaces/EnterpriseDto'
-import { useInjection } from '../infra/hooks/useInjection'
-import { AuthServicesImpl } from '../domin/services/impl/AuthServicesImpl'
-import { AxiosHttpClientAdapter } from '../adapter/AxiosHttpClientAdapter'
+import { useInjection } from './InjectionContext'
 
 type AuthContextProviderProps = {
     children?: React.ReactNode | undefined
@@ -36,7 +33,8 @@ type jwtDecode = {
 const AuthContext = createContext({} as AuthContextType)
 
 export function AuthContextProvider(props: AuthContextProviderProps) {
-    const authServices = new AuthServicesImpl(new AxiosHttpClientAdapter())
+    const authServices = useInjection('AuthServices')
+
     const [firstAccess, setFirstAccess] = useState(true)
     const [user, setUser] = useState<User>()
     const [enterprise, setEnterprise] = useState<EnterpriseDto>()

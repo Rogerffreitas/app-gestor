@@ -1,19 +1,18 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useAuth } from '../../../../../contexts/AuthContext'
-import { InvoiceServices } from '../../../../../domin/services/interfaces/InvoiceServices'
-import { useInjection } from '../../../../../infra/hooks/useInjection'
 import { useEffect, useState } from 'react'
 import { InvoiceDto } from '../../../../../domin/entity/invoice/InvoiceDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../../types'
 import { useConfig } from '../../../../../contexts/ConfigContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type NewInvoiceProp = RouteProp<RootStackParamList, ScreenNames.NEW_INVOICE>
 type ViewType = 'transport' | 'hourMeter' | 'discount' | 'fuelSupply'
 
 export default function useNewInvoice() {
-    const invoiceServices = useInjection<InvoiceServices>('InvoiceServices')
+    const invoiceServices = useInjection('InvoiceServices')
     const navigation = useNavigation()
     const route = useRoute<NewInvoiceProp>()
     const { workId, type, transportVehicleOrWorkEquipment, startDate, endDate } = route.params

@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
-import { WorkServices } from '../../../../domin/services/interfaces/WorkServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useSync } from '@/src/infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type EditWorkProp = RouteProp<RootStackParamList, ScreenNames.EDIT_WORK>
 
 export default function useEditWork() {
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const workServices = useInjection('WorkServices')
     const route = useRoute<EditWorkProp>()
     const navigation = useNavigation()
     const { work } = route.params
@@ -73,6 +72,7 @@ export default function useEditWork() {
             await workServices.deleteWorkInLocalDatabase(work.id, user.id)
             Alert.alert('Obra Apagada')
             successVibration()
+            performSync()
             navigation.goBack()
         } catch (error) {
             if (error.message == 'Não é possível apagar a obra') {

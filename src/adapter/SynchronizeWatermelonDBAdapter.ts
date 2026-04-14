@@ -6,12 +6,9 @@ import { Alert } from 'react-native'
 import { SyncAdapter } from '../domin/application/infra/SyncAdapter'
 import { SyncPushResponse } from '../interfaces/SyncPushResponse'
 import { SyncRepositoryGateway } from '../domin/application/gateways/SyncRepositoryGateway'
-import { inject, injectable } from 'inversify'
-import { TYPES } from '../infra/ioc/types'
 
-@injectable()
 export class SynchronizeWatermelonDBAdapter implements SyncAdapter {
-    constructor(@inject(TYPES.SyncRepositoryGateway) private repository: SyncRepositoryGateway) {}
+    constructor(private repository: SyncRepositoryGateway) {}
 
     async sync(token: Token, url: string, signOut: () => void): Promise<SyncPushResponse> {
         let syncPushResponse = {} as SyncPushResponse

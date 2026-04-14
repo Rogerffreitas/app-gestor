@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react'
-import { FuelSupplyServices } from '../../../../../domin/services/interfaces/FuelSupplyServices'
-import { TransportVehicleServices } from '../../../../../domin/services/interfaces/TransportVehicleServices'
-import { WorkEquipmentServices } from '../../../../../domin/services/interfaces/WorkEquipmentServices'
 import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../../../types'
 import TransportVehicleDto from '../../../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
@@ -11,7 +8,7 @@ import { errorVibration, successVibration } from '../../../../../services/Vibrat
 import { FuelSupplyDto } from '../../../../../domin/entity/fuel-supply/FuelSupplyDto'
 import { StrictBuilder } from '../../../../../services/StrictBuilder'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type NewMaintenanceTruckFuelSupplyProp = RouteProp<
     RootStackParamList,
@@ -19,9 +16,9 @@ type NewMaintenanceTruckFuelSupplyProp = RouteProp<
 >
 
 export default function useNewMaintenanceTruckFuelSupply() {
-    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
-    const fuelSupplyServices = useInjection<FuelSupplyServices>('FuelSupplyServices')
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const workEquipmentServices = useInjection('WorkEquipmentServices')
+    const fuelSupplyServices = useInjection('FuelSupplyServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
     const route = useRoute<NewMaintenanceTruckFuelSupplyProp>()
     const { maintenanceTruck, type, workId } = route.params
     const navigation = useNavigation()

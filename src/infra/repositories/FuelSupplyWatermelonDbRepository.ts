@@ -4,9 +4,7 @@ import FuelSupplyModel from '../../database/model/FuelSupplyModel'
 import { FuelSupplyRepositoryGateway } from '../../domin/application/gateways/FuelSupplyRepositoryGateway'
 import { FuelSupplyEntity } from '../../domin/entity/fuel-supply/FuelSupplyEntity'
 import { FuelSupplyTypes, InvoiceStatus, TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGateway {
     async createFuelSupplyInLocalDatabase(entity: FuelSupplyEntity): Promise<FuelSupplyEntity> {
         console.log('Creating Fuel Supply in the database')

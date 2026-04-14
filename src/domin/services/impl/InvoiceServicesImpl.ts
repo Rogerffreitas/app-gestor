@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify'
 import { InvoiceServices } from '../interfaces/InvoiceServices'
 import { InvoiceDto } from '../../entity/invoice/InvoiceDto'
 import { TYPES } from '../../../infra/ioc/types'
@@ -6,9 +5,8 @@ import Token from '../../../interfaces/Token'
 import { InvoiceRepositoryGateway } from '../../application/gateways/InvoiceRepositoryGateway'
 import { InvoiceEntity } from '../../entity/invoice/InvoiceEntity'
 
-@injectable()
 export class InvoiceServicesImpl implements InvoiceServices {
-    constructor(@inject(TYPES.InvoiceRepositoryGateway) private repository: InvoiceRepositoryGateway) {}
+    constructor(private repository: InvoiceRepositoryGateway) {}
 
     async generateInvoiceAnalyticPdfFormat(
         baseURL: string,

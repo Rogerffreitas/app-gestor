@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
-import { SyncServices } from '../../domin/services/interfaces/SyncService'
-import { useInjection } from './useInjection'
 import { useAuth } from '../../contexts/AuthContext'
 import { useConfig } from '../../contexts/ConfigContext'
 import { Alert, ToastAndroid } from 'react-native'
 import { useNetwork } from '@/src/contexts/NetworkContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export function useSync() {
-    const syncServices = useInjection<SyncServices>('SyncServices')
+    const syncServices = useInjection('SyncServices')
     const [syncState, setSyncState] = useState<boolean>(false)
     const [status, setStatus] = useState(syncServices.getStatus())
     const Auth = useAuth()

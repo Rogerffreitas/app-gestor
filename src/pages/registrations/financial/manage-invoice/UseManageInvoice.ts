@@ -5,9 +5,8 @@ import { useConfig } from '../../../../contexts/ConfigContext'
 import { InvoiceDto } from '../../../../domin/entity/invoice/InvoiceDto'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
-import { InvoiceServices } from '../../../../domin/services/interfaces/InvoiceServices'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { errorVibration } from '../../../../services/VibrationService'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type ManageInvoiceProp = RouteProp<RootStackParamList, ScreenNames.MANAGE_INVOICE>
 
@@ -15,7 +14,7 @@ export default function useManageInvoice() {
     const route = useRoute<ManageInvoiceProp>()
     const navigation = useNavigation()
     const { workId, type } = route.params
-    const invoiceServices = useInjection<InvoiceServices>('InvoiceServices')
+    const invoiceServices = useInjection('InvoiceServices')
     const { user, token } = useAuth()
     const { config } = useConfig()
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
 import TransportVehicleDto from '../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import WorkDto from '../../../domin/entity/work/WorkDto'
 import { useAuth } from '../../../contexts/AuthContext'
@@ -8,13 +7,12 @@ import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
 import { errorVibration } from '../../../services/VibrationService'
 import { Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { useInjection } from '../../../infra/hooks/useInjection'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function useTransportVehiclesList() {
-    const workServices = useInjection<WorkServices>('WorkServices')
-
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const workServices = useInjection('WorkServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
     const navigation = useNavigation()
     const { work, saveWork } = useApplicationContext()
     const [states, setStates] = useState({

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
-import { WorkEquipmentServices } from '../../../../domin/services/interfaces/WorkEquipmentServices'
 import { useAuth } from '../../../../contexts/AuthContext'
 import WorkEquipmentDto from '../../../../domin/entity/work-equipment/WorkEquipmentDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { WorkServices } from '../../../../domin/services/interfaces/WorkServices'
 import WorkDto from '../../../../domin/entity/work/WorkDto'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type WorkEquipmentListProp = RouteProp<RootStackParamList, ScreenNames.WORK_EQUIPMENTS_LIST>
 
 export default function useWorkEquipmentList() {
-    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
-    const workServices = useInjection<WorkServices>('WorkServices')
+    const workEquipmentServices = useInjection('WorkEquipmentServices')
+    const workServices = useInjection('WorkServices')
     const navigation = useNavigation()
     const route = useRoute<WorkEquipmentListProp>()
     const { workId } = route.params

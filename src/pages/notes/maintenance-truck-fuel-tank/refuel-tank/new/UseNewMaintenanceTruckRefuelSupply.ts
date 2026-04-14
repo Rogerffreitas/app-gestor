@@ -1,13 +1,12 @@
 import { useState } from 'react'
-import { FuelSupplyServices } from '../../../../../domin/services/interfaces/FuelSupplyServices'
 import { useAuth } from '../../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../../services/StrictBuilder'
 import { FuelSupplyDto } from '../../../../../domin/entity/fuel-supply/FuelSupplyDto'
 import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../../../types'
-import { useInjection } from '../../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type MaintenanceTruckRefuelTankProp = RouteProp<
     RootStackParamList,
@@ -15,7 +14,7 @@ type MaintenanceTruckRefuelTankProp = RouteProp<
 >
 
 export default function useNewMaintenanceTruckRefuelSupply() {
-    const fuelSupplyServices = useInjection<FuelSupplyServices>('FuelSupplyServices')
+    const fuelSupplyServices = useInjection('FuelSupplyServices')
     const route = useRoute<MaintenanceTruckRefuelTankProp>()
     const { maintenanceTruck, workId } = route.params
     const navigation = useNavigation()

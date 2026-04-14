@@ -4,13 +4,12 @@ import { InvoiceDto } from '../../../../../domin/entity/invoice/InvoiceDto'
 import { useEffect, useState } from 'react'
 import { useConfig } from '../../../../../contexts/ConfigContext'
 import { useAuth } from '../../../../../contexts/AuthContext'
-import { useInjection } from '../../../../../infra/hooks/useInjection'
-import { InvoiceServices } from '../../../../../domin/services/interfaces/InvoiceServices'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../../services/VibrationService'
 import MaterialTransportDto from '../../../../../domin/entity/material-transport/MaterialTransportDto'
 import HourMeterMonitoringDto from '../../../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import * as Print from 'expo-print'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type InvoiceDetailsProp = RouteProp<RootStackParamList, ScreenNames.INVOICE_DETAILS>
 type ViewType = 'transport' | 'hourMeter' | 'discount' | 'fuelSupply'
@@ -19,7 +18,7 @@ export default function useInvoiceDetails() {
     const route = useRoute<InvoiceDetailsProp>()
     const navigation = useNavigation()
     const { workId, invoiceId } = route.params
-    const invoiceServices = useInjection<InvoiceServices>('InvoiceServices')
+    const invoiceServices = useInjection('InvoiceServices')
     const { user, token } = useAuth()
     const { config } = useConfig()
 

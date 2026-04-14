@@ -1,17 +1,11 @@
-import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { MaintenanceTruckRepositoryGateway } from '../../application/gateways/MaintenanceTruckRepositoryGateway'
 import { MaintenanceTruckDto } from '../../entity/maintenance-truck/MaintenanceTruckDto'
 import { MaintenanceTruckEntity } from '../../entity/maintenance-truck/MaintenanceTruckEntity'
 import { MaintenanceTruckServices } from '../interfaces/MaintenanceTruckServices'
-import { inject, injectable } from 'inversify'
 
-@injectable()
 export class MaintenanceTruckServicesImpl implements MaintenanceTruckServices {
-    constructor(
-        @inject(TYPES.MaintenanceTruckRepositoryGateway)
-        private repository: MaintenanceTruckRepositoryGateway
-    ) {}
+    constructor(private repository: MaintenanceTruckRepositoryGateway) {}
 
     async createMaintenanceTruckInLocalDatabase(
         dto: MaintenanceTruckDto,

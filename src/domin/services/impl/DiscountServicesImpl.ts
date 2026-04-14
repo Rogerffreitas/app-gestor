@@ -1,14 +1,11 @@
-import { inject, injectable } from 'inversify'
 import { ChangeErrorFields } from '../../../types'
 import { DiscountRepositoryGateway } from '../../application/gateways/DiscountRepositoryGateway'
 import DiscountDto from '../../entity/discount/DiscountDto'
 import DiscountEntity from '../../entity/discount/DiscountEntity'
 import { DiscountServices } from '../interfaces/DiscountServices'
-import { TYPES } from '../../../infra/ioc/types'
 
-@injectable()
 export class DiscountServicesImpl implements DiscountServices {
-    constructor(@inject(TYPES.DiscountRepositoryGateway) private repository: DiscountRepositoryGateway) {}
+    constructor(private repository: DiscountRepositoryGateway) {}
 
     async createDiscountInLocalDatabase(
         dto: DiscountDto,

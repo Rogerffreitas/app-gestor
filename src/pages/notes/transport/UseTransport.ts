@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react'
 import TransportVehicleDto from '../../../domin/entity/transport-vehicle/TransportVehicleDto'
 import { Alert } from 'react-native'
 import { useAuth } from '../../../contexts/AuthContext'
-import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
 import { ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
 import { useNavigation } from '@react-navigation/native'
-import { useInjection } from '../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function useTransport() {
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
     const navigation = useNavigation()
     const { user } = useAuth()
 

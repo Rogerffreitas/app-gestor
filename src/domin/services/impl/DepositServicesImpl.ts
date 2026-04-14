@@ -1,14 +1,11 @@
-import { injectable, inject } from 'inversify'
 import { ChangeErrorFields } from '../../../types'
 import { DepositRepositoryGateway } from '../../application/gateways/DepositRepositoryGateway'
 import DepositDto from '../../entity/deposit/DepositDto'
 import DepositEntity from '../../entity/deposit/DepositEntity'
 import { DepositServices } from '../interfaces/DepositServices'
-import { TYPES } from '../../../infra/ioc/types'
 
-@injectable()
 export class DepositServicesImpl implements DepositServices {
-    constructor(@inject(TYPES.DepositRepositoryGateway) private repository: DepositRepositoryGateway) {}
+    constructor(private repository: DepositRepositoryGateway) {}
     saveDepositServerId(dto: DepositDto): void {
         this.saveDepositServerId(dto)
     }

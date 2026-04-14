@@ -1,5 +1,4 @@
 import { Alert, ToastAndroid } from 'react-native'
-import { MaterialServices } from '../../../../domin/services/interfaces/MaterialServices'
 import { MaterialDto } from '../../../../domin/entity/material/MaterialDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Reference, RootStackParamList, ScreenNames } from '../../../../types'
@@ -7,13 +6,13 @@ import { useState } from 'react'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useSync } from '../../../../infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type EditMaterialProp = RouteProp<RootStackParamList, ScreenNames.EDIT_MATERIAL>
 
 export default function useEditMaterial() {
-    const materialServices = useInjection<MaterialServices>('MaterialServices')
+    const materialServices = useInjection('MaterialServices')
     const navigation = useNavigation()
     const route = useRoute<EditMaterialProp>()
     const { material } = route.params
@@ -99,6 +98,7 @@ export default function useEditMaterial() {
             await materialServices.deleteMaterialInLocalDatabase(material.id, user.id)
 
             Alert.alert('Material Apagado')
+            performSync()
             navigation.goBack()
         } catch (error) {
             console.log(error)

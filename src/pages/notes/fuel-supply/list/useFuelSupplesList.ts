@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { FuelSupplyServices } from '../../../../domin/services/interfaces/FuelSupplyServices'
 import { FuelSupplyDto } from '../../../../domin/entity/fuel-supply/FuelSupplyDto'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type FuelSupplesListProp = RouteProp<RootStackParamList, ScreenNames.FUEL_SUPPLY_LIST>
 
 export default function useFuelSupplesList() {
-    const fuelSupplyServices = useInjection<FuelSupplyServices>('FuelSupplyServices')
+    const fuelSupplyServices = useInjection('FuelSupplyServices')
     const route = useRoute<FuelSupplesListProp>()
     const { type, transportVehicleOrWorkEquipmentId, workId } = route.params
     const navigation = useNavigation()

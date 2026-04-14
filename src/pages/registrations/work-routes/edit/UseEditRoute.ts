@@ -3,19 +3,20 @@ import { useAuth } from '../../../../contexts/AuthContext'
 import WorkRoutesDto from '../../../../domin/entity/work-routes/WorkRoutesDto'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
-import { WorkRoutesServices } from '../../../../domin/services/interfaces/WorkRoutesServices'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
+import { useSync } from '@/src/infra/hooks/UseSync'
 
 type EditWorkRouteProp = RouteProp<RootStackParamList, ScreenNames.EDIT_WORK_ROUTE>
 
 export default function useEditRoute() {
-    const workRoutesServices = useInjection<WorkRoutesServices>('WorkRoutesServices')
+    const workRoutesServices = useInjection('WorkRoutesServices')
     const route = useRoute<EditWorkRouteProp>()
     const { workRoute } = route.params
     const navigation = useNavigation()
+    const { performSync } = useSync()
 
     const [states, setStates] = useState({
         arrivalLocation: workRoute.arrivalLocation,
@@ -66,11 +67,12 @@ export default function useEditRoute() {
             )
             Alert.alert('Rota Editada')
             successVibration()
+            performSync()
             navigation.goBack()
         } catch (error) {
             console.log(error)
             setStates((state) => ({ ...state, isLoading: false }))
-            if (error.message == 'Entity validation failed') {
+            if (error.message.includes('Entity validation failed')) {
                 errorVibration()
                 ToastAndroid.show('Preencha todos os campos obrigatórios', ToastAndroid.LONG)
                 return
@@ -103,6 +105,7 @@ export default function useEditRoute() {
             await workRoutesServices.deleteWorkRoutesInLocalDatabase(workRoute.id, user.id)
             Alert.alert('Rota Apagada')
             successVibration()
+            performSync()
             navigation.goBack()
         } catch (err) {
             if (err.message == 'Não é possível apagar a Rota') {

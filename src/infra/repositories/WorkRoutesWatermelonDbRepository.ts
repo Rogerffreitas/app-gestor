@@ -5,9 +5,7 @@ import { WorkRoutesRepositoryGateway } from '../../domin/application/gateways/Wo
 import WorkRoutesModel from '../../database/model/WorkRouteModel'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGateway {
     async createWorkRoutesInLocalDatabase(entity: WorkRoutesEntity): Promise<WorkRoutesEntity> {
         try {

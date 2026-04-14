@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import { EquipmentServices } from '../../../../domin/services/interfaces/EquipmentServices'
 import { BankInformation } from '../../../../domin/entity/bank-information/BankInformation'
 import { Alert } from 'react-native'
 import { Builder } from '../../../../services/Builder'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { useInjection } from '../../../../infra/hooks/useInjection'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type BankInfoProp = RouteProp<RootStackParamList, ScreenNames.EDIT_EQUIPMENT>
 
 export default function useBankInfo() {
-    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const equipmentServices = useInjection('EquipmentServices')
     const navigation = useNavigation()
     const route = useRoute<BankInfoProp>()
     const { equipment } = route.params

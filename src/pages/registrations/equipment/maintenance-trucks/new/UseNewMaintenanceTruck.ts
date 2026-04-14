@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { MaintenanceTruckServices } from '../../../../../domin/services/interfaces/MaintenanceTruckServices'
-import { UserServices } from '../../../../../domin/services/interfaces/UserServices'
-import { WorkEquipmentServices } from '../../../../../domin/services/interfaces/WorkEquipmentServices'
 import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
 import { useAuth } from '../../../../../contexts/AuthContext'
 import UserDto from '../../../../../domin/entity/user/UserDto'
@@ -11,9 +8,9 @@ import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../../services/StrictBuilder'
 import { MaintenanceTruckDto } from '../../../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { useConfig } from '../../../../../contexts/ConfigContext'
-import { useInjection } from '../../../../../infra/hooks/useInjection'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useSync } from '@/src/infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type UserSelectionList = {
     key: string
@@ -23,9 +20,9 @@ type UserSelectionList = {
 type NewMaintenanceTrucksProp = RouteProp<RootStackParamList, ScreenNames.NEW_MAINTENANCE_TRUCKS>
 
 export default function useNewMaintenanceTrucks() {
-    const userServices = useInjection<UserServices>('UserServices')
-    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
-    const maintenanceTruckServices = useInjection<MaintenanceTruckServices>('MaintenanceTruckServices')
+    const userServices = useInjection('UserServices')
+    const workEquipmentServices = useInjection('WorkEquipmentServices')
+    const maintenanceTruckServices = useInjection('MaintenanceTruckServices')
     const navigation = useNavigation()
     const route = useRoute<NewMaintenanceTrucksProp>()
     const { workId, workEquipmentIds } = route.params

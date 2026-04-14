@@ -1,13 +1,11 @@
 import { useRef, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
-import { EquipmentServices } from '../../../../domin/services/interfaces/EquipmentServices'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import EquipmentDto from '../../../../domin/entity/equipment/EquipmentDto'
-import { UserAction } from '../../../../types'
 import { Alert, ToastAndroid } from 'react-native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useNavigation } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 enum EquipmentOrVehicle {
     EQUIPMENT = 'Máquina',
@@ -15,7 +13,7 @@ enum EquipmentOrVehicle {
 }
 
 export default function useNewEquipment() {
-    const equipmentServices = useInjection<EquipmentServices>('EquipmentServices')
+    const equipmentServices = useInjection('EquipmentServices')
     const navigation = useNavigation()
 
     const [states, setStates] = useState({

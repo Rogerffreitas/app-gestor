@@ -2,26 +2,23 @@ import { useNavigation } from '@react-navigation/native'
 import { useEffect, useRef, useState } from 'react'
 import { useNetwork } from '../../../contexts/NetworkContext'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
-import { useInjection } from '../../../infra/hooks/useInjection'
-import { WorkServices } from '../../../domin/services/interfaces/WorkServices'
 import WorkDto from '../../../domin/entity/work/WorkDto'
 import { useAuth } from '../../../contexts/AuthContext'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../services/VibrationService'
 import WorkEquipmentDto from '../../../domin/entity/work-equipment/WorkEquipmentDto'
 import TransportVehicleDto from '../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import { WorkEquipmentServices } from '../../../domin/services/interfaces/WorkEquipmentServices'
-import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
 import { InvoiceTypes, ScreenNames } from '../../../types'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type MenuOptionsTypes = 'Equipamentos' | 'Caçambas'
 
 type ScreenTypes = 'Gerar fatura' | 'Gerenciar faturas'
 
 export default function useFinancial() {
-    const workServices = useInjection<WorkServices>('WorkServices')
-    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const workServices = useInjection('WorkServices')
+    const workEquipmentServices = useInjection('WorkEquipmentServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
 
     const navigation = useNavigation()
     const { isConnected } = useNetwork()

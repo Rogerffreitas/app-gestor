@@ -2,20 +2,16 @@ import { useEffect, useState } from 'react'
 import WorkEquipmentDto from '../../../domin/entity/work-equipment/WorkEquipmentDto'
 import { ScreenNames } from '../../../types'
 import { useAuth } from '../../../contexts/AuthContext'
-import { HourMeterMonitoringServices } from '../../../domin/services/interfaces/HourMeterMonitoringServices'
-import { WorkEquipmentServices } from '../../../domin/services/interfaces/WorkEquipmentServices'
 import { errorVibration } from '../../../services/VibrationService'
 import { Alert } from 'react-native'
 import HourMeterMonitoringDto from '../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { useNavigation } from '@react-navigation/native'
-import { useInjection } from '../../../infra/hooks/useInjection'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 export default function useHourMeterMonitoring() {
-    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
-    const hourMeterMonitoringServices = useInjection<HourMeterMonitoringServices>(
-        'HourMeterMonitoringServices'
-    )
+    const workEquipmentServices = useInjection('WorkEquipmentServices')
+    const hourMeterMonitoringServices = useInjection('HourMeterMonitoringServices')
     const navigation = useNavigation()
     const { user } = useAuth()
     const { work } = useApplicationContext()

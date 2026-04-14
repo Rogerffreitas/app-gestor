@@ -5,17 +5,15 @@ import WorkEquipmentDto from '../../../domin/entity/work-equipment/WorkEquipment
 import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'
 import { Alert } from 'react-native'
-import { WorkEquipmentServices } from '../../../domin/services/interfaces/WorkEquipmentServices'
-import { useInjection } from '../../../infra/hooks/useInjection'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { TransportVehicleServices } from '../../../domin/services/interfaces/TransportVehicleServices'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type FuelSuppliesProp = RouteProp<RootStackParamList, ScreenNames.FUEL_SUPPLIES>
 
 export default function useFuelSupplies() {
-    const workEquipmentServices = useInjection<WorkEquipmentServices>('WorkEquipmentServices')
-    const transportVehicleServices = useInjection<TransportVehicleServices>('TransportVehicleServices')
+    const workEquipmentServices = useInjection('WorkEquipmentServices')
+    const transportVehicleServices = useInjection('TransportVehicleServices')
     const route = useRoute<FuelSuppliesProp>()
     const { type } = route.params
     const navigation = useNavigation()

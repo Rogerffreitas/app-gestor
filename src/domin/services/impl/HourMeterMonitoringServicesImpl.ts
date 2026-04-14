@@ -1,17 +1,11 @@
-import { TYPES } from '../../../infra/ioc/types'
 import { ChangeErrorFields } from '../../../types'
 import { HourMeterMonitoringRepositoryGateway } from '../../application/gateways/HourMeterMonitoringRepositoryGateway'
 import HourMeterMonitoringDto from '../../entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { HourMeterMonitoringEntity } from '../../entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 import { HourMeterMonitoringServices } from '../interfaces/HourMeterMonitoringServices'
-import { inject, injectable } from 'inversify'
 
-@injectable()
 export class HourMeterMonitoringServicesImpl implements HourMeterMonitoringServices {
-    constructor(
-        @inject(TYPES.HourMeterMonitoringRepositoryGateway)
-        private repository: HourMeterMonitoringRepositoryGateway
-    ) {}
+    constructor(private repository: HourMeterMonitoringRepositoryGateway) {}
 
     async createHourMeterMonitoringInLocalDatabase(
         dto: HourMeterMonitoringDto,

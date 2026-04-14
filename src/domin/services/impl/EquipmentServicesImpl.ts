@@ -1,15 +1,12 @@
-import { inject, injectable } from 'inversify'
 import { ChangeErrorFields } from '../../../types'
 import { EquipmentRepositoryGateway } from '../../application/gateways/EquipmentRepositoryGateway'
 import { BankInformation } from '../../entity/bank-information/BankInformation'
 import EquipmentDto from '../../entity/equipment/EquipmentDto'
 import { EquipmentEntity } from '../../entity/equipment/EquipmentEntity'
 import { EquipmentServices } from '../interfaces/EquipmentServices'
-import { TYPES } from '../../../infra/ioc/types'
 
-@injectable()
 export class EquipmentServicesImpl implements EquipmentServices {
-    constructor(@inject(TYPES.EquipmentRepositoryGateway) private repository: EquipmentRepositoryGateway) {}
+    constructor(private repository: EquipmentRepositoryGateway) {}
 
     async updateHourMeterOrOdometerInLocalDatabase(
         dto: EquipmentDto,

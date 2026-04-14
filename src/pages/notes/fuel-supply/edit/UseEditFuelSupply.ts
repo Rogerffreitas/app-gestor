@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { FuelSupplyDto } from '../../../../domin/entity/fuel-supply/FuelSupplyDto'
-import { FuelSupplyServices } from '../../../../domin/services/interfaces/FuelSupplyServices'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { InvoiceStatus, RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { useInjection } from '../../../../infra/hooks/useInjection'
 import { useSync } from '@/src/infra/hooks/UseSync'
+import { useInjection } from '@/src/contexts/InjectionContext'
 
 type EditFuelSupplyProp = RouteProp<RootStackParamList, ScreenNames.EDIT_FUEL_SUPPLY>
 
 export default function useEditFuelSupply() {
-    const fuelSupplyServices = useInjection<FuelSupplyServices>('FuelSupplyServices')
+    const fuelSupplyServices = useInjection('FuelSupplyServices')
     const route = useRoute<EditFuelSupplyProp>()
     const { fuelSupply } = route.params
     const navigation = useNavigation()

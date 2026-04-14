@@ -4,9 +4,7 @@ import DiscountModel from '../../database/model/DiscountModel'
 import { DiscountRepositoryGateway } from '../../domin/application/gateways/DiscountRepositoryGateway'
 import DiscountEntity from '../../domin/entity/discount/DiscountEntity'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
-import { injectable } from 'inversify'
 
-@injectable()
 export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway {
     async createDiscountInLocalDatabase(entity: DiscountEntity): Promise<DiscountEntity> {
         console.log('Creating Discount in the database')
