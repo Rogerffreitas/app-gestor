@@ -25,7 +25,6 @@ export default function LoginScreen() {
         setErroMsgUsername,
         setErroMsgPassword,
     } = useLogin()
-    const { config } = useConfig()
 
     return (
         <LinearGradient
@@ -42,18 +41,6 @@ export default function LoginScreen() {
                 <FormComponent>
                     <ImageIcon source={require('../../../assets/image/icon.png')} />
                     <DescriptionTextInput description={'Usuário:* '} erroMenssage={erroMsgUsername} />
-
-                    <InputStyled
-                        placeholder={'Usuário'}
-                        autoCapitalize={'none'}
-                        autoCorrect={false}
-                        value={config.urlApi}
-                        secureTextEntry={false}
-                        onChangeText={(text) => {
-                            setUsername(text)
-                            setErroMsgUsername(null)
-                        }}
-                    />
                     <InputStyled
                         placeholder={'Usuário'}
                         autoCapitalize={'none'}

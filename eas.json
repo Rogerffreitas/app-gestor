@@ -7,17 +7,12 @@
         "development": {
             "developmentClient": true,
             "distribution": "internal",
-            "autoIncrement": true,
-            "android": {
-                "versionSource": "remote"
-            }
+            "autoIncrement": true
         },
         "preview": {
             "distribution": "internal",
             "autoIncrement": true,
-            "android": {
-                "versionSource": "remote"
-            },
+
             "env": {
                 "EXPO_PUBLIC_URL_API": "http://164.152.34.165:3000/api/v1",
                 "EXPO_PUBLIC_URL_LOGIN": "/auth/signin",
@@ -27,10 +22,7 @@
             }
         },
         "production": {
-            "autoIncrement": true,
-            "android": {
-                "versionSource": "remote"
-            }
+            "autoIncrement": true
         }
     },
     "submit": {
