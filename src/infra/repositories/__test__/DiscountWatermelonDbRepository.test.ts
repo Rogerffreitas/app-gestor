@@ -44,12 +44,14 @@ describe('DiscountWatermelonDbRepository', () => {
         })
 
         it('You should search for a model by ID, update it, and return an entity.', async () => {
+            const entityReturned = await repository.createDiscountInLocalDatabase(discountEntityT)
             const list = await repository.loadAllDiscountByEnterpriseIdAndWorkIdFromLocalDatabase(
-                discountEntityT.enterpriseId,
-                discountEntityT.workId,
-                DiscountTypes.TRANSPORT_VEHICLE,
-                discountEntityT.transportVehicleOrWorkEquipmentId
+                entityReturned.enterpriseId,
+                entityReturned.workId,
+                entityReturned.discountType,
+                entityReturned.transportVehicleOrWorkEquipmentId
             )
+            console.info(list)
             const result = await repository.updateDiscountInLocalDatabase(list[0])
             expect(result.userAction).toBe(UserAction.UPDATE)
         })
