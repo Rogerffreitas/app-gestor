@@ -31,8 +31,9 @@ import { SyncServicesImpl } from '@/src/domin/services/impl/SyncServicesImpl'
 import { UserServicesImpl } from '@/src/domin/services/impl/UserServicesImpl'
 import { WorkServicesImpl } from '@/src/domin/services/impl/WorkServicesImpl'
 import { AuthServicesImpl } from '@/src/domin/services/impl/AuthServicesImpl'
+import { FetchHttpClientAdapter } from '@/src/adapter/FetchHttpClientAdapter'
 
-const httpClientGateway = new AxiosHttpClientAdapter()
+const httpClientGateway = new FetchHttpClientAdapter()
 
 // Repositórios
 const syncRepositoryGateway = new SyncWatermelonDbRepository()
