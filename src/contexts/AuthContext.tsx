@@ -8,7 +8,6 @@ import { jwtDecode } from 'jwt-decode'
 import UserDto from '../domin/entity/user/UserDto'
 import EnterpriseDto from '../interfaces/EnterpriseDto'
 import { useInjection } from './InjectionContext'
-import { useConfig } from './ConfigContext'
 
 type AuthContextProviderProps = {
     children?: React.ReactNode | undefined
@@ -41,7 +40,6 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     const [enterprise, setEnterprise] = useState<EnterpriseDto>()
     const [token, setToken] = useState<Token>()
     const [loading, setLoading] = useState(true)
-    const { config } = useConfig()
 
     async function signIn(username: string, password: string) {
         try {
