@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode'
 import UserDto from '../domin/entity/user/UserDto'
 import EnterpriseDto from '../interfaces/EnterpriseDto'
 import { useInjection } from './InjectionContext'
+import { useConfig } from './ConfigContext'
 
 type AuthContextProviderProps = {
     children?: React.ReactNode | undefined
@@ -34,7 +35,7 @@ const AuthContext = createContext({} as AuthContextType)
 
 export function AuthContextProvider(props: AuthContextProviderProps) {
     const authServices = useInjection('AuthServices')
-
+    const { config } = useConfig()
     const [firstAccess, setFirstAccess] = useState(true)
     const [user, setUser] = useState<User>()
     const [enterprise, setEnterprise] = useState<EnterpriseDto>()
@@ -44,7 +45,7 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     async function signIn(username: string, password: string) {
         try {
             const { accessToken } = await authServices.loginByUsernameAndPassword({
-                baseURL: 'http://164.152.34.165:3000/api/v1',
+                baseURL: config.urlApi,
                 url: '/auth/signin',
                 body: { username, password },
             } as HttpRequest)
@@ -53,25 +54,33 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
             setUser(decoded.user)
             setToken(accessToken)
 
-            await SecureStore.setItemAsync('gestor-user', JSON.stringify(decoded.user))
-            await SecureStore.setItemAsync('gestor-token', JSON.stringify(accessToken))
-            await SecureStore.setItemAsync('gestor-enterprise', JSON.stringify(decoded.enterprise))
+            await SecureStore.setItemAsync(
+                process.env.EXPO_PUBLIC_KEY_SECURE_STORE_USER,
+                JSON.stringify(decoded.user)
+            )
+            await SecureStore.setItemAsync(
+                process.env.EXPO_PUBLIC_KEY_SECURE_STORE_TOKEN,
+                JSON.stringify(accessToken)
+            )
+            await SecureStore.setItemAsync(
+                process.env.EXPO_PUBLIC_KEY_SECURE_STORE_ENTERPRISE,
+                JSON.stringify(decoded.enterprise)
+            )
         } catch (error) {
-            console.log(error)
             if (error) {
                 Alert.alert('⚠️ Ocorreu um erro ao tentar fazer login!', `Messagem: ${error}`)
             }
         }
     }
     function signOut() {
-        SecureStore.deleteItemAsync('gestor-user').then(() => {
+        SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_SECURE_STORE_USER).then(() => {
             setUser(null)
         })
-        SecureStore.deleteItemAsync('gestor-token').then(() => {
+        SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_SECURE_STORE_TOKEN).then(() => {
             setToken(null)
         })
 
-        SecureStore.deleteItemAsync('gestor-enterprise').then(() => {
+        SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_SECURE_STORE_ENTERPRISE).then(() => {
             setEnterprise(null)
         })
     }
@@ -86,9 +95,11 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
             setFirstAccess(!granted)
         }
 
-        let resultUser = await SecureStore.getItemAsync('gestor-user')
-        let resultToken = await SecureStore.getItemAsync('gestor-token')
-        let resultEnterprise = await SecureStore.getItemAsync('gestor-enterprise')
+        let resultUser = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_SECURE_STORE_USER)
+        let resultToken = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_SECURE_STORE_TOKEN)
+        let resultEnterprise = await SecureStore.getItemAsync(
+            process.env.EXPO_PUBLIC_KEY_SECURE_STORE_ENTERPRISE
+        )
 
         setUser(await JSON.parse(resultUser))
         setToken(await JSON.parse(resultToken))

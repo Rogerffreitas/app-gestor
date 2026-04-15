@@ -36,7 +36,7 @@ export function ConfigContextProvider(props: ConfigContextProviderProps) {
         setConfig((state) => ({ ...state, isExtraDMTPaid: true }))
         setConfig((state) => ({ ...state, dmtPicket: 20 }))
         setConfig((state) => ({ ...state, workRoutes: ['DIÁRIA', 'MEIA DIÁRIA'] }))
-        setConfig((state) => ({ ...state, urlApi: 'http://164.152.34.165:3000/api/v1' }))
+        setConfig((state) => ({ ...state, urlApi: process.env.EXPO_PUBLIC_URL_API }))
     }
 
     return (
