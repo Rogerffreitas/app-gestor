@@ -1,4 +1,3 @@
-import 'reflect-metadata'
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { AuthContextProvider } from './src/contexts/AuthContext'
