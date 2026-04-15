@@ -10,6 +10,7 @@ import theme from '../../global/styles/theme'
 import { InputStyled } from '../../components/input/InputStyled'
 import DescriptionTextInput from '../../components/input/DescriptionTextInput'
 import useLogin from './UseLogin'
+import { useConfig } from '@/src/contexts/ConfigContext'
 
 export default function LoginScreen() {
     const {
@@ -24,6 +25,7 @@ export default function LoginScreen() {
         setErroMsgUsername,
         setErroMsgPassword,
     } = useLogin()
+    const { config } = useConfig()
 
     return (
         <LinearGradient
@@ -40,6 +42,18 @@ export default function LoginScreen() {
                 <FormComponent>
                     <ImageIcon source={require('../../../assets/image/icon.png')} />
                     <DescriptionTextInput description={'Usuário:* '} erroMenssage={erroMsgUsername} />
+
+                    <InputStyled
+                        placeholder={'Usuário'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        value={config.urlApi}
+                        secureTextEntry={false}
+                        onChangeText={(text) => {
+                            setUsername(text)
+                            setErroMsgUsername(null)
+                        }}
+                    />
                     <InputStyled
                         placeholder={'Usuário'}
                         autoCapitalize={'none'}

@@ -49,7 +49,7 @@
             "package": "com.rogerffreitas.appgestor",
             "runtimeVersion": "1.0.1-beta",
             "permissions": ["WRITE_EXTERNAL_STORAGE", "READ_EXTERNAL_STORAGE"],
-            "versionCode": 2
+            "versionCode": 3
         },
         "ios": {
             "bundleIdentifier": "com.rogerfreitas.appgestor"
