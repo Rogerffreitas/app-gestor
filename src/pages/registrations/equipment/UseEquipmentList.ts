@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import WorkDto from '../../../domin/entity/work/WorkDto'
 import { useAuth } from '../../../contexts/AuthContext'
 import { MenuEquipmentType, ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'
 import { Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useInjection } from '@/src/contexts/InjectionContext'
+import WorkDto from '@domin/entity/work/WorkDto'
 
 export default function useEquipmentMenuOptions() {
     const workServices = useInjection('WorkServices')

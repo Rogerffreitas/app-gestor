@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import EquipmentDto from '../../../../../domin/entity/equipment/EquipmentDto'
-import WorkDto from '../../../../../domin/entity/work/WorkDto'
 import { useAuth } from '../../../../../contexts/AuthContext'
 import { errorVibration, successVibration } from '../../../../../services/VibrationService'
 import { Alert } from 'react-native'
-import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
 import { Builder } from '../../../../../services/Builder'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../../../types'
 import { useSync } from '@/src/infra/hooks/UseSync'
 import { useInjection } from '@/src/contexts/InjectionContext'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
+import EquipmentDto from '@domin/entity/equipment/EquipmentDto'
+import WorkDto from '@domin/entity/work/WorkDto'
 
 type NewWorkEquipmentProp = RouteProp<RootStackParamList, ScreenNames.WORK_EQUIPMENTS>
 

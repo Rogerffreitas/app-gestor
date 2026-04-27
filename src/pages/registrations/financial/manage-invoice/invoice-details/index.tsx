@@ -11,11 +11,11 @@ import { InvoiceStatus, InvoiceTypes } from '../../../../../types'
 import FuelSupply from '../../components/FuelSupply'
 import Discount from '../../components/Discount'
 import HourMeterMonitoring from '../../components/HourMeterMonitoring'
-import HourMeterMonitoringDto from '../../../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
-import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
+import HourMeterMonitoringDto from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
 import Transports from '../../components/Transports'
-import TransportVehicleDto from '../../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import MaterialTransportDto from '../../../../../domin/entity/material-transport/MaterialTransportDto'
+import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
+import MaterialTransportDto from '@domin/entity/material-transport/MaterialTransportDto'
 
 export default function InvoiceDetails() {
     const { states, actions } = useInvoiceDetails()

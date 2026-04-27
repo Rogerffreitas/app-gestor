@@ -9,9 +9,9 @@ import ObraSelected from '../../components/List/ObraSelected'
 import ItemObra from '../../components/List/ItemObra'
 import { DiscountTypes, FuelSupplyTypes, MenuOptionsNotesTypes, ScreenNames, UserRoles } from '../../types'
 import { errorVibration } from '../../services/VibrationService'
-import WorkDto from '../../domin/entity/work/WorkDto'
 import { useNavigation } from '@react-navigation/native'
 import { useInjection } from '@/src/contexts/InjectionContext'
+import WorkDto from '@domin/entity/work/WorkDto'
 
 export default function Notes() {
     const workServices = useInjection('WorkServices')

@@ -1,9 +1,10 @@
+import { MaintenanceTruckRepositoryGateway } from '@domin/application/gateways/MaintenanceTruckRepositoryGateway'
 import { database } from '../../database'
 import MaintenanceTruckModel from '../../database/model/MaintenanceTruckModel'
-import { MaintenanceTruckRepositoryGateway } from '../../domin/application/gateways/MaintenanceTruckRepositoryGateway'
-import { MaintenanceTruckEntity } from '../../domin/entity/maintenance-truck/MaintenanceTruckEntity'
 import { TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
+import { MaintenanceTruckEntity } from '@domin/entity/maintenance-truck/MaintenanceTruckEntity'
+import Mappers from './mappers'
 
 export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckRepositoryGateway {
     async createMaintenanceTruckInLocalDatabase(
@@ -28,7 +29,7 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
                         item.serverId = +0
                     })
             })
-            return new MaintenanceTruckEntity().modelToEntity(entityCreated)
+            return new MaintenanceTruckEntity().modelToEntity(Mappers.maintenanceTruckMapper(entityCreated))
         } catch (error) {
             console.log('[MaintenanceTruckRepository]: ' + error)
             throw new Error('Error create maintenace trucks in local database. ', { cause: error })
@@ -52,7 +53,7 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
                     result.userId = entity.userId
                 })
             })
-            return new MaintenanceTruckEntity().modelToEntity(entityUpdated)
+            return new MaintenanceTruckEntity().modelToEntity(Mappers.maintenanceTruckMapper(entityUpdated))
         } catch (error) {
             console.log('[MaintenanceTruckRepository]: ' + error)
             throw new Error('Error updating maintenace trucks in local database. ', { cause: error })
@@ -117,7 +118,7 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
                 )
 
             return result.map((item: MaintenanceTruckModel) => {
-                return new MaintenanceTruckEntity().modelToEntity(item)
+                return new MaintenanceTruckEntity().modelToEntity(Mappers.maintenanceTruckMapper(item))
             })
         } catch (error) {
             console.log('[MaintenanceTruckRepository]: ' + error)
@@ -138,7 +139,7 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
             )
             return await Promise.all(
                 result.map((item: MaintenanceTruckModel) => {
-                    return new MaintenanceTruckEntity().modelToEntity(item)
+                    return new MaintenanceTruckEntity().modelToEntity(Mappers.maintenanceTruckMapper(item))
                 })
             )
         } catch (error) {

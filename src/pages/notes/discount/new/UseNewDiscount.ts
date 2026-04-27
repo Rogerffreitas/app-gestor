@@ -4,7 +4,7 @@ import { DiscountTypes, RootStackParamList, ScreenNames } from '../../../../type
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
-import DiscountDto from '../../../../domin/entity/discount/DiscountDto'
+import DiscountDto from '@domin/entity/discount/DiscountDto'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useInjection } from '@/src/contexts/InjectionContext'
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { HttpClientGateway } from '../domin/application/gateways/HttpClientGateway'
-import { HttpRequest } from '../domin/entity/http/dtos/HttpRequest'
+import { HttpClientGateway } from '../../../domin/application/gateways/HttpClientGateway'
+import { HttpRequest } from '../../../domin/entity/http/dtos/HttpRequest'
 
 export class AxiosHttpClientAdapter implements HttpClientGateway {
     async httpRequesUpdate<T>(request: HttpRequest): Promise<T> {

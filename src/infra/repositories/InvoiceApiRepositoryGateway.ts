@@ -1,10 +1,11 @@
-import { HttpClientGateway } from '../../domin/application/gateways/HttpClientGateway'
-import { InvoiceRepositoryGateway } from '../../domin/application/gateways/InvoiceRepositoryGateway'
-import { InvoiceEntity } from '../../domin/entity/invoice/InvoiceEntity'
-import { InvoiceDto } from '../../domin/entity/invoice/InvoiceDto'
-import Token from '../../interfaces/Token'
+import { InvoiceDto } from '@domin/entity/invoice/InvoiceDto'
+import { InvoiceRequestRepositoryGateway } from '@domin/application/gateways/InvoiceRequestRepositoryGateway'
 
-export class InvoiceApiRepositoryGateway implements InvoiceRepositoryGateway {
+import Token from '../../interfaces/Token'
+import { InvoiceEntity } from '@domin/entity/invoice/InvoiceEntity'
+import { HttpClientGateway } from '@domin/application/gateways/HttpClientGateway'
+
+export class InvoiceApiRepositoryGateway implements InvoiceRequestRepositoryGateway {
     constructor(private httpClient: HttpClientGateway) {}
 
     async generateInvoiceAnalyticPdfFormat(

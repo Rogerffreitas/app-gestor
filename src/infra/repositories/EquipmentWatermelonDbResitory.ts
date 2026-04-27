@@ -1,10 +1,11 @@
-import { EquipmentRepositoryGateway } from '../../domin/application/gateways/EquipmentRepositoryGateway'
-import { BankInformation } from '../../domin/entity/bank-information/BankInformation'
-import { EquipmentEntity } from '../../domin/entity/equipment/EquipmentEntity'
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import EquipmentModel from '../../database/model/EquipmentModel'
 import { TableName, UserAction } from '../../types'
+import { EquipmentRepositoryGateway } from '@domin/application/gateways/EquipmentRepositoryGateway'
+import { EquipmentEntity } from '@domin/entity/equipment/EquipmentEntity'
+import { BankInformation } from '@domin/entity/bank-information/BankInformation'
+import Mappers from './mappers'
 
 export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway {
     async updateHourMeterOrOdometerInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity> {
@@ -18,7 +19,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                     item.userAction = UserAction.UPDATE
                 })
             })
-            return new EquipmentEntity().modelToEntity(result)
+            return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(result))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('Error update equipament in local database: ', { cause: error })
@@ -39,7 +40,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                     item.pix = bankInformation.pix
                 })
             })
-            return new EquipmentEntity().modelToEntity(entityUpdated)
+            return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(entityUpdated))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('An error occurred while updating bank information', { cause: error })
@@ -65,7 +66,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                 )
                 .fetch()
 
-            return result.map((item) => new EquipmentEntity().modelToEntity(item))
+            return result.map((item) => new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(item)))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('an error occurred while trying to load list ', { cause: error })
@@ -95,7 +96,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                     item.serverId = +0
                 })
             })
-            return new EquipmentEntity().modelToEntity(entityCreated)
+            return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(entityCreated))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('Error create equipament in local database ', { cause: error })
@@ -121,7 +122,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                     item.userAction = UserAction.UPDATE
                 })
             })
-            return new EquipmentEntity().modelToEntity(result)
+            return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(result))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('Error update equipament in local database: ', { cause: error })
@@ -162,7 +163,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
         try {
             const result = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
             if (result) {
-                return new EquipmentEntity().modelToEntity(result)
+                return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(result))
             }
             return null
         } catch (error) {
@@ -177,7 +178,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                 .query(Q.where('enterprise_id', enterpriseId), Q.where('is_valid', true))
                 .fetch()
 
-            return result.map((item) => new EquipmentEntity().modelToEntity(item))
+            return result.map((item) => new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(item)))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('an error occurred while trying to load list ', { cause: error })
@@ -200,7 +201,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
                 .fetch()
 
             return result.map((item) => {
-                return new EquipmentEntity().modelToEntity(item)
+                return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(item))
             })
         } catch (error) {
             console.log('[Equipment]: ' + error)

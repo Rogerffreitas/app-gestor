@@ -1,11 +1,29 @@
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import FuelSupplyModel from '../../database/model/FuelSupplyModel'
-import { FuelSupplyRepositoryGateway } from '../../domin/application/gateways/FuelSupplyRepositoryGateway'
-import { FuelSupplyEntity } from '../../domin/entity/fuel-supply/FuelSupplyEntity'
+import { FuelSupplyRepositoryGateway } from '@domin/application/gateways/FuelSupplyRepositoryGateway'
 import { FuelSupplyTypes, InvoiceStatus, TableName, UserAction } from '../../types'
+import { FuelSupplyEntity } from '@domin/entity/fuel-supply/FuelSupplyEntity'
+import FuelSupplyProps from '@domin/interfaces/props/FuelSupplyProps'
 
 export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGateway {
+    loadCurrentBalanceTankByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndPreviousDateFromLocalDatabase(
+        enterpriseId: string,
+        workId: string,
+        maintenanceTrucksWorkEquipmentId: string,
+        previousDate: number
+    ): Promise<number> {
+        throw new Error('Method not implemented.')
+    }
+    loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndStartDateAndEndDateFromLocalDatabase(
+        enterpriseId: string,
+        workId: string,
+        maintenanceTrucksWorkEquipmentId: string,
+        startDate: number,
+        endDate: number
+    ): Promise<FuelSupplyEntity[]> {
+        throw new Error('Method not implemented.')
+    }
     async createFuelSupplyInLocalDatabase(entity: FuelSupplyEntity): Promise<FuelSupplyEntity> {
         console.log('Creating Fuel Supply in the database')
         try {
@@ -34,7 +52,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
             })
             if (entityCreated) {
                 console.log('Entity created: ' + entityCreated)
-                return new FuelSupplyEntity().modelToEntity(entityCreated)
+                return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(entityCreated))
             }
         } catch (error) {
             console.log('[FuelSupply]= ' + error)
@@ -58,7 +76,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
                     item.userAction = UserAction.UPDATE
                 })
             })
-            return new FuelSupplyEntity().modelToEntity(result)
+            return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(result))
         } catch (error) {
             console.log('[FuelSupply]: ' + error)
             throw new Error('Error updating Fuel Supply in local database: ')
@@ -109,7 +127,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
                 )
                 .fetch()
 
-            return new FuelSupplyEntity().modelToEntity(result[0])
+            return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(result[0]))
         } catch (error) {
             console.log('[FuelSupplyRepository]= ' + error)
             throw new Error('Error loading maintenace trucks fuel supply from local database.')
@@ -181,7 +199,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
 
             return await Promise.all(
                 result.map(async (item: FuelSupplyModel) => {
-                    return new FuelSupplyEntity().modelToEntity(item)
+                    return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(item))
                 })
             )
         } catch (error) {
@@ -213,7 +231,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
 
             return await Promise.all(
                 result.map(async (item: FuelSupplyModel) => {
-                    return new FuelSupplyEntity().modelToEntity(item)
+                    return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(item))
                 })
             )
         } catch (error) {
@@ -245,12 +263,44 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
                 .fetch()
             return await Promise.all(
                 result.map(async (item: FuelSupplyModel) => {
-                    return new FuelSupplyEntity().modelToEntity(item)
+                    return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(item))
                 })
             )
         } catch (error) {
             console.log('[FuelSupplyRepository]= ' + error)
             throw new Error('Error loading fuel supply from local database.')
+        }
+    }
+
+    private fuelSupplyMapper(model: FuelSupplyModel): FuelSupplyProps {
+        return {
+            quantity: model.quantity,
+            valuePerLiter: model.valuePerLiter,
+            value: model.value,
+            description: model.description,
+            supplyType: model.supplyType as FuelSupplyTypes,
+            transportVehicleOrWorkEquipmentId: model.transportVehicleOrWorkEquipmentId,
+            observation: model.observation,
+            isGasStation: model.isGasStation,
+            maintenanceTrucksWorkEquipmentId: model.maintenanceTrucksWorkEquipmentId,
+            hourMeterOrOdometer: model.hourMeterOrOdometer,
+            isDiscount: model.isDiscount,
+
+            // Relacionamentos e Notas
+            invoiceId: model.invoiceId,
+            invoiceStatus: model.invoiceStatus as InvoiceStatus,
+            workId: model.workId,
+
+            // Propriedades da AbstractEntity
+            serverId: model.serverId,
+            id: model.id,
+            userId: model.userId,
+            userAction: model.userAction,
+            enterpriseId: model.enterpriseId,
+            isValid: model.isValid,
+            createdAt: Number(model.createdAt),
+            updatedAt: Number(model.updatedAt),
+            status: model._raw._status,
         }
     }
 }

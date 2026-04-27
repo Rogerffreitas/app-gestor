@@ -1,9 +1,8 @@
-import MaterialTransportDto from '../../../../domin/entity/material-transport/MaterialTransportDto'
-import { MaterialTransportServices } from '../../../../domin/services/interfaces/MaterialTransportServices'
+import MaterialTransportDto from '@domin/entity/material-transport/MaterialTransportDto'
 
 type UseTransportEditProps = {
     materialTransportDto: MaterialTransportDto
-    materialTransportServices: MaterialTransportServices
+    materialTransportServices: any
     navigation: any
 }
 

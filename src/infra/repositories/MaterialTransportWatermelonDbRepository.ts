@@ -1,9 +1,10 @@
+import { MaterialTransportRepositoryGateway } from '@domin/application/gateways/MaterialTransportRepositoryGateway'
 import { database } from '../../database'
 import MaterialTransportModel from '../../database/model/MaterialTransportModel'
-import { MaterialTransportRepositoryGateway } from '../../domin/application/gateways/MaterialTransportRepositoryGateway'
-import { MaterialTransportEntity } from '../../domin/entity/material-transport/MaterialTransportEntity'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
+import { MaterialTransportEntity } from '@domin/entity/material-transport/MaterialTransportEntity'
+import Mappers from './mappers'
 
 export class MaterialTransportWatermelonDbRepository implements MaterialTransportRepositoryGateway {
     async createMaterialTransportInLocalDatabase(
@@ -49,7 +50,9 @@ export class MaterialTransportWatermelonDbRepository implements MaterialTranspor
                     })
             })
             console.log('Entity created: ' + entityCreated)
-            return await new MaterialTransportEntity().modelToEntity(entityCreated)
+            return await new MaterialTransportEntity().modelToEntity(
+                await Mappers.materialTransportMapper(entityCreated)
+            )
         } catch (error) {
             console.log('[MaterialTransport]: ' + error)
             throw new Error('Error create Material Transport in local database ', { cause: error })
@@ -95,7 +98,9 @@ export class MaterialTransportWatermelonDbRepository implements MaterialTranspor
 
             return await Promise.all(
                 result.map(async (item: MaterialTransportModel) => {
-                    return await new MaterialTransportEntity().modelToEntity(item)
+                    return new MaterialTransportEntity().modelToEntity(
+                        await Mappers.materialTransportMapper(item)
+                    )
                 })
             )
         } catch (error) {

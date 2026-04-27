@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { MaintenanceTruckDto } from '../../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
+import { MaintenanceTruckDto } from '@domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
+import WorkDto from '@domin/entity/work/WorkDto'
 import { useInjection } from '@/src/contexts/InjectionContext'
 
 type MaintenanceTrucksProp = RouteProp<RootStackParamList, ScreenNames.MAINTENANCE_TRUCKS>

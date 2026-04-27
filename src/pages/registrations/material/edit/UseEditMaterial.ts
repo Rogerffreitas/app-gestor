@@ -1,5 +1,5 @@
 import { Alert, ToastAndroid } from 'react-native'
-import { MaterialDto } from '../../../../domin/entity/material/MaterialDto'
+import { MaterialDto } from '@domin/entity/material/MaterialDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Reference, RootStackParamList, ScreenNames } from '../../../../types'
 import { useState } from 'react'

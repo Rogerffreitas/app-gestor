@@ -2,9 +2,9 @@ import { Model } from '@nozbe/watermelondb'
 import { SyncPushResponse } from '../../interfaces/SyncPushResponse'
 import { database } from '../../database'
 import { TableName } from '../../types'
-import { SyncRepositoryGateway } from '../../domin/application/gateways/SyncRepositoryGateway'
+import { SyncResponseRepositoryGateway } from '@domin/application/gateways/SyncResponseRepositoryGateway'
 
-export class SyncWatermelonDbRepository implements SyncRepositoryGateway {
+export class SyncWatermelonDbRepository implements SyncResponseRepositoryGateway {
     async saveAllServerIds(syncData: SyncPushResponse): Promise<void> {
         //console.log(syncData)
         try {

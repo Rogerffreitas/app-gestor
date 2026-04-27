@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react'
-import WorkDto from '../domin/entity/work/WorkDto'
+import WorkDto from '@domin/entity/work/WorkDto'
 
 type ApplicationContextProviderProps = {
     children?: React.ReactNode | undefined

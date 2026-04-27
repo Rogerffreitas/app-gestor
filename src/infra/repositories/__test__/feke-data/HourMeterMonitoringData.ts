@@ -1,4 +1,4 @@
-import { HourMeterMonitoringEntity } from '../../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
+import { HourMeterMonitoringEntity } from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 
 export const hourMeterMonitoringEntity = {
     value: 100,

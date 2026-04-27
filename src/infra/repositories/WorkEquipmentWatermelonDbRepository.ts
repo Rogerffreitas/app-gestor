@@ -1,9 +1,10 @@
-import { WorkEquipmentRepositoryGateway } from '../../domin/application/gateways/WorkEquipmentRepositoryGateway'
-import { WorkEquipmentEntity } from '../../domin/entity/work-equipment/WorkEquipmentEntity'
 import WorkEquipmentModel from '../../database/model/WorkEquipmentModel'
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import { TableName, UserAction } from '../../types'
+import { WorkEquipmentRepositoryGateway } from '@domin/application/gateways/WorkEquipmentRepositoryGateway'
+import { WorkEquipmentEntity } from '@domin/entity/work-equipment/WorkEquipmentEntity'
+import Mappers from './mappers'
 
 export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentRepositoryGateway {
     async createWorkEquipmentInLocalDatabase(entity: WorkEquipmentEntity): Promise<WorkEquipmentEntity> {
@@ -28,7 +29,7 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
                     item.serverId = 0
                 })
             })
-            return new WorkEquipmentEntity().modelToEntity(entityCreated)
+            return new WorkEquipmentEntity().modelToEntity(await Mappers.workEquipmentMapper(entityCreated))
         } catch (error) {
             console.log('[WorkEquipmentRepository]: ' + error)
             throw new Error('Error create equipament in local database: ', { cause: error })
@@ -83,8 +84,8 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
                     Q.where('work_id', workId)
                 )
             return await Promise.all(
-                result.map((item: WorkEquipmentModel) => {
-                    return new WorkEquipmentEntity().modelToEntity(item)
+                result.map(async (item: WorkEquipmentModel) => {
+                    return new WorkEquipmentEntity().modelToEntity(await Mappers.workEquipmentMapper(item))
                 })
             )
         } catch (error) {
@@ -108,8 +109,8 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
                 //Q.where('server_id', Q.gt(0))
             )
             return await Promise.all(
-                result.map((item: WorkEquipmentModel) => {
-                    return new WorkEquipmentEntity().modelToEntity(item)
+                result.map(async (item: WorkEquipmentModel) => {
+                    return new WorkEquipmentEntity().modelToEntity(await Mappers.workEquipmentMapper(item))
                 })
             )
         } catch (error) {

@@ -14,14 +14,14 @@ type FormType = {
     description: string
     observation: string
     isGasStation: boolean
-    hourMeterOrKmMeter: number
+    hourMeterOrOdometer: number
     isDiscount: boolean
 }
 
 type Erros = {
     quantity: string
     valuePerLiter: string
-    hourMeterOrKmMeter: string
+    hourMeterOrOdometer: string
     description: string
 }
 
@@ -68,16 +68,16 @@ export default function ({ type, form, erros, isLoading, onChange, handlerClickB
 
             <DescriptionTextInput
                 description={type === FuelSupplyTypes.EQUIPMENT ? 'Horimentro:* ' : 'Odometro:* '}
-                erroMenssage={erros.hourMeterOrKmMeter}
+                erroMenssage={erros.hourMeterOrOdometer}
             />
             <InputMaskNumber2
-                value={form.hourMeterOrKmMeter ? form.hourMeterOrKmMeter / 10 : null}
+                value={form.hourMeterOrOdometer ? form.hourMeterOrOdometer / 10 : null}
                 placeholder={'Horimentro/km'}
                 autoCapitalize={'none'}
                 autoCorrect={false}
                 secureTextEntry={false}
                 onChangeTextFunction={(value) => {
-                    onChange('hourMeterOrKmMeter')(
+                    onChange('hourMeterOrOdometer')(
                         +value.replace('R$ ', '').replace(/\./g, '').replace(',', '')
                     )
                 }}

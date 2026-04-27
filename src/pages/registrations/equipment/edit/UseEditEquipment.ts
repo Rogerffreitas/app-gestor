@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import EquipmentDto from '../../../../domin/entity/equipment/EquipmentDto'
+import EquipmentDto from '@domin/entity/equipment/EquipmentDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'

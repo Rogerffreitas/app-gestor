@@ -1,12 +1,13 @@
+import { BankInformation } from '@domin/entity/bank-information/BankInformation'
 import { database } from '../../database'
 import TransportVehicleModel from '../../database/model/TransportVehicleModel'
-import { TransportVehicleReposirotyGateway } from '../../domin/application/gateways/TransportVehicleReposirotyGateway'
-import { BankInformation } from '../../domin/entity/bank-information/BankInformation'
-import { TransportVehicleEntity } from '../../domin/entity/transport-vehicle/TransportVehicleEntity'
 import { TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
+import { TransportVehicleEntity } from '@domin/entity/transport-vehicle/TransportVehicleEntity'
+import { TransportVehicleRepositoryGateway } from '@domin/application/gateways/TransportVehicleRepositoryGateway'
+import Mappers from './mappers'
 
-export class TransportVehicleWatermelonDbRepository implements TransportVehicleReposirotyGateway {
+export class TransportVehicleWatermelonDbRepository implements TransportVehicleRepositoryGateway {
     async updateTransportVehicleBankInformation(
         id: string,
         bankInformation: BankInformation
@@ -24,7 +25,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
                     item.pix = bankInformation.pix
                 })
             })
-            return new TransportVehicleEntity().modelToEntity(modelUpdated)
+            return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(modelUpdated))
         } catch (error) {
             console.log('[TransportVehicleEntityRepository]: ' + error)
             throw new Error('An error occurred while updating bank information', { cause: error })
@@ -54,7 +55,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
                         item.serverId = 0
                     })
             })
-            return new TransportVehicleEntity().modelToEntity(entityCreated)
+            return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(entityCreated))
         } catch (error) {
             console.log('[TransportVehicleEntityRepository]: ' + error)
             throw new Error('Error create TransportVehicle in local database: ', { cause: error })
@@ -81,7 +82,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
                     item.userAction = UserAction.UPDATE
                 })
             })
-            return new TransportVehicleEntity().modelToEntity(entityUpdated)
+            return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(entityUpdated))
         } catch (error) {
             console.log('[TransportVehicleEntityRepository]: ' + error)
             throw new Error('An error occurred while updating transport vehicle', { cause: error })
@@ -122,7 +123,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
         try {
             const result = await database.get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES).find(id)
 
-            return new TransportVehicleEntity().modelToEntity(result)
+            return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(result))
         } catch (error) {
             console.log('[TransportVehicleEntityRepository]: ' + error)
             throw new Error('an error occurred while trying to load model ', { cause: error })
@@ -146,7 +147,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
                 )
             return await Promise.all(
                 result.map((item: TransportVehicleModel) => {
-                    return new TransportVehicleEntity().modelToEntity(item)
+                    return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(item))
                 })
             )
         } catch (error) {
@@ -170,7 +171,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
                 )
             return await Promise.all(
                 result.map((item: TransportVehicleModel) => {
-                    return new TransportVehicleEntity().modelToEntity(item)
+                    return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(item))
                 })
             )
         } catch (error) {
@@ -196,7 +197,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
                     item.pix = bankInformation.pix
                 })
             })
-            return new TransportVehicleEntity().modelToEntity(entityUpdated)
+            return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(entityUpdated))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('An error occurred while updating bank information', { cause: error })

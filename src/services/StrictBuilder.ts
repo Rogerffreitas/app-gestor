@@ -1,7 +1,13 @@
+type DataKeys<T> = {
+    [K in keyof T]: T[K] extends Function ? never : K
+}[keyof T]
+
 export type IStrictBuilder<T, B = Record<string, unknown>> = {
-    [k in keyof T]-?: ((arg: T[k]) => IStrictBuilder<T, B & Record<k, T[k]>>) & (() => T[k])
+    // Aqui filtramos para usar apenas as DataKeys
+    [k in DataKeys<T>]-?: ((arg: T[k]) => IStrictBuilder<T, B & Record<k, T[k]>>) & (() => T[k])
 } & {
-    build: B extends T ? () => T : never
+    // O build continua validando se todas as propriedades obrigatórias (Pick) foram preenchidas
+    build: B extends Pick<T, DataKeys<T>> ? () => T : never
 }
 
 /**

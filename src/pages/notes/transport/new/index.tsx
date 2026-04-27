@@ -12,8 +12,8 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import InputMaskNumber from '../../../../components/input/InputMaskNumber'
 import InputComponent from '../../../../components/input/InputComponent'
 import useNewTransport from './UseNewTransport'
-import WorkRoutesDto from '../../../../domin/entity/work-routes/WorkRoutesDto'
-import { MaterialDto } from '../../../../domin/entity/material/MaterialDto'
+import WorkRoutesDto from '@domin/entity/work-routes/WorkRoutesDto'
+import { MaterialDto } from '@domin/entity/material/MaterialDto'
 import { Reference } from '../../../../types'
 import { TextInputMask } from 'react-native-masked-text'
 

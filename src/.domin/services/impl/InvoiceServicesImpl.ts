@@ -1,6 +1,5 @@
 import { InvoiceServices } from '../interfaces/InvoiceServices'
 import { InvoiceDto } from '../../entity/invoice/InvoiceDto'
-import { TYPES } from '../../../infra/ioc/types'
 import Token from '../../../interfaces/Token'
 import { InvoiceRepositoryGateway } from '../../application/gateways/InvoiceRepositoryGateway'
 import { InvoiceEntity } from '../../entity/invoice/InvoiceEntity'

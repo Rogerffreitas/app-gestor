@@ -1,10 +1,11 @@
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import WorkModel from '../../database/model/WorkModel'
-import { WorkRepositoryGateway } from '../../domin/application/gateways/WorkRepositoryGateway'
-import WorkEntity from '../../domin/entity/work/WorkEntity'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
+import { WorkRepositoryGateway } from '@domin/application/gateways/WorkRepositoryGateway'
+import WorkEntity from '@domin/entity/work/WorkEntity'
+import Mappers from './mappers'
 
 export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     async createWorkInLocalDatabase(entity: WorkEntity): Promise<WorkEntity> {
@@ -22,7 +23,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
                     work.serverId = 0
                 })
             })
-            return new WorkEntity().modelToEntity(entityCreated)
+            return new WorkEntity().toEntity(Mappers.workMapper(entityCreated))
         } catch (error) {
             console.log('[WorkRepository]: ' + error)
             throw new Error('Error create work in local database.' + error)
@@ -40,7 +41,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
                     result.pickets = +entity.pickets
                 })
             })
-            return new WorkEntity().modelToEntity(entityUpdated)
+            return new WorkEntity().toEntity(Mappers.workMapper(entityUpdated))
         } catch (error) {
             console.log('[WorkRepositoty]: ' + error)
             throw new Error('Error updating work in local database.' + error)
@@ -78,7 +79,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     async findWorkByIdInLocalDatabase(id: string): Promise<WorkEntity> {
         try {
             const result = await database.get<WorkModel>(TableName.WORKS).find(id)
-            return new WorkEntity().modelToEntity(result)
+            return new WorkEntity().toEntity(Mappers.workMapper(result))
         } catch (error) {
             throw new Error('Error loading works from local database.' + error)
         }
@@ -94,7 +95,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
                 )
                 .fetch()
             return result.map((item: WorkModel) => {
-                return new WorkEntity().modelToEntity(item)
+                return new WorkEntity().toEntity(Mappers.workMapper(item))
             })
         } catch (error) {
             console.log('[WorkRepositoty]: ' + error)
@@ -116,7 +117,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
                 )
                 .fetch()
             return result.map((item: WorkModel) => {
-                return new WorkEntity().modelToEntity(item)
+                return new WorkEntity().toEntity(Mappers.workMapper(item))
             })
         } catch (error) {
             console.log('[WorkRepositoty]: ' + error)
@@ -153,7 +154,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
                 )
                 .fetch()
             return result.map((item: WorkModel) => {
-                return new WorkEntity().modelToEntity(item)
+                return new WorkEntity().toEntity(Mappers.workMapper(item))
             })
         } catch (error) {
             console.log('[WorkRepositoty]: ' + error)

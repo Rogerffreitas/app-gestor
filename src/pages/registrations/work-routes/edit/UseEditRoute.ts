@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import WorkRoutesDto from '../../../../domin/entity/work-routes/WorkRoutesDto'
+import WorkRoutesDto from '@domin/entity/work-routes/WorkRoutesDto'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'

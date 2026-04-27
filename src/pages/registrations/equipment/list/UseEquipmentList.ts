@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import EquipmentDto from '../../../../domin/entity/equipment/EquipmentDto'
+import EquipmentDto from '@domin/entity/equipment/EquipmentDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'

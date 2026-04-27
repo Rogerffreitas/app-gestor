@@ -53,12 +53,12 @@ export default class WorkEntity extends AbstratcEntity {
         }
 
         if (this._name && this._name.length > 30) {
-            changeErrorFields('name')('Max. 100 caracteres')
+            changeErrorFields('name')('Max. 30 caracteres')
             errorMessages.push({ field: 'name', message: 'Max. 30 caracteres' })
         }
 
-        if (this._description && this._description.length > 50) {
-            changeErrorFields('description')('Max. 50 caracteres')
+        if (this._description && this._description.length > 100) {
+            changeErrorFields('description')('Max. 100 caracteres')
             errorMessages.push({ field: 'description', message: 'Max. 100 caracteres' })
         }
 

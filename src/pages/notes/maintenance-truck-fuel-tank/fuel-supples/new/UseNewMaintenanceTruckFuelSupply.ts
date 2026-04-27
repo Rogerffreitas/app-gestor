@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../../../types'
-import TransportVehicleDto from '../../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
+import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
 import { useAuth } from '../../../../../contexts/AuthContext'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../../services/VibrationService'
-import { FuelSupplyDto } from '../../../../../domin/entity/fuel-supply/FuelSupplyDto'
+import { FuelSupplyDto } from '@domin/entity/fuel-supply/FuelSupplyDto'
 import { StrictBuilder } from '../../../../../services/StrictBuilder'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useInjection } from '@/src/contexts/InjectionContext'
@@ -33,7 +33,7 @@ export default function useNewMaintenanceTruckFuelSupply() {
     const [erros, setErros] = useState({
         quantity: '',
         valuePerLiter: '',
-        hourMeterOrKmMeter: '',
+        hourMeterOrOdometer: '',
         description: '',
     })
     const [form, setForm] = useState({
@@ -42,7 +42,7 @@ export default function useNewMaintenanceTruckFuelSupply() {
         description: null,
         observation: null,
         isGasStation: true,
-        hourMeterOrKmMeter: null,
+        hourMeterOrOdometer: null,
         isDiscount: true,
         isVisible: false,
     })
@@ -138,8 +138,8 @@ export default function useNewMaintenanceTruckFuelSupply() {
 
             const fuelSupply = StrictBuilder<FuelSupplyDto>()
                 .description(form.description)
-                .hourMeterOrOdometer(form.hourMeterOrKmMeter)
-                .isDiscount(form.isDiscount)
+                .hourMeterOrOdometer(form.hourMeterOrOdometer)
+                .isDiscount(false)
                 .isGasStation(false)
                 .quantity(form.quantity)
                 .observation(form.observation)

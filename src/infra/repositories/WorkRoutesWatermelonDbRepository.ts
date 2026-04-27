@@ -1,10 +1,11 @@
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
-import WorkRoutesEntity from '../../domin/entity/work-routes/WorkRoutesEntity'
-import { WorkRoutesRepositoryGateway } from '../../domin/application/gateways/WorkRoutesRepositoryGateway'
 import WorkRoutesModel from '../../database/model/WorkRouteModel'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
+import { WorkRoutesRepositoryGateway } from '@domin/application/gateways/WorkRoutesRepositoryGateway'
+import WorkRoutesEntity from '@domin/entity/work-routes/WorkRoutesEntity'
+import Mappers from './mappers'
 
 export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGateway {
     async createWorkRoutesInLocalDatabase(entity: WorkRoutesEntity): Promise<WorkRoutesEntity> {
@@ -28,7 +29,7 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
                 })
             })
 
-            return new WorkRoutesEntity().modelToEntity(entityCreated)
+            return new WorkRoutesEntity().modelToEntity(await Mappers.workRoutesMapper(entityCreated))
         } catch (error) {
             console.log('[WorkRoutes]: ' + error)
             throw new Error('Error create route in local database. ' + error)
@@ -49,7 +50,7 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
                     item.userId = entity.userId
                 })
             })
-            return new WorkRoutesEntity().modelToEntity(entityUpdated)
+            return new WorkRoutesEntity().modelToEntity(await Mappers.workRoutesMapper(entityUpdated))
         } catch (error) {
             console.log('[WorkRoutes]: ' + error)
             throw new Error('Error updating route in local database. ' + error)
@@ -106,8 +107,8 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
                 .fetch()
 
             return await Promise.all(
-                result.map((item) => {
-                    return new WorkRoutesEntity().modelToEntity(item)
+                result.map(async (item) => {
+                    return new WorkRoutesEntity().modelToEntity(await Mappers.workRoutesMapper(item))
                 })
             )
         } catch (error) {
@@ -132,8 +133,8 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
                 )
                 .fetch()
             return await Promise.all(
-                result.map((item) => {
-                    return new WorkRoutesEntity().modelToEntity(item)
+                result.map(async (item) => {
+                    return new WorkRoutesEntity().modelToEntity(await Mappers.workRoutesMapper(item))
                 })
             )
         } catch (error) {

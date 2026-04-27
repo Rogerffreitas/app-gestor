@@ -1,5 +1,5 @@
-import { HttpClientGateway } from '../domin/application/gateways/HttpClientGateway'
-import { HttpRequest } from '../domin/entity/http/dtos/HttpRequest'
+import { HttpClientGateway } from '@domin/application/gateways/HttpClientGateway'
+import { HttpRequest } from '@domin/entity/http/dtos/HttpRequest'
 
 export class FetchHttpClientAdapter implements HttpClientGateway {
     async httpRequesUpdate<T>(request: HttpRequest): Promise<T> {

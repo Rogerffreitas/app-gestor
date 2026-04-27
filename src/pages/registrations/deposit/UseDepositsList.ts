@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import DepositDto from '../../../domin/entity/deposit/DepositDto'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useNavigation } from '@react-navigation/native'
 import { ScreenNames } from '../../../types'
 import { ToastAndroid } from 'react-native'
 import { useInjection } from '@/src/contexts/InjectionContext'
+import DepositDto from '@domin/entity/deposit/DepositDto'
 
 export default function useDepositsList() {
     const depositServices = useInjection('DepositServices')

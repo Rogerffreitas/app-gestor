@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../contexts/AuthContext'
-import { MaintenanceTruckDto } from '../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
+import { MaintenanceTruckDto } from '@domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { useApplicationContext } from '../../../contexts/ApplicationContext'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../services/VibrationService'

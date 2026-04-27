@@ -1,5 +1,4 @@
 import Token from '../../../interfaces/Token'
-import { InvoiceTypes } from '../../../types'
 import { InvoiceDto } from '../../entity/invoice/InvoiceDto'
 
 export interface InvoiceServices {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import HourMeterMonitoringDto from '../../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import HourMeterMonitoringDto from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { InvoiceStatus, RootStackParamList, ScreenNames } from '../../../../types'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'

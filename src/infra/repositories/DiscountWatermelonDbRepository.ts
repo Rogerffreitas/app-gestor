@@ -1,9 +1,12 @@
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import DiscountModel from '../../database/model/DiscountModel'
-import { DiscountRepositoryGateway } from '../../domin/application/gateways/DiscountRepositoryGateway'
-import DiscountEntity from '../../domin/entity/discount/DiscountEntity'
+
 import { InvoiceStatus, TableName, UserAction } from '../../types'
+import { DiscountRepositoryGateway } from '@domin/application/gateways/DiscountRepositoryGateway'
+import DiscountEntity from '@domin/entity/discount/DiscountEntity'
+import DiscountProps from '@domin/interfaces/props/DiscountProps'
+import { DiscountTypes } from '@domin/types'
 
 export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway {
     async createDiscountInLocalDatabase(entity: DiscountEntity): Promise<DiscountEntity> {
@@ -27,7 +30,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
             })
             if (entityCreated) {
                 console.log('Entity created: ' + entityCreated)
-                return DiscountEntity.modelToEntity(entityCreated)
+                return new DiscountEntity().modelToEntity(this.discountMapper(entityCreated))
             }
         } catch (error) {
             console.log('[Discount]: ' + error)
@@ -46,7 +49,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
                     item.userAction = UserAction.UPDATE
                 })
             })
-            return DiscountEntity.modelToEntity(result)
+            return new DiscountEntity().modelToEntity(this.discountMapper(result))
         } catch (error) {
             console.log('[Discount]: ' + error)
             throw new Error('Error updating Discount in local database ', { cause: error })
@@ -74,7 +77,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
         try {
             const result = await database.get<DiscountModel>(TableName.DISCOUNTS).find(id)
             if (result) {
-                return DiscountEntity.modelToEntity(result)
+                return new DiscountEntity().modelToEntity(this.discountMapper(result))
             }
             return null
         } catch (error) {
@@ -109,7 +112,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
                 .fetch()
             return await Promise.all(
                 result.map(async (item: DiscountModel) => {
-                    return DiscountEntity.modelToEntity(item)
+                    return new DiscountEntity().modelToEntity(this.discountMapper(item))
                 })
             )
         } catch (error) {
@@ -117,6 +120,28 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
             throw new Error('Error loading Discount from local database.', {
                 cause: error,
             })
+        }
+    }
+
+    private discountMapper(model: DiscountModel): DiscountProps {
+        return {
+            value: model.value,
+            description: model.description,
+            discountType: model.discountType as DiscountTypes,
+            workId: model.workId,
+            transportVehicleOrWorkEquipmentId: model.transportVehicleOrWorkEquipmentId,
+            invoiceId: model.invoiceId,
+            invoiceStatus: model.invoiceStatus as InvoiceStatus,
+
+            serverId: model.serverId,
+            id: model.id,
+            userId: model.userId,
+            userAction: model.userAction,
+            enterpriseId: model.enterpriseId,
+            isValid: model.isValid,
+            createdAt: Number(model.createdAt),
+            updatedAt: Number(model.updatedAt),
+            status: model._raw._status,
         }
     }
 }

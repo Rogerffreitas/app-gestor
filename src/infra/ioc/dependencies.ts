@@ -1,17 +1,5 @@
 // 1. Importações de Gateways e Adaptadores
 import { SynchronizeWatermelonDBAdapter } from '@/src/adapter/SynchronizeWatermelonDBAdapter'
-import { DepositServicesImpl } from '@/src/domin/services/impl/DepositServicesImpl'
-import { DiscountServicesImpl } from '@/src/domin/services/impl/DiscountServicesImpl'
-import { EquipmentServicesImpl } from '@/src/domin/services/impl/EquipmentServicesImpl'
-import { FuelSupplyServicesImpl } from '@/src/domin/services/impl/FuelSupplyServicesImpl'
-import { HourMeterMonitoringServicesImpl } from '@/src/domin/services/impl/HourMeterMonitoringServicesImpl'
-import { InvoiceServicesImpl } from '@/src/domin/services/impl/InvoiceServicesImpl'
-import { MaintenanceTruckServicesImpl } from '@/src/domin/services/impl/MaintenanceTruckServicesImpl'
-import { MaterialServicesImpl } from '@/src/domin/services/impl/MaterialServicesImpl'
-import { MaterialTransportServicesImpl } from '@/src/domin/services/impl/MaterialTransportServicesImpl'
-import { TransportVehicleServicesImpl } from '@/src/domin/services/impl/TransportVehicleServicesImpl'
-import { WorkEquipmentServicesImpl } from '@/src/domin/services/impl/WorkEquipmentServicesImpl'
-import { WorkRoutesServicesImpl } from '@/src/domin/services/impl/WorkRoutesServicesImpl'
 import { DepositWatermelonDbRepository } from '../repositories/DepositWatermelonDbRepository'
 import { DiscountWatermelonDbRepository } from '../repositories/DiscountWatermelonDbRepository'
 import { EquipmentWatermelonDbResitory } from '../repositories/EquipmentWatermelonDbResitory'
@@ -24,13 +12,27 @@ import { MaterialWatermelonDbRepository } from '../repositories/MaterialWatermel
 import { TransportVehicleWatermelonDbRepository } from '../repositories/TransportVehicleWatermelonDbRepository'
 import { WorkEquipmentWatermelonDbRepository } from '../repositories/WorkEquipmentWatermelonDbRepository'
 import { WorkRoutesWatermelonDbRepository } from '../repositories/WorkRoutesWatermelonDbRepository'
-import { AxiosHttpClientAdapter } from '@/src/adapter/AxiosHttpClientAdapter'
 import { SyncWatermelonDbRepository } from '../repositories/SyncWatermelonDbRepository'
 import { WorkWatermelonDbRepository } from '../repositories/WorkWatermelonDbRepository'
-import { SyncServicesImpl } from '@/src/domin/services/impl/SyncServicesImpl'
-import { UserServicesImpl } from '@/src/domin/services/impl/UserServicesImpl'
-import { WorkServicesImpl } from '@/src/domin/services/impl/WorkServicesImpl'
-import { AuthServicesImpl } from '@/src/domin/services/impl/AuthServicesImpl'
+import { AxiosHttpClientAdapter } from '@/src/adapter/AxiosHttpClientAdapter'
+
+import { SyncServicesImpl } from '@domin/services/impl/SyncServicesImpl'
+import { UserServicesImpl } from '@domin/services/impl/UserServicesImpl'
+import { AuthServicesImpl } from '@domin/services/impl/AuthServicesImpl'
+import { InvoiceServicesImpl } from '@domin/services/impl/InvoiceServiceImpl'
+import { WorkServicesImpl } from '@domin/services/impl/WorkServicesImpl'
+
+import { DepositInteractor } from '@domin/interactors/DepositInteractor'
+import { MaterialInteractor } from '@domin/interactors/MaterialInteractor'
+import { WorkRoutesInteractor } from '@domin/interactors/WorkRoutesInteractor'
+import { EquipmentInteractor } from '@domin/interactors/EquipmentInteractor'
+import { WorkEquipmentInteractor } from '@domin/interactors/WorkEquipmentInteractor'
+import { MaintenanceTruckInteractor } from '@domin/interactors/MaintenanceTruckInteractor'
+import { TransportVehicleInteractor } from '@domin/interactors/TransportVehicleInteractor'
+import { MaterialTransportInteractor } from '@domin/interactors/MaterialTransportInteractor'
+import { HourMeterMonitoringInteractor } from '@domin/interactors/HourMeterMonitoringInteractor'
+import { DiscountInteractor } from '@domin/interactors/DiscountInteractor'
+import { FuelSupplyInteractor } from '@domin/interactors/FuelSupplyInteractor'
 
 const httpClientGateway = new AxiosHttpClientAdapter()
 
@@ -56,20 +58,24 @@ const syncAdapter = new SynchronizeWatermelonDBAdapter(syncRepositoryGateway)
 // Serviços (Injetando as instâncias criadas acima no construtor)
 const syncServices = new SyncServicesImpl(syncAdapter)
 const userServices = new UserServicesImpl(httpClientGateway) // Ajuste conforme seu construtor
-const workServices = new WorkServicesImpl(workRepositoryGateway, httpClientGateway)
-const workEquipmentServices = new WorkEquipmentServicesImpl(workEquipmentRepositoryGateway)
-const workRoutesServices = new WorkRoutesServicesImpl(workRoutesRepositoryGateway)
-const depositServices = new DepositServicesImpl(depositRepositoryGateway)
-const discountServices = new DiscountServicesImpl(discountRepositoryGateway)
-const equipmentServices = new EquipmentServicesImpl(equipmentRepositoryGateway)
-const fuelSupplyServices = new FuelSupplyServicesImpl(fuelSupplyRepositoryGateway)
-const hourMeterMonitoringServices = new HourMeterMonitoringServicesImpl(hourMeterMonitoringRepositoryGateway)
-const maintenanceTruckServices = new MaintenanceTruckServicesImpl(maintenanceTruckRepositoryGateway)
-const materialServices = new MaterialServicesImpl(materialRepositoryGateway)
-const materialTransportServices = new MaterialTransportServicesImpl(materialTransportRepositoryGateway)
-const transportVehicleServices = new TransportVehicleServicesImpl(transportVehicleReposirotyGateway)
-const invoiceServices = new InvoiceServicesImpl(invoiceRepositoryGateway)
 const authServices = new AuthServicesImpl(httpClientGateway)
+const invoiceServices = new InvoiceServicesImpl(invoiceRepositoryGateway)
+const workServices = new WorkServicesImpl(workRepositoryGateway, httpClientGateway)
+
+// Interectors (Injetando as instâncias criadas acima no construtor)
+
+const depositServices = new DepositInteractor(depositRepositoryGateway)
+const materialServices = new MaterialInteractor(materialRepositoryGateway)
+const workRoutesServices = new WorkRoutesInteractor(workRoutesRepositoryGateway)
+const equipmentServices = new EquipmentInteractor(equipmentRepositoryGateway)
+const workEquipmentServices = new WorkEquipmentInteractor(workEquipmentRepositoryGateway)
+const maintenanceTruckServices = new MaintenanceTruckInteractor(maintenanceTruckRepositoryGateway)
+const transportVehicleServices = new TransportVehicleInteractor(transportVehicleReposirotyGateway)
+const materialTransportServices = new MaterialTransportInteractor(materialTransportRepositoryGateway)
+const hourMeterMonitoringServices = new HourMeterMonitoringInteractor(hourMeterMonitoringRepositoryGateway)
+const discountServices = new DiscountInteractor(discountRepositoryGateway)
+
+const fuelSupplyServices = new FuelSupplyInteractor(fuelSupplyRepositoryGateway)
 
 // --- CONTAINER DE EXPOSIÇÃO ---
 

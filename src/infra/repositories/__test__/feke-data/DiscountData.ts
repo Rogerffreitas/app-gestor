@@ -1,4 +1,4 @@
-import DiscountEntity from '../../../../domin/entity/discount/DiscountEntity'
+import DiscountEntity from '@domin/entity/discount/DiscountEntity'
 import { DiscountTypes } from '../../../../types'
 
 export const discountEntityT = {

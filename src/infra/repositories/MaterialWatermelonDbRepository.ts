@@ -1,9 +1,10 @@
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
-import MaterialEntity from '../../domin/entity/material/MaterialEntity'
 import MaterialModel from '../../database/model/MaterialModel'
-import { MaterialRepositoryGateway } from '../../domin/application/gateways/MaterialRepositoryGateway'
 import { TableName, UserAction } from '../../types'
+import { MaterialRepositoryGateway } from '@domin/application/gateways/MaterialRepositoryGateway'
+import MaterialEntity from '@domin/entity/material/MaterialEntity'
+import Mappers from './mappers'
 
 export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway {
     async createMaterialInLocalDatabase(entity: MaterialEntity): Promise<MaterialEntity> {
@@ -23,7 +24,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
                 })
             })
 
-            return new MaterialEntity().modelToEntity(entityCreated)
+            return new MaterialEntity().modelToEntity(Mappers.materialMapper(entityCreated))
         } catch (error) {
             console.log('[Material]: ' + error)
             throw new Error('Error create material in local database.', {
@@ -44,7 +45,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
                     item.userId = entity.userId
                 })
             })
-            return new MaterialEntity().modelToEntity(entityUpdated)
+            return new MaterialEntity().modelToEntity(Mappers.materialMapper(entityUpdated))
         } catch (error) {
             console.log('[Material]: ' + error)
             throw new Error('Error updating material in local database.', {
@@ -102,7 +103,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
                 )
                 .fetch()
             return result.map((item) => {
-                return new MaterialEntity().modelToEntity(item)
+                return new MaterialEntity().modelToEntity(Mappers.materialMapper(item))
             })
         } catch (error) {
             console.log('[Material]: ' + error)
@@ -129,7 +130,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
                 .fetch()
 
             return result.map((item) => {
-                return new MaterialEntity().modelToEntity(item)
+                return new MaterialEntity().modelToEntity(Mappers.materialMapper(item))
             })
         } catch (error) {
             console.log('[Material]: ' + error)

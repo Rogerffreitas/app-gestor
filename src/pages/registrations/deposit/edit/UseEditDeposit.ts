@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import DepositDto from '../../../../domin/entity/deposit/DepositDto'
+import DepositDto from '@domin/entity/deposit/DepositDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'

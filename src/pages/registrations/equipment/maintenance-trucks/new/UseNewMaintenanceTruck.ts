@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import WorkEquipmentDto from '../../../../../domin/entity/work-equipment/WorkEquipmentDto'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../../contexts/AuthContext'
-import UserDto from '../../../../../domin/entity/user/UserDto'
 import { RootStackParamList, ScreenNames, UserRoles } from '../../../../../types'
 import { errorVibration, successVibration } from '../../../../../services/VibrationService'
 import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../../services/StrictBuilder'
-import { MaintenanceTruckDto } from '../../../../../domin/entity/maintenance-truck/MaintenanceTruckDto'
 import { useConfig } from '../../../../../contexts/ConfigContext'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useSync } from '@/src/infra/hooks/UseSync'
 import { useInjection } from '@/src/contexts/InjectionContext'
+import { MaintenanceTruckDto } from '@domin/entity/maintenance-truck/MaintenanceTruckDto'
+import UserDto from '@domin/entity/user/UserDto'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
 
 type UserSelectionList = {
     key: string

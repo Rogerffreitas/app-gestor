@@ -7,8 +7,8 @@ import CardLineContentLeft from '../../../../components/cardLine/CardLineContent
 import TextTituloCardLine from '../../../../components/cardLine/TextTituloCardLine'
 import Line from '../../../../components/cardLine/Line'
 import TextConteudoCardLine from '../../../../components/cardLine/TextConteudoCardLine'
-import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import WorkEquipmentDto from '../../../../domin/entity/work-equipment/WorkEquipmentDto'
+import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 
 type props = {

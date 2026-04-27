@@ -1,11 +1,15 @@
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import DepositModel from '../../database/model/DepositModel'
-import DepositEntity from '../../domin/entity/deposit/DepositEntity'
-import { DepositRepositoryGateway } from '../../domin/application/gateways/DepositRepositoryGateway'
+import { DepositRepositoryGateway } from '@domin/application/gateways/DepositRepositoryGateway'
 import { TableName, UserAction } from '../../types'
+import DepositEntity from '@domin/entity/deposit/DepositEntity'
+import Mappers from './mappers'
 
 export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
+    saveDepositServerId(entitys: DepositEntity[]): void {
+        throw new Error('Method not implemented.')
+    }
     async createDepositInLocalDatabase(entity: DepositEntity): Promise<DepositEntity> {
         try {
             const entityCreated = await database.write(async () => {
@@ -20,7 +24,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
                 })
             })
 
-            return new DepositEntity().modelToEntity(entityCreated)
+            return new DepositEntity().modelToEntity(Mappers.depositMapper(entityCreated))
         } catch (error) {
             console.error('[Deposits]: ' + error)
             throw new Error('Error create Deposit in local database.', {
@@ -39,7 +43,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
                     item.userAction = UserAction.UPDATE
                 })
             })
-            return new DepositEntity().modelToEntity(entityUpdeted)
+            return new DepositEntity().modelToEntity(Mappers.depositMapper(entityUpdeted))
         } catch (error) {
             console.error('[Deposits]: ' + error)
             throw new Error('Error updating deposit in local database.', {
@@ -81,7 +85,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
         try {
             const result = await database.get<DepositModel>(TableName.DEPOSITS).find(id)
             if (result) {
-                return new DepositEntity().modelToEntity(result)
+                return new DepositEntity().modelToEntity(Mappers.depositMapper(result))
             }
             return null
         } catch (error) {
@@ -102,7 +106,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
                 )
                 .fetch()
             return result.map((item) => {
-                return new DepositEntity().modelToEntity(item)
+                return new DepositEntity().modelToEntity(Mappers.depositMapper(item))
             })
         } catch (error) {
             console.error('[Deposits]: ' + error)
@@ -112,7 +116,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
         }
     }
 
-    async saveDepositServerId(entity: DepositEntity): Promise<void> {
+    /*async saveDepositServerId(entity: DepositEntity): Promise<void> {
         try {
             await database.write(async () => {
                 const deposit = await database.get<DepositModel>(TableName.DEPOSITS).find(entity.id)
@@ -129,5 +133,5 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
                 }`
             )
         }
-    }
+    }*/
 }

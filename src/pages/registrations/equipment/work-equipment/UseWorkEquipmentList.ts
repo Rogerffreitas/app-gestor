@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import WorkEquipmentDto from '../../../../domin/entity/work-equipment/WorkEquipmentDto'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import WorkDto from '../../../../domin/entity/work/WorkDto'
+import WorkDto from '@domin/entity/work/WorkDto'
 import { useInjection } from '@/src/contexts/InjectionContext'
 
 type WorkEquipmentListProp = RouteProp<RootStackParamList, ScreenNames.WORK_EQUIPMENTS_LIST>

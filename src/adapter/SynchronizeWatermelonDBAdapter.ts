@@ -3,12 +3,12 @@ import { database } from '../database'
 import Token from '../interfaces/Token'
 import axios from 'axios'
 import { Alert } from 'react-native'
-import { SyncAdapter } from '../domin/application/infra/SyncAdapter'
 import { SyncPushResponse } from '../interfaces/SyncPushResponse'
-import { SyncRepositoryGateway } from '../domin/application/gateways/SyncRepositoryGateway'
+import { SyncAdapter } from '../../../domin/application/infra/SyncAdapter'
+import { SyncResponseRepositoryGateway } from '@domin/application/gateways/SyncResponseRepositoryGateway'
 
 export class SynchronizeWatermelonDBAdapter implements SyncAdapter {
-    constructor(private repository: SyncRepositoryGateway) {}
+    constructor(private repository: SyncResponseRepositoryGateway) {}
 
     async sync(token: Token, url: string, signOut: () => void): Promise<SyncPushResponse> {
         let syncPushResponse = {} as SyncPushResponse

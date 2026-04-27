@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import TransportVehicleDto from '../../../domin/entity/transport-vehicle/TransportVehicleDto'
+import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
 import { Alert } from 'react-native'
 import { useAuth } from '../../../contexts/AuthContext'
 import { ScreenNames } from '../../../types'

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import TransportVehicleDto from '../../../../domin/entity/transport-vehicle/TransportVehicleDto'
-import WorkEquipmentDto from '../../../../domin/entity/work-equipment/WorkEquipmentDto'
+import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
+import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../../types'
-import { InvoiceDto } from '../../../../domin/entity/invoice/InvoiceDto'
+import { InvoiceDto } from '@domin/entity/invoice/InvoiceDto'
 
 type GenerateInvoiceProp = RouteProp<RootStackParamList, ScreenNames.GENERATE_INVOICE>
 

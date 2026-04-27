@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import MaterialTransportDto from '../../../../domin/entity/material-transport/MaterialTransportDto'
+import MaterialTransportDto from '@domin/entity/material-transport/MaterialTransportDto'
 import { Alert } from 'react-native'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { useConfig } from '../../../../contexts/ConfigContext'

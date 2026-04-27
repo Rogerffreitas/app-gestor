@@ -1,9 +1,10 @@
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import HourMeterMonitoringModel from '../../database/model/HourMeterMonitoringModel'
-import { HourMeterMonitoringRepositoryGateway } from '../../domin/application/gateways/HourMeterMonitoringRepositoryGateway'
-import { HourMeterMonitoringEntity } from '../../domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
+import { HourMeterMonitoringRepositoryGateway } from '@domin/application/gateways/HourMeterMonitoringRepositoryGateway'
+import { HourMeterMonitoringEntity } from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
+import Mappers from './mappers'
 
 export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonitoringRepositoryGateway {
     async createHourMeterMonitoringInLocalDatabase(
@@ -33,7 +34,9 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                     })
             })
             console.log('Entity created: ' + entityCreated)
-            return new HourMeterMonitoringEntity().modelToEntity(entityCreated)
+            return new HourMeterMonitoringEntity().modelToEntity(
+                await Mappers.hourMeterMonitoringMapper(entityCreated)
+            )
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
             throw new Error('Error create  Hour Meter Monitoring in local database ', { cause: error })
@@ -60,7 +63,9 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                 })
             })
             console.log('Entity created: ' + entityCreated)
-            return new HourMeterMonitoringEntity().modelToEntity(entityCreated)
+            return new HourMeterMonitoringEntity().modelToEntity(
+                await Mappers.hourMeterMonitoringMapper(entityCreated)
+            )
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
             throw new Error('Error updating  Hour Meter Monitoring in local database ', { cause: error })
@@ -97,7 +102,9 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                 .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                 .find(id)
             if (result) {
-                return new HourMeterMonitoringEntity().modelToEntity(result)
+                return new HourMeterMonitoringEntity().modelToEntity(
+                    await Mappers.hourMeterMonitoringMapper(result)
+                )
             }
             return null
         } catch (error) {
@@ -131,7 +138,9 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
 
             return await Promise.all(
                 result.map(async (item: HourMeterMonitoringModel) => {
-                    return new HourMeterMonitoringEntity().modelToEntity(item)
+                    return new HourMeterMonitoringEntity().modelToEntity(
+                        await Mappers.hourMeterMonitoringMapper(item)
+                    )
                 })
             )
         } catch (error) {
@@ -156,7 +165,9 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                     Q.take(1)
                 )
                 .fetch()
-            return new HourMeterMonitoringEntity().modelToEntity(result[0])
+            return new HourMeterMonitoringEntity().modelToEntity(
+                await Mappers.hourMeterMonitoringMapper(result[0])
+            )
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
             throw new Error('Error loading Hour Meter Monitoring from local database.')
@@ -181,7 +192,9 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
 
             return await Promise.all(
                 result.map(async (item: HourMeterMonitoringModel) => {
-                    return new HourMeterMonitoringEntity().modelToEntity(item)
+                    return new HourMeterMonitoringEntity().modelToEntity(
+                        await Mappers.hourMeterMonitoringMapper(item)
+                    )
                 })
             )
         } catch (error) {
