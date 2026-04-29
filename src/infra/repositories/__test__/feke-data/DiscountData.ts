@@ -1,10 +1,9 @@
-import DiscountEntity from '@domin/entity/discount/DiscountEntity'
+import DiscountEntity from '@gestor/domain/entity/discount/DiscountEntity'
 import { DiscountTypes } from '../../../../types'
 
 export const discountEntityT = {
     value: 100,
     description: 'peça',
-    typ_e: DiscountTypes.TRANSPORT_VEHICLE,
     transportVehicleOrWorkEquipmentId: 't-1',
     workId: 'work-1',
     enterpriseId: 'enterprise-1',
@@ -14,7 +13,6 @@ export const discountEntityT = {
 export const discountEntityEQ = {
     value: 100,
     description: 'peça',
-    typ_e: DiscountTypes.EQUIPMENT,
     transportVehicleOrWorkEquipmentId: 'eq-1',
     workId: 'work-1',
     enterpriseId: 'enterprise-1',

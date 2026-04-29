@@ -1,8 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
 import { StatusBar } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 type ContainerProps = {
     children?: React.ReactNode | undefined

@@ -8,7 +8,7 @@ import {
 } from '../../../../types'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'
-import { FuelSupplyDto } from '@domin/entity/fuel-supply/FuelSupplyDto'
+import { FuelSupplyDto } from '@gestor/domain/entity/fuel-supply/FuelSupplyDto'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useApplicationContext } from '../../../../contexts/ApplicationContext'
 import { useInjection } from '@/src/contexts/InjectionContext'

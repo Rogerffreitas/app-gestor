@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { FuelSupplyDto } from '@domin/entity/fuel-supply/FuelSupplyDto'
+import { FuelSupplyDto } from '@gestor/domain/entity/fuel-supply/FuelSupplyDto'
 import { FuelSupplyTypes, RootStackParamList, ScreenNames } from '../../../../types'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../services/VibrationService'

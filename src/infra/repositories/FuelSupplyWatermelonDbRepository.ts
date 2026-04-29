@@ -1,10 +1,10 @@
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import FuelSupplyModel from '../../database/model/FuelSupplyModel'
-import { FuelSupplyRepositoryGateway } from '@domin/application/gateways/FuelSupplyRepositoryGateway'
+import { FuelSupplyRepositoryGateway } from '@gestor/domain/application/gateways/FuelSupplyRepositoryGateway'
 import { FuelSupplyTypes, InvoiceStatus, TableName, UserAction } from '../../types'
-import { FuelSupplyEntity } from '@domin/entity/fuel-supply/FuelSupplyEntity'
-import FuelSupplyProps from '@domin/interfaces/props/FuelSupplyProps'
+import { FuelSupplyEntity } from '@gestor/domain/entity/fuel-supply/FuelSupplyEntity'
+import FuelSupplyProps from '@gestor/domain/interfaces/props/FuelSupplyProps'
 
 export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGateway {
     loadCurrentBalanceTankByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndPreviousDateFromLocalDatabase(

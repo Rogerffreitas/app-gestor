@@ -7,9 +7,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { RootStackParamList, ScreenNames } from '../../../../../types'
 import { useSync } from '@/src/infra/hooks/UseSync'
 import { useInjection } from '@/src/contexts/InjectionContext'
-import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
-import EquipmentDto from '@domin/entity/equipment/EquipmentDto'
-import WorkDto from '@domin/entity/work/WorkDto'
+import WorkEquipmentDto from '@gestor/domain/entity/work-equipment/WorkEquipmentDto'
+import EquipmentDto from '@gestor/domain/entity/equipment/EquipmentDto'
+import WorkDto from '@gestor/domain/entity/work/WorkDto'
 
 type NewWorkEquipmentProp = RouteProp<RootStackParamList, ScreenNames.WORK_EQUIPMENTS>
 

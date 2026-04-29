@@ -6,7 +6,7 @@ import { Alert, ToastAndroid } from 'react-native'
 import { StrictBuilder } from '../../../../services/StrictBuilder'
 import { useNavigation } from '@react-navigation/native'
 import { useInjection } from '@/src/contexts/InjectionContext'
-import DepositDto from '@domin/entity/deposit/DepositDto'
+import DepositDto from '@gestor/domain/entity/deposit/DepositDto'
 
 export default function useNewDeposit() {
     const depositServices = useInjection('DepositServices')

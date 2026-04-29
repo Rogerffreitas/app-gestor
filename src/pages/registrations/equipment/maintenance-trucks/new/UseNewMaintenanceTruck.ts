@@ -8,9 +8,9 @@ import { useConfig } from '../../../../../contexts/ConfigContext'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useSync } from '@/src/infra/hooks/UseSync'
 import { useInjection } from '@/src/contexts/InjectionContext'
-import { MaintenanceTruckDto } from '@domin/entity/maintenance-truck/MaintenanceTruckDto'
-import UserDto from '@domin/entity/user/UserDto'
-import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
+import { MaintenanceTruckDto } from '@gestor/domain/entity/maintenance-truck/MaintenanceTruckDto'
+import UserDto from '@gestor/domain/entity/user/UserDto'
+import WorkEquipmentDto from '@gestor/domain/entity/work-equipment/WorkEquipmentDto'
 
 type UserSelectionList = {
     key: string

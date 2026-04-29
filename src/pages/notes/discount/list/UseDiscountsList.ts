@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import DiscountDto from '@domin/entity/discount/DiscountDto'
+import DiscountDto from '@gestor/domain/entity/discount/DiscountDto'
 import { errorVibration } from '../../../../services/VibrationService'
 import { Alert } from 'react-native'
 import { RootStackParamList, ScreenNames } from '../../../../types'

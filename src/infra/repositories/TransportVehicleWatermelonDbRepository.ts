@@ -1,10 +1,10 @@
-import { BankInformation } from '@domin/entity/bank-information/BankInformation'
+import { BankInformation } from '@gestor/domain/entity/bank-information/BankInformation'
 import { database } from '../../database'
 import TransportVehicleModel from '../../database/model/TransportVehicleModel'
 import { TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
-import { TransportVehicleEntity } from '@domin/entity/transport-vehicle/TransportVehicleEntity'
-import { TransportVehicleRepositoryGateway } from '@domin/application/gateways/TransportVehicleRepositoryGateway'
+import { TransportVehicleEntity } from '@gestor/domain/entity/transport-vehicle/TransportVehicleEntity'
+import { TransportVehicleRepositoryGateway } from '@gestor/domain/application/gateways/TransportVehicleRepositoryGateway'
 import Mappers from './mappers'
 
 export class TransportVehicleWatermelonDbRepository implements TransportVehicleRepositoryGateway {

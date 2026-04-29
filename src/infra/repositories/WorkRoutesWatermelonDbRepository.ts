@@ -3,8 +3,8 @@ import { database } from '../../database'
 import WorkRoutesModel from '../../database/model/WorkRouteModel'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
-import { WorkRoutesRepositoryGateway } from '@domin/application/gateways/WorkRoutesRepositoryGateway'
-import WorkRoutesEntity from '@domin/entity/work-routes/WorkRoutesEntity'
+import { WorkRoutesRepositoryGateway } from '@gestor/domain/application/gateways/WorkRoutesRepositoryGateway'
+import WorkRoutesEntity from '@gestor/domain/entity/work-routes/WorkRoutesEntity'
 import Mappers from './mappers'
 
 export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGateway {

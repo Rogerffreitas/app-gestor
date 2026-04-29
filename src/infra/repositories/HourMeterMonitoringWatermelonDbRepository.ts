@@ -2,8 +2,8 @@ import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import HourMeterMonitoringModel from '../../database/model/HourMeterMonitoringModel'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
-import { HourMeterMonitoringRepositoryGateway } from '@domin/application/gateways/HourMeterMonitoringRepositoryGateway'
-import { HourMeterMonitoringEntity } from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
+import { HourMeterMonitoringRepositoryGateway } from '@gestor/domain/application/gateways/HourMeterMonitoringRepositoryGateway'
+import { HourMeterMonitoringEntity } from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 import Mappers from './mappers'
 
 export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonitoringRepositoryGateway {

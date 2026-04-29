@@ -1,9 +1,9 @@
-import { MaintenanceTruckRepositoryGateway } from '@domin/application/gateways/MaintenanceTruckRepositoryGateway'
+import { MaintenanceTruckRepositoryGateway } from '@gestor/domain/application/gateways/MaintenanceTruckRepositoryGateway'
 import { database } from '../../database'
 import MaintenanceTruckModel from '../../database/model/MaintenanceTruckModel'
 import { TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
-import { MaintenanceTruckEntity } from '@domin/entity/maintenance-truck/MaintenanceTruckEntity'
+import { MaintenanceTruckEntity } from '@gestor/domain/entity/maintenance-truck/MaintenanceTruckEntity'
 import Mappers from './mappers'
 
 export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckRepositoryGateway {

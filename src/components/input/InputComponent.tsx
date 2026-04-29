@@ -1,5 +1,4 @@
 import React from 'react'
-import { Controller } from 'react-hook-form'
 import { StyleSheet, TextInput } from 'react-native'
 
 export default function InputComponent({

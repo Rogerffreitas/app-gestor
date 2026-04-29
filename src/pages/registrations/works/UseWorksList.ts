@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { ToastAndroid } from 'react-native'
-import WorkDto from '@domin/entity/work/WorkDto'
+import WorkDto from '@gestor/domain/entity/work/WorkDto'
 import { useNavigation } from '@react-navigation/native'
 import { ScreenNames } from '../../../types'
 import { useInjection } from '@/src/contexts/InjectionContext'

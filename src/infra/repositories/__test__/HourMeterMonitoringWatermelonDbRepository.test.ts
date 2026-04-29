@@ -5,7 +5,7 @@ import { schemas } from '../../../database/schemas'
 import HourMeterMonitoringModel from '../../../database/model/HourMeterMonitoringModel'
 import { HourMeterMonitoringWatermelonDbRepository } from '../HourMeterMonitoringWatermelonDbRepository'
 import { hourMeterMonitoringEntity, hourMeterMonitoringIDEntity } from './feke-data/HourMeterMonitoringData'
-import { HourMeterMonitoringEntity } from '../../../domin/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
+import { HourMeterMonitoringEntity } from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 
 const adapter = new LokiJSAdapter({
     dbName: 'TEST-DB',

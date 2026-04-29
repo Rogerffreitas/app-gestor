@@ -3,8 +3,8 @@ import { database } from '../../database'
 import WorkModel from '../../database/model/WorkModel'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
-import { WorkRepositoryGateway } from '@domin/application/gateways/WorkRepositoryGateway'
-import WorkEntity from '@domin/entity/work/WorkEntity'
+import { WorkRepositoryGateway } from '@gestor/domain/application/gateways/WorkRepositoryGateway'
+import WorkEntity from '@gestor/domain/entity/work/WorkEntity'
 import Mappers from './mappers'
 
 export class WorkWatermelonDbRepository implements WorkRepositoryGateway {

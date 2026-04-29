@@ -2,8 +2,8 @@ import WorkEquipmentModel from '../../database/model/WorkEquipmentModel'
 import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import { TableName, UserAction } from '../../types'
-import { WorkEquipmentRepositoryGateway } from '@domin/application/gateways/WorkEquipmentRepositoryGateway'
-import { WorkEquipmentEntity } from '@domin/entity/work-equipment/WorkEquipmentEntity'
+import { WorkEquipmentRepositoryGateway } from '@gestor/domain/application/gateways/WorkEquipmentRepositoryGateway'
+import { WorkEquipmentEntity } from '@gestor/domain/entity/work-equipment/WorkEquipmentEntity'
 import Mappers from './mappers'
 
 export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentRepositoryGateway {

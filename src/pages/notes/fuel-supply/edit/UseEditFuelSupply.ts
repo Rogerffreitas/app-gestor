@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../../../contexts/AuthContext'
-import { FuelSupplyDto } from '@domin/entity/fuel-supply/FuelSupplyDto'
+import { FuelSupplyDto } from '@gestor/domain/entity/fuel-supply/FuelSupplyDto'
 import { Alert, ToastAndroid } from 'react-native'
 import { errorVibration, successVibration } from '../../../../services/VibrationService'
 import { StrictBuilder } from '../../../../services/StrictBuilder'

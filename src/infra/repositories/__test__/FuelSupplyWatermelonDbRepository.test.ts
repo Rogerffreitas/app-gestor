@@ -3,7 +3,7 @@ import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import { FuelSupplyTypes, TableName, UserAction } from '../../../types'
 import { schemas } from '../../../database/schemas'
 import FuelSupplyModel from '../../../database/model/FuelSupplyModel'
-import { FuelSupplyEntity } from '../../../domin/entity/fuel-supply/FuelSupplyEntity'
+import { FuelSupplyEntity } from '@gestor/domain/entity/fuel-supply/FuelSupplyEntity'
 import {
     entityEquipment,
     entityMaintenanceTruck,
@@ -11,7 +11,6 @@ import {
     entityTransportVehicle,
 } from './feke-data/FuelSupplyData'
 
-import { FuelSupplyRepositoryGateway } from '../../../domin/application/gateways/FuelSupplyRepositoryGateway'
 import { useInjection } from '@/src/contexts/InjectionContext'
 
 const adapter = new LokiJSAdapter({

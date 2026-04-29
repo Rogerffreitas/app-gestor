@@ -4,8 +4,8 @@ import Token from '../interfaces/Token'
 import axios from 'axios'
 import { Alert } from 'react-native'
 import { SyncPushResponse } from '../interfaces/SyncPushResponse'
-import { SyncAdapter } from '../../../domin/application/infra/SyncAdapter'
-import { SyncResponseRepositoryGateway } from '@domin/application/gateways/SyncResponseRepositoryGateway'
+import { SyncAdapter } from '@gestor/domain/application/infra/SyncAdapter'
+import { SyncResponseRepositoryGateway } from '@gestor/domain/application/gateways/SyncResponseRepositoryGateway'
 
 export class SynchronizeWatermelonDBAdapter implements SyncAdapter {
     constructor(private repository: SyncResponseRepositoryGateway) {}

@@ -1,4 +1,4 @@
-import MaterialTransportDto from '@domin/entity/material-transport/MaterialTransportDto'
+import MaterialTransportDto from '@gestor/domain/entity/material-transport/MaterialTransportDto'
 
 type UseTransportEditProps = {
     materialTransportDto: MaterialTransportDto

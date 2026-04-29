@@ -11,10 +11,10 @@ import TitleInvoice from '../../components/TitleInvoice'
 import Discount from '../../components/Discount'
 import FuelSupply from '../../components/FuelSupply'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import HourMeterMonitoringDto from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
-import MaterialTransportDto from '@domin/entity/material-transport/MaterialTransportDto'
-import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
-import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
+import HourMeterMonitoringDto from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import MaterialTransportDto from '@gestor/domain/entity/material-transport/MaterialTransportDto'
+import TransportVehicleDto from '@gestor/domain/entity/transport-vehicle/TransportVehicleDto'
+import WorkEquipmentDto from '@gestor/domain/entity/work-equipment/WorkEquipmentDto'
 
 export default function NewInvoice() {
     const { states, type, actions, transportVehicleOrWorkEquipment } = useNewInvoice()

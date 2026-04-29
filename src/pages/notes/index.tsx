@@ -11,7 +11,7 @@ import { DiscountTypes, FuelSupplyTypes, MenuOptionsNotesTypes, ScreenNames, Use
 import { errorVibration } from '../../services/VibrationService'
 import { useNavigation } from '@react-navigation/native'
 import { useInjection } from '@/src/contexts/InjectionContext'
-import WorkDto from '@domin/entity/work/WorkDto'
+import WorkDto from '@gestor/domain/entity/work/WorkDto'
 
 export default function Notes() {
     const workServices = useInjection('WorkServices')

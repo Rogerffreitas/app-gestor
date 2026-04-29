@@ -1,9 +1,9 @@
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import DepositModel from '../../database/model/DepositModel'
-import { DepositRepositoryGateway } from '@domin/application/gateways/DepositRepositoryGateway'
+import { DepositRepositoryGateway } from '@gestor/domain/application/gateways/DepositRepositoryGateway'
 import { TableName, UserAction } from '../../types'
-import DepositEntity from '@domin/entity/deposit/DepositEntity'
+import DepositEntity from '@gestor/domain/entity/deposit/DepositEntity'
 import Mappers from './mappers'
 
 export class DepositWatermelonDbRepository implements DepositRepositoryGateway {

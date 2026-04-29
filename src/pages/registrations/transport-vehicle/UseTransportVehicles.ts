@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
-import WorkDto from '@domin/entity/work/WorkDto'
+import TransportVehicleDto from '@gestor/domain/entity/transport-vehicle/TransportVehicleDto'
+import WorkDto from '@gestor/domain/entity/work/WorkDto'
 import { useAuth } from '../../../contexts/AuthContext'
 import { ScreenNames } from '../../../types'
 import { errorVibration } from '../../../services/VibrationService'

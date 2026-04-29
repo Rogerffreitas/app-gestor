@@ -12,8 +12,8 @@ import {
 } from '../../../../components/List/FlatListItemApontamento'
 import formatarData from '../../../../services/formatarData'
 import { useConfig } from '../../../../contexts/ConfigContext'
-import MaterialTransportDto from '@domin/entity/material-transport/MaterialTransportDto'
-import TransportVehicleDto from '@domin/entity/transport-vehicle/TransportVehicleDto'
+import MaterialTransportDto from '@gestor/domain/entity/material-transport/MaterialTransportDto'
+import TransportVehicleDto from '@gestor/domain/entity/transport-vehicle/TransportVehicleDto'
 import TitleInvoice from './TitleInvoice'
 import { InvoiceTypes } from '../../../../types'
 

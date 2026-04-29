@@ -1,4 +1,4 @@
-import { FuelSupplyEntity } from '@domin/entity/fuel-supply/FuelSupplyEntity'
+import { FuelSupplyEntity } from '@gestor/domain/entity/fuel-supply/FuelSupplyEntity'
 import { FuelSupplyTypes } from '../../../../types'
 
 export const entityTransportVehicle = {

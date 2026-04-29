@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import HourMeterMonitoringDto from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import HourMeterMonitoringDto from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { RootStackParamList, ScreenNames } from '../../../../types'
 import { Alert } from 'react-native'

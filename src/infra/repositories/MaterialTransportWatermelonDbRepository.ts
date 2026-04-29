@@ -1,9 +1,9 @@
-import { MaterialTransportRepositoryGateway } from '@domin/application/gateways/MaterialTransportRepositoryGateway'
+import { MaterialTransportRepositoryGateway } from '@gestor/domain/application/gateways/MaterialTransportRepositoryGateway'
 import { database } from '../../database'
 import MaterialTransportModel from '../../database/model/MaterialTransportModel'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
 import { Q } from '@nozbe/watermelondb'
-import { MaterialTransportEntity } from '@domin/entity/material-transport/MaterialTransportEntity'
+import { MaterialTransportEntity } from '@gestor/domain/entity/material-transport/MaterialTransportEntity'
 import Mappers from './mappers'
 
 export class MaterialTransportWatermelonDbRepository implements MaterialTransportRepositoryGateway {

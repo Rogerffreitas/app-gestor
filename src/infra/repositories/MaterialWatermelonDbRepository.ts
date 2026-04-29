@@ -2,8 +2,8 @@ import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import MaterialModel from '../../database/model/MaterialModel'
 import { TableName, UserAction } from '../../types'
-import { MaterialRepositoryGateway } from '@domin/application/gateways/MaterialRepositoryGateway'
-import MaterialEntity from '@domin/entity/material/MaterialEntity'
+import { MaterialRepositoryGateway } from '@gestor/domain/application/gateways/MaterialRepositoryGateway'
+import MaterialEntity from '@gestor/domain/entity/material/MaterialEntity'
 import Mappers from './mappers'
 
 export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway {

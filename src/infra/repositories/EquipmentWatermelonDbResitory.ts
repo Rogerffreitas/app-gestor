@@ -2,9 +2,9 @@ import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import EquipmentModel from '../../database/model/EquipmentModel'
 import { TableName, UserAction } from '../../types'
-import { EquipmentRepositoryGateway } from '@domin/application/gateways/EquipmentRepositoryGateway'
-import { EquipmentEntity } from '@domin/entity/equipment/EquipmentEntity'
-import { BankInformation } from '@domin/entity/bank-information/BankInformation'
+import { EquipmentRepositoryGateway } from '@gestor/domain/application/gateways/EquipmentRepositoryGateway'
+import { EquipmentEntity } from '@gestor/domain/entity/equipment/EquipmentEntity'
+import { BankInformation } from '@gestor/domain/entity/bank-information/BankInformation'
 import Mappers from './mappers'
 
 export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway {

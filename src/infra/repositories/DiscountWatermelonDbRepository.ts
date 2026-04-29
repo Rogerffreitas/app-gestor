@@ -3,10 +3,10 @@ import { Q } from '@nozbe/watermelondb'
 import DiscountModel from '../../database/model/DiscountModel'
 
 import { InvoiceStatus, TableName, UserAction } from '../../types'
-import { DiscountRepositoryGateway } from '@domin/application/gateways/DiscountRepositoryGateway'
-import DiscountEntity from '@domin/entity/discount/DiscountEntity'
-import DiscountProps from '@domin/interfaces/props/DiscountProps'
-import { DiscountTypes } from '@domin/types'
+import { DiscountRepositoryGateway } from '@gestor/domain/application/gateways/DiscountRepositoryGateway'
+import DiscountEntity from '@gestor/domain/entity/discount/DiscountEntity'
+import DiscountProps from '@gestor/domain/interfaces/props/DiscountProps'
+import { DiscountTypes } from '@gestor/domain/types'
 
 export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway {
     async createDiscountInLocalDatabase(entity: DiscountEntity): Promise<DiscountEntity> {

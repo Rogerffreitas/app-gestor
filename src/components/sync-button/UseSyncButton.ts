@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useConfig } from '../../contexts/ConfigContext'
-import { HttpRequest } from '../../domin/entity/http/dtos/HttpRequest'
+import { HttpRequest } from '@gestor/domain/entity/http/dtos/HttpRequest'
 import { useInjection } from '@/src/contexts/InjectionContext'
 
 type SyncButtonProps = {

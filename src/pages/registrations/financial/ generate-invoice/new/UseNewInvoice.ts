@@ -1,7 +1,7 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { useAuth } from '../../../../../contexts/AuthContext'
 import { useEffect, useState } from 'react'
-import { InvoiceDto } from '@domin/entity/invoice/InvoiceDto'
+import { InvoiceDto } from '@gestor/domain/entity/invoice/InvoiceDto'
 import { Alert } from 'react-native'
 import { errorVibration } from '../../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../../types'

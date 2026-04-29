@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BankInformation } from '@domin/entity/bank-information/BankInformation'
+import { BankInformation } from '@gestor/domain/entity/bank-information/BankInformation'
 import { Alert } from 'react-native'
 import { Builder } from '../../../../services/Builder'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'

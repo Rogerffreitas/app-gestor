@@ -9,9 +9,9 @@ import {
     ViewRight,
     ViewTitle,
 } from '../../../../components/List/FlatListItemApontamento'
-import HourMeterMonitoringDto from '@domin/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import HourMeterMonitoringDto from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { styled } from 'styled-components/native'
-import WorkEquipmentDto from '@domin/entity/work-equipment/WorkEquipmentDto'
+import WorkEquipmentDto from '@gestor/domain/entity/work-equipment/WorkEquipmentDto'
 import TitleInvoice from './TitleInvoice'
 import { InvoiceTypes } from '../../../../types'
 

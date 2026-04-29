@@ -3,7 +3,7 @@ import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import { TableName, UserAction } from '../../../types'
 import { schemas } from '../../../database/schemas'
 import DepositModel from '../../../database/model/DepositModel'
-import DepositEntity from '../../../domin/entity/deposit/DepositEntity'
+import DepositEntity from '@gestor/domain/entity/deposit/DepositEntity'
 import { DepositWatermelonDbRepository } from '../DepositWatermelonDbRepository'
 import { depositEntity } from './feke-data/DepositData'
 

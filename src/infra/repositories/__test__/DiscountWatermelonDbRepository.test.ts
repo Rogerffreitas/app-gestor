@@ -5,7 +5,7 @@ import { schemas } from '../../../database/schemas'
 import DiscountModel from '../../../database/model/DiscountModel'
 import { DiscountWatermelonDbRepository } from '../DiscountWatermelonDbRepository'
 import { discountEntityEQ, discountEntityT } from './feke-data/DiscountData'
-import DiscountEntity from '../../../domin/entity/discount/DiscountEntity'
+import DiscountEntity from '@gestor/domain/entity/discount/DiscountEntity'
 
 const adapter = new LokiJSAdapter({
     dbName: 'TEST-DB',

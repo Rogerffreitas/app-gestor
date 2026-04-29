@@ -1,4 +1,4 @@
-import { EquipmentEntity } from '@domin/entity/equipment/EquipmentEntity'
+import { EquipmentEntity } from '@gestor/domain/entity/equipment/EquipmentEntity'
 
 export const equipamentEntity = {
     nameProprietary: 'nameProprietary',

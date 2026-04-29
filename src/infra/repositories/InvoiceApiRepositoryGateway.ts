@@ -1,9 +1,9 @@
-import { InvoiceDto } from '@domin/entity/invoice/InvoiceDto'
-import { InvoiceRequestRepositoryGateway } from '@domin/application/gateways/InvoiceRequestRepositoryGateway'
+import { InvoiceDto } from '@gestor/domain/entity/invoice/InvoiceDto'
+import { InvoiceRequestRepositoryGateway } from '@gestor/domain/application/gateways/InvoiceRequestRepositoryGateway'
 
 import Token from '../../interfaces/Token'
-import { InvoiceEntity } from '@domin/entity/invoice/InvoiceEntity'
-import { HttpClientGateway } from '@domin/application/gateways/HttpClientGateway'
+import { InvoiceEntity } from '@gestor/domain/entity/invoice/InvoiceEntity'
+import { HttpClientGateway } from '@gestor/domain/application/gateways/HttpClientGateway'
 
 export class InvoiceApiRepositoryGateway implements InvoiceRequestRepositoryGateway {
     constructor(private httpClient: HttpClientGateway) {}
