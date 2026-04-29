@@ -133,6 +133,23 @@ export default function NewInvoice() {
                     <ActivityIndicator size={'small'} color="#fff" />
                 </TouchableOpacity>
             )}
+            {!states.isLoading ? (
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.touchableOpacityPrintStyle}
+                    onPress={actions.showPrintDialog}
+                >
+                    <FontAwesome name="print" size={20} color={'#fff'} />
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.touchableOpacityPrintStyle}
+                    onPress={() => {}}
+                >
+                    <ActivityIndicator size={'small'} color="#fff" />
+                </TouchableOpacity>
+            )}
         </Container>
     )
 }
@@ -157,5 +174,25 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 20,
         bottom: 20,
+    },
+    touchableOpacityPrintStyle: {
+        shadowColor: '#000000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 8,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: theme.colors.menu,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+        position: 'absolute',
+        right: 20,
+        bottom: 90,
     },
 })

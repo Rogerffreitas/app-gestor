@@ -18,6 +18,7 @@ import useMaintenanceTruckFuelSupplies from './UseMaintenanceTruckFuelSupplies'
 import { FuelSupplyTypes } from '../../../../types'
 import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
 import MenuOptionSelected from '@/src/pages/registrations/financial/components/MenuOptionSelected'
+import getDataFormatada from '@/src/services/formatarData'
 
 const ASSETS_MAP = {
     truck: require('../../../../assets/truck2.json'),
@@ -129,6 +130,7 @@ export default function MaintenanceTruckFuelSupplies() {
                                                 <TextTituloCardLine conteudo={'Proprietário:'} />
                                                 <TextTituloCardLine conteudo={'Motorista:'} />
                                                 <TextTituloCardLine conteudo={'Quantidade:'} />
+                                                <TextTituloCardLine conteudo={'Data:'} />
                                                 <TextTituloCardLine conteudo={'Observação:'} />
 
                                                 {states.fuelType == FuelSupplyTypes.TRANSPORT_VEHICLE && (
@@ -146,7 +148,13 @@ export default function MaintenanceTruckFuelSupplies() {
                                                         }) + ' L'
                                                     }
                                                 />
+                                                <TextConteudoCardLine
+                                                    conteudo={getDataFormatada(
+                                                        item.fuelSupply.createdAt
+                                                    ).substring(0, 10)}
+                                                />
                                                 <TextConteudoCardLine conteudo={item.observation} />
+
                                                 {states.fuelType == FuelSupplyTypes.TRANSPORT_VEHICLE && (
                                                     <TextConteudoCardLine
                                                         conteudo={item.isDiscount ? 'Sim' : 'Não'}

@@ -32,7 +32,6 @@ export function ConfigContextProvider(props: ConfigContextProviderProps) {
     }, [])
 
     async function _getconfigFromStore() {
-        console.log('_getconfigFromStore')
         setConfig((state) => ({ ...state, isExtraDMTPaid: true }))
         setConfig((state) => ({ ...state, dmtPicket: 20 }))
         setConfig((state) => ({ ...state, workRoutes: ['DIÁRIA', 'MEIA DIÁRIA'] }))

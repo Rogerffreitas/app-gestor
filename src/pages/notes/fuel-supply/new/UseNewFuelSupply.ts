@@ -83,7 +83,7 @@ export default function useNewFuelSupply() {
                 ToastAndroid.show('Preencha todos os campos obrigatórios', ToastAndroid.LONG)
                 return
             }
-            Alert.alert('Erro ao tentar salvar o equipamento', error)
+            Alert.alert(`Erro ao tentar salvar o equipamento ${error}`)
             errorVibration()
         } finally {
             setStates((state) => ({ ...state, isLoading: false }))

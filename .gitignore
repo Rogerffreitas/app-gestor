@@ -42,3 +42,8 @@ yarn-error.*
 coverage/**/*
 ��@@��9@8
 ''$'\001\220\370''@@'$'\320\303''9@8'
+
+# eas
+eas.json
+
+#app.json

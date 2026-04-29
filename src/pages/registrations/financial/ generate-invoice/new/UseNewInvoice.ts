@@ -7,6 +7,7 @@ import { errorVibration } from '../../../../../services/VibrationService'
 import { RootStackParamList, ScreenNames } from '../../../../../types'
 import { useConfig } from '../../../../../contexts/ConfigContext'
 import { useInjection } from '@/src/contexts/InjectionContext'
+import * as Print from 'expo-print'
 
 type NewInvoiceProp = RouteProp<RootStackParamList, ScreenNames.NEW_INVOICE>
 type ViewType = 'transport' | 'hourMeter' | 'discount' | 'fuelSupply'
@@ -62,6 +63,7 @@ export default function useNewInvoice() {
                 type,
                 token
             )
+
             setStates((state) => ({ ...state, invoice: result, isLoadingList: false }))
         } catch (error) {
             Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
@@ -91,6 +93,40 @@ export default function useNewInvoice() {
         ])
     }
 
+    const showPrintDialog = () => {
+        return Alert.alert('Deseja imprimir?', 'Para confirmar pressione sim?', [
+            {
+                text: 'SIM',
+                onPress: () => {
+                    handlePrint()
+                },
+            },
+            {
+                text: 'NÃO',
+            },
+        ])
+    }
+
+    async function handlePrint() {
+        try {
+            setStates((state) => ({ ...state, isLoading: true }))
+            const pdf = await invoiceServices.previewInvoice(
+                config.urlApi,
+                `/reports/preview-invoice`,
+                states.invoice,
+                token
+            )
+
+            await Print.printAsync({ uri: pdf })
+            setStates((state) => ({ ...state, isLoading: false }))
+        } catch (error) {
+            console.info(error.mesage)
+            Alert.alert(`Erro ao tentar imprimir: ${error}`)
+            errorVibration()
+            setStates((state) => ({ ...state, isLoading: false }))
+        }
+    }
+
     return {
         states,
         type,
@@ -98,6 +134,7 @@ export default function useNewInvoice() {
             viewType: (t: ViewType) => setStates((state) => ({ ...state, screenType: t })),
             goBack: () => navigation.goBack(),
             showConfirmDialog,
+            showPrintDialog,
         },
         transportVehicleOrWorkEquipment,
     }

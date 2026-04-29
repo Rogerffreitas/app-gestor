@@ -6,6 +6,10 @@ import HeaderHome from '../../components/HeaderHome'
 import { useAuth } from '../../contexts/AuthContext'
 import { UserRoles } from '../../types'
 
+import * as Updates from 'expo-updates'
+import { useEffect } from 'react'
+import { Button, Text, View } from 'react-native'
+
 export default function Home({ navigation }) {
     const { user } = useAuth()
     const animation = useRef(null)

@@ -121,7 +121,7 @@ export default function useInvoiceDetails() {
         updateInvoice(InvoiceStatus.PAID, states.invoice.serverId)
     }
 
-    async function hadlePrintInvoice() {
+    async function handlePrintInvoice() {
         try {
             setStates((state) => ({ ...state, isLoading: true }))
             const pdf = await invoiceServices.generateInvoiceAnalyticPdfFormat(
@@ -161,7 +161,7 @@ export default function useInvoiceDetails() {
 
     const showConfirmDialogPaid = () => showConfirmDialog('Deseja finalizar a fatura?', handlePaidInvoice)
 
-    const showConfirmDialogPrint = () => showConfirmDialog('Deseja imprimir a fatura?', hadlePrintInvoice)
+    const showConfirmDialogPrint = () => showConfirmDialog('Deseja imprimir a fatura?', handlePrintInvoice)
 
     return {
         states,

@@ -161,8 +161,6 @@ export default function useNewMaintenanceTruckFuelSupply() {
 
             if (response.id) {
                 successVibration()
-                //sincronizar()
-
                 Alert.alert('Abastecimento Cadastrado')
                 navigation.goBack()
             }

@@ -1,81 +1,81 @@
 {
-  "expo": {
-    "name": "Gestor Caçambas e Equipamentos",
-    "slug": "app-gestor",
-    "version": "1.0.4-alfa",
-    "orientation": "portrait",
-    "icon": "./assets/image/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/image/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "imageWidth": 200
-    },
-    "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "usesCleartextTraffic": true
-          }
+    "expo": {
+        "name": "Gestor Caçambas e Equipamentos",
+        "slug": "app-gestor",
+        "version": "1.0.4-alfa",
+        "orientation": "portrait",
+        "icon": "./assets/image/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/image/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff",
+            "imageWidth": 200
+        },
+        "plugins": [
+            [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "usesCleartextTraffic": true
+                    }
+                }
+            ],
+            "@morrowdigital/watermelondb-expo-plugin",
+            "@react-native-community/datetimepicker",
+            "expo-secure-store",
+            [
+                "expo-splash-screen",
+                {
+                    "resizeMode": "contain",
+                    "backgroundColor": "#FFFFFF",
+                    "image": "./assets/image/splash.png",
+                    "imageWidth": 600
+                }
+            ],
+            [
+                "react-native-ble-manager",
+                {
+                    "isBleRequired": true,
+                    "neverForLocation": true,
+                    "companionDeviceEnabled": false,
+                    "bluetoothAlwaysPermission": "Allow BLE DEMO APP to connect to bluetooth devices"
+                }
+            ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "1fac0061-61da-44e0-bb4a-02aa69e07abb"
+            }
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/image/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.rogerffreitas.appgestor",
+            "runtimeVersion": "1.0.2-beta",
+            "permissions": [
+                "WRITE_EXTERNAL_STORAGE",
+                "READ_EXTERNAL_STORAGE",
+                "android.permission.BLUETOOTH",
+                "android.permission.BLUETOOTH_ADMIN",
+                "android.permission.BLUETOOTH_CONNECT",
+                "WRITE_EXTERNAL_STORAGE",
+                "READ_EXTERNAL_STORAGE",
+                "android.permission.BLUETOOTH",
+                "android.permission.BLUETOOTH_ADMIN",
+                "android.permission.BLUETOOTH_CONNECT"
+            ]
+        },
+        "ios": {
+            "bundleIdentifier": "com.rogerfreitas.appgestor",
+            "runtimeVersion": {
+                "policy": "appVersion"
+            }
+        },
+        "updates": {
+            "url": "https://u.expo.dev/1fac0061-61da-44e0-bb4a-02aa69e07abb"
         }
-      ],
-      "@morrowdigital/watermelondb-expo-plugin",
-      "@react-native-community/datetimepicker",
-      "expo-secure-store",
-      [
-        "expo-splash-screen",
-        {
-          "resizeMode": "contain",
-          "backgroundColor": "#FFFFFF",
-          "image": "./assets/image/splash.png",
-          "imageWidth": 600
-        }
-      ],
-      [
-        "react-native-ble-manager",
-        {
-          "isBleRequired": true,
-          "neverForLocation": true,
-          "companionDeviceEnabled": false,
-          "bluetoothAlwaysPermission": "Allow BLE DEMO APP to connect to bluetooth devices"
-        }
-      ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "1fac0061-61da-44e0-bb4a-02aa69e07abb"
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/image/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.rogerffreitas.appgestor",
-      "runtimeVersion": "1.0.1-beta",
-      "permissions": [
-        "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE",
-        "android.permission.BLUETOOTH",
-        "android.permission.BLUETOOTH_ADMIN",
-        "android.permission.BLUETOOTH_CONNECT",
-        "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE",
-        "android.permission.BLUETOOTH",
-        "android.permission.BLUETOOTH_ADMIN",
-        "android.permission.BLUETOOTH_CONNECT"
-      ]
-    },
-    "ios": {
-      "bundleIdentifier": "com.rogerfreitas.appgestor",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      }
-    },
-    "updates": {
-      "url": "https://u.expo.dev/1fac0061-61da-44e0-bb4a-02aa69e07abb"
     }
-  }
 }

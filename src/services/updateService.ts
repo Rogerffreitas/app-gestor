@@ -14,6 +14,6 @@ export async function onFetchUpdateAsync() {
             }
         })
     } catch (error) {
-        console.log(error)
+        alert(`Error fetching latest Expo update: ${error}`)
     }
 }

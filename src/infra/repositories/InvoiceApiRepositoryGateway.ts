@@ -1,12 +1,30 @@
 import { InvoiceDto } from '@gestor/domain/entity/invoice/InvoiceDto'
 import { InvoiceRequestRepositoryGateway } from '@gestor/domain/application/gateways/InvoiceRequestRepositoryGateway'
-
-import Token from '../../interfaces/Token'
 import { InvoiceEntity } from '@gestor/domain/entity/invoice/InvoiceEntity'
 import { HttpClientGateway } from '@gestor/domain/application/gateways/HttpClientGateway'
+import Token from '@gestor/domain/interfaces/Token'
 
 export class InvoiceApiRepositoryGateway implements InvoiceRequestRepositoryGateway {
     constructor(private httpClient: HttpClientGateway) {}
+
+    async previewInvoice(baseURL: string, url: string, entity: InvoiceEntity, token: Token): Promise<string> {
+        try {
+            const invoice = new InvoiceDto().entityToDto(entity)
+            return await this.httpClient.httpRequestPost<string>({
+                baseURL: baseURL,
+                url: url,
+                token: token,
+                body: {
+                    invoice,
+                },
+            })
+        } catch (error) {
+            console.info(error)
+            throw new Error(
+                `[InvoiceRepository] An unexpected error occurred while trying to create an preview invoice.: ${error}`
+            )
+        }
+    }
 
     async generateInvoiceAnalyticPdfFormat(
         baseURL: string,
