@@ -54,7 +54,7 @@
                 "backgroundColor": "#ffffff"
             },
             "package": "com.rogerffreitas.appgestor",
-            "runtimeVersion": "1.0.2-beta",
+            "runtimeVersion": "1.0.1-beta",
             "permissions": [
                 "WRITE_EXTERNAL_STORAGE",
                 "READ_EXTERNAL_STORAGE",
