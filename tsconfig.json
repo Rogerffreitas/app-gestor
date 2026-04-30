@@ -1,0 +1,11 @@
+{
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "paths": {
+            "@/*": ["./*"],
+            "@gestor/domain/*": ["./src/domain/*"]
+        }
+    }
+}

@@ -1,0 +1,141 @@
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useAuth } from '../../../../../contexts/AuthContext'
+import { useEffect, useState } from 'react'
+import { InvoiceDto } from '@gestor/domain/entity/invoice/InvoiceDto'
+import { Alert } from 'react-native'
+import { errorVibration } from '../../../../../services/VibrationService'
+import { RootStackParamList, ScreenNames } from '../../../../../types'
+import { useConfig } from '../../../../../contexts/ConfigContext'
+import { useInjection } from '@/src/contexts/InjectionContext'
+import * as Print from 'expo-print'
+
+type NewInvoiceProp = RouteProp<RootStackParamList, ScreenNames.NEW_INVOICE>
+type ViewType = 'transport' | 'hourMeter' | 'discount' | 'fuelSupply'
+
+export default function useNewInvoice() {
+    const invoiceServices = useInjection('InvoiceServices')
+    const navigation = useNavigation()
+    const route = useRoute<NewInvoiceProp>()
+    const { workId, type, transportVehicleOrWorkEquipment, startDate, endDate } = route.params
+    const [states, setStates] = useState({
+        isLoadingList: true,
+        invoice: {} as InvoiceDto,
+        screenType: null as ViewType,
+        isLoading: false,
+    })
+
+    const { user, token } = useAuth()
+    const { config } = useConfig()
+
+    async function generateInvoice() {
+        try {
+            setStates((state) => ({ ...state, isLoading: true }))
+            console.log(states.invoice.userId)
+            const result = await invoiceServices.generateInvoice(
+                config.urlApi,
+                '/invoices',
+                { ...states.invoice, userId: user.id, enterpriseId: user.enterpriseId } as InvoiceDto,
+                token
+            )
+            setStates((state) => ({ ...state, isLoading: false }))
+            if (result.serverId) {
+                Alert.alert(`Fatura ${result.serverId} gerada com sucesso!`)
+            }
+            navigation.goBack()
+        } catch (error) {
+            Alert.alert('Erro ao tentar gerar a fatura', 'Menssagem: ' + error)
+            errorVibration()
+            setStates((state) => ({ ...state, isLoading: false }))
+            navigation.goBack()
+        }
+    }
+
+    async function loadAll() {
+        try {
+            const result = await invoiceServices.loadAllInoviceItensByWorkIdAndStartDateAndEndDateAndType(
+                transportVehicleOrWorkEquipment.id,
+                config.urlApi,
+                '/invoices/search',
+                user.enterpriseId,
+                workId,
+                startDate,
+                endDate,
+                type,
+                token
+            )
+
+            setStates((state) => ({ ...state, invoice: result, isLoadingList: false }))
+        } catch (error) {
+            Alert.alert('Erro ao tentar buscar lista', 'Menssagem: ' + error)
+            errorVibration()
+            setStates((state) => ({ ...state, isLoadingList: false }))
+        }
+    }
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadAll()
+        })
+        return unsubscribe
+    }, [navigation])
+
+    const showConfirmDialog = () => {
+        return Alert.alert('Deseja gerar uma Fatura?', 'Para confirmar pressione sim?', [
+            {
+                text: 'SIM',
+                onPress: () => {
+                    generateInvoice()
+                },
+            },
+            {
+                text: 'NÃO',
+            },
+        ])
+    }
+
+    const showPrintDialog = () => {
+        return Alert.alert('Deseja imprimir?', 'Para confirmar pressione sim?', [
+            {
+                text: 'SIM',
+                onPress: () => {
+                    handlePrint()
+                },
+            },
+            {
+                text: 'NÃO',
+            },
+        ])
+    }
+
+    async function handlePrint() {
+        try {
+            setStates((state) => ({ ...state, isLoading: true }))
+            const pdf = await invoiceServices.previewInvoice(
+                config.urlApi,
+                `/reports/preview-invoice`,
+                states.invoice,
+                token
+            )
+
+            await Print.printAsync({ uri: pdf })
+            setStates((state) => ({ ...state, isLoading: false }))
+        } catch (error) {
+            console.info(error.mesage)
+            Alert.alert(`Erro ao tentar imprimir: ${error}`)
+            errorVibration()
+            setStates((state) => ({ ...state, isLoading: false }))
+        }
+    }
+
+    return {
+        states,
+        type,
+        actions: {
+            viewType: (t: ViewType) => setStates((state) => ({ ...state, screenType: t })),
+            goBack: () => navigation.goBack(),
+            showConfirmDialog,
+            showPrintDialog,
+        },
+        transportVehicleOrWorkEquipment,
+    }
+}

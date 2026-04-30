@@ -1,0 +1,157 @@
+import React from 'react'
+import { FlatList, View, ActivityIndicator } from 'react-native'
+import Container from '../../../../components/Container'
+import {
+    Card,
+    CardContent,
+    SubTextTitulo,
+    TextDescricao,
+    TextLabel,
+    TextTitulo,
+    ViewLeft,
+    ViewRight,
+    ViewTitle,
+} from '../../../../components/List/FlatListItemApontamento'
+import formatarData from '../../../../services/formatarData'
+import Content from '../../../../components/Content'
+import ListaVazia from '../../../../components/List/ListaVazia'
+import SyncButton from '../../../../components/sync-button'
+import useTransportsList from './UseTransportsList'
+import { UserRoles } from '../../../../types'
+import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
+
+export default function TransportList() {
+    const { workRoutes, user, states, actions } = useTransportsList()
+
+    if (states.isLoadingList) {
+        return (
+            <Container>
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <ActivityIndicator size="large" color="#666" />
+                </View>
+            </Container>
+        )
+    }
+
+    if (states.materialTransports.length == 0) {
+        return (
+            <Container>
+                <Content>
+                    <View style={{ justifyContent: 'flex-start', flex: 1, width: '95%' }}>
+                        <ListaVazia />
+                    </View>
+                    <ButtonNewRegister onPressFunction={actions.handlerClickNewButton} activeOpacity={0.7} />
+                </Content>
+            </Container>
+        )
+    }
+
+    if (states.materialTransports.length > 0) {
+        return (
+            <Container>
+                <Content>
+                    <FlatList
+                        style={{ width: '100%' }}
+                        data={states.materialTransports}
+                        keyExtractor={(item) => {
+                            return item.id
+                        }}
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                        }}
+                        renderItem={({ item }) => {
+                            return (
+                                <View style={{ flex: 1 }}>
+                                    <Card onPress={() => actions.handlerclickItem(item)}>
+                                        <ViewTitle>
+                                            <View style={{ width: '80%' }}>
+                                                <TextTitulo>PLACA: {item.transportVehicle.plate}</TextTitulo>
+                                                <SubTextTitulo>ID: {item.id}</SubTextTitulo>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    width: '28%',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <SyncButton item={item} model={'transporte'} />
+                                            </View>
+                                        </ViewTitle>
+                                        <CardContent>
+                                            <ViewLeft>
+                                                <TextLabel>Local de origem: </TextLabel>
+                                                <TextDescricao>
+                                                    {item.workRoutes.arrivalLocation}
+                                                </TextDescricao>
+                                                <TextLabel>Local de destino: </TextLabel>
+                                                <TextDescricao>
+                                                    {item.workRoutes.departureLocation}
+                                                </TextDescricao>
+                                                <TextLabel>Estaca: </TextLabel>
+                                                <TextDescricao>{item.deliveryPicket}</TextDescricao>
+                                                <TextLabel>Material: </TextLabel>
+                                                <TextDescricao>{item.material.name}</TextDescricao>
+                                                <TextLabel>Quantidade: </TextLabel>
+                                                <TextDescricao>
+                                                    {item.isReferenceCapacity
+                                                        ? item.quantity + ' m³'
+                                                        : item.quantity / 100 + ' t'}
+                                                </TextDescricao>
+                                            </ViewLeft>
+                                            <ViewRight>
+                                                <TextLabel>Data: </TextLabel>
+                                                <TextDescricao>{formatarData(item.createdAt)}</TextDescricao>
+                                                <TextLabel>Placa: </TextLabel>
+                                                <TextDescricao>{item.transportVehicle.plate}</TextDescricao>
+                                                {workRoutes.includes(item.workRoutes.arrivalLocation) ? (
+                                                    <View></View>
+                                                ) : (
+                                                    <View>
+                                                        <TextLabel>Distância percorrida: </TextLabel>
+                                                        <TextDescricao>
+                                                            {(
+                                                                (item.workRoutes.km +
+                                                                    item.distanceTraveledWithinTheWork) /
+                                                                100
+                                                            ).toLocaleString('pt-br', {
+                                                                style: 'decimal',
+                                                                maximumFractionDigits: 2,
+                                                            })}{' '}
+                                                            km
+                                                        </TextDescricao>
+                                                    </View>
+                                                )}
+                                                {user.role === UserRoles.ADMIN ? (
+                                                    <View>
+                                                        <TextLabel>Valor: </TextLabel>
+                                                        <TextDescricao>
+                                                            {(item.value / 100).toLocaleString('pt-BR', {
+                                                                style: 'currency',
+                                                                currency: 'BRL',
+                                                            })}
+                                                        </TextDescricao>
+                                                    </View>
+                                                ) : null}
+                                            </ViewRight>
+                                        </CardContent>
+                                        {item.observation.length > 0 ? (
+                                            <View style={{ width: '100%', flexDirection: 'column' }}>
+                                                <TextLabel>Observação: </TextLabel>
+                                                <TextDescricao>{item.observation}</TextDescricao>
+                                            </View>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </Card>
+                                </View>
+                            )
+                        }}
+                    />
+                </Content>
+                <ButtonNewRegister onPressFunction={actions.handlerClickNewButton} activeOpacity={0.7} />
+            </Container>
+        )
+    }
+}

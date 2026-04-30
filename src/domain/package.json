@@ -1,0 +1,21 @@
+{
+    "name": "@gestor/domain",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest --watchAll"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "jest": "^30.3.0",
+        "ts-jest": "^29.4.9",
+        "typescript": "^6.0.3"
+    },
+    "dependencies": {
+        "@types/jest": "^30.0.0",
+        "abbrev": "^4.0.0"
+    }
+}

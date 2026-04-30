@@ -1,0 +1,141 @@
+import { useState } from 'react'
+import { useAuth } from '../../../../contexts/AuthContext'
+import WorkRoutesDto from '@gestor/domain/entity/work-routes/WorkRoutesDto'
+import { Alert, ToastAndroid } from 'react-native'
+import { errorVibration, successVibration } from '../../../../services/VibrationService'
+import { StrictBuilder } from '../../../../services/StrictBuilder'
+import { RootStackParamList, ScreenNames } from '../../../../types'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { useInjection } from '@/src/contexts/InjectionContext'
+import { useSync } from '@/src/infra/hooks/UseSync'
+
+type EditWorkRouteProp = RouteProp<RootStackParamList, ScreenNames.EDIT_WORK_ROUTE>
+
+export default function useEditRoute() {
+    const workRoutesServices = useInjection('WorkRoutesServices')
+    const route = useRoute<EditWorkRouteProp>()
+    const { workRoute } = route.params
+    const navigation = useNavigation()
+    const { performSync } = useSync()
+
+    const [states, setStates] = useState({
+        arrivalLocation: workRoute.arrivalLocation,
+        departureLocation: workRoute.departureLocation,
+        km: workRoute.km,
+        initialPicket: workRoute.initialPicket,
+        value: workRoute.value,
+        isFixedValue: workRoute.isFixedValue,
+        deposit: workRoute.deposit,
+        isLoading: false,
+        sync: false,
+        workRoute: workRoute,
+    })
+    const [erros, setErros] = useState({
+        arrivalLocation: '',
+        departureLocation: '',
+        km: '',
+        initialPicket: '',
+        value: '',
+        isFixedValue: '',
+    })
+    const { user } = useAuth()
+
+    async function handlerClickEditButton() {
+        if (workRoute.id == null && !user) {
+            Alert.alert('Error')
+            errorVibration()
+            navigation.goBack()
+        }
+
+        try {
+            setStates((state) => ({ ...state, isLoading: true }))
+            await workRoutesServices.updateWorkRoutesInLocalDatabase(
+                StrictBuilder<WorkRoutesDto>()
+                    .id(workRoute.id)
+                    .arrivalLocation(states.arrivalLocation)
+                    .departureLocation(states.departureLocation)
+                    .km(+states.km)
+                    .initialPicket(+states.initialPicket)
+                    .value(+states.value)
+                    .isFixedValue(states.isFixedValue)
+                    .work(workRoute.work)
+                    .deposit(states.deposit)
+                    .userId(user.id)
+                    .enterpriseId(user.enterpriseId)
+                    .build(),
+                changeErrorFields
+            )
+            Alert.alert('Rota Editada')
+            successVibration()
+            performSync()
+            navigation.goBack()
+        } catch (error) {
+            console.log(error)
+            setStates((state) => ({ ...state, isLoading: false }))
+            if (error.message.includes('Entity validation failed')) {
+                errorVibration()
+                ToastAndroid.show('Preencha todos os campos obrigatórios', ToastAndroid.LONG)
+                return
+            }
+            Alert.alert('Erro ao tentar atualizar a rota', 'Menssagem: ' + error)
+            errorVibration()
+        }
+    }
+
+    function onChange(name: any) {
+        return (value: any) => {
+            setStates((state) => ({ ...state, [name]: value }))
+            setErros((state) => ({ ...state, [name]: null }))
+        }
+    }
+
+    function changeErrorFields(name: string) {
+        return (value: string) => {
+            setErros((state) => ({ ...state, [name]: value }))
+        }
+    }
+
+    async function handleClickDeleteButton() {
+        if (workRoute.id == null) {
+            Alert.alert('Error')
+            errorVibration()
+            navigation.goBack()
+        }
+        try {
+            await workRoutesServices.deleteWorkRoutesInLocalDatabase(workRoute.id, user.id)
+            Alert.alert('Rota Apagada')
+            successVibration()
+            performSync()
+            navigation.goBack()
+        } catch (err) {
+            if (err.message == 'Não é possível apagar a Rota') {
+                Alert.alert(err.message, 'Já existe(m) apontamento(s) para essa Rota')
+            }
+            console.log(err.message)
+        }
+    }
+    const showConfirmDialog = () => {
+        return Alert.alert('Deseja apagar a Rota?', 'Para confirmar pressione sim?', [
+            {
+                text: 'SIM',
+                onPress: () => {
+                    handleClickDeleteButton()
+                },
+            },
+
+            {
+                text: 'NÃO',
+            },
+        ])
+    }
+    return {
+        states,
+        erros,
+        actions: {
+            handlerClickEditButton,
+            setStates,
+            showConfirmDialog,
+            onChange,
+        },
+    }
+}
