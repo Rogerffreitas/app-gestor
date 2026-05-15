@@ -1,9 +1,9 @@
 import { Q } from '@nozbe/watermelondb'
 import { database } from '../../database'
 import DepositModel from '../../database/model/DepositModel'
-import { DepositRepositoryGateway } from '@gestor/domain/application/gateways/DepositRepositoryGateway'
+import { DepositRepositoryGateway } from '../../domain/application/gateways/DepositRepositoryGateway'
 import { TableName, UserAction } from '../../types'
-import DepositEntity from '@gestor/domain/entity/deposit/DepositEntity'
+import DepositEntity from '../../domain/entity/deposit/DepositEntity'
 import Mappers from './mappers'
 
 export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
@@ -27,9 +27,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
             return new DepositEntity().modelToEntity(Mappers.depositMapper(entityCreated))
         } catch (error) {
             console.error('[Deposits]: ' + error)
-            throw new Error('Error create Deposit in local database.', {
-                cause: error.message,
-            })
+            throw new Error('Error create Deposit in local database. ' + error)
         }
     }
     async updateDepositInLocalDatabase(entity: DepositEntity): Promise<DepositEntity> {
@@ -46,9 +44,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
             return new DepositEntity().modelToEntity(Mappers.depositMapper(entityUpdeted))
         } catch (error) {
             console.error('[Deposits]: ' + error)
-            throw new Error('Error updating deposit in local database.', {
-                cause: error.message,
-            })
+            throw new Error('Error updating deposit in local database. ' + error)
         }
     }
     async deleteDepositInLocalDatabase(id: string, userId: string): Promise<void> {
@@ -76,9 +72,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
             return result
         } catch (error) {
             console.error('[Deposits]: ' + error)
-            throw new Error('Error deleting deposit routes in local database.', {
-                cause: error,
-            })
+            throw new Error('Error deleting deposit routes in local database. ' + error)
         }
     }
     async findDepositByIdInLocalDatabase(id: string): Promise<DepositEntity> {
@@ -90,9 +84,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
             return null
         } catch (error) {
             console.error('[Deposits]: ' + error)
-            throw new Error('Error deleting deposit routes in local database.', {
-                cause: error,
-            })
+            throw new Error('Error deleting deposit routes in local database. ' + error)
         }
     }
     async loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<DepositEntity[]> {
@@ -110,9 +102,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
             })
         } catch (error) {
             console.error('[Deposits]: ' + error)
-            throw new Error('Error loading deposit from local database.', {
-                cause: error,
-            })
+            throw new Error('Error loading deposit from local database. ' + error)
         }
     }
 

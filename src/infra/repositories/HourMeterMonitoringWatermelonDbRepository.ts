@@ -2,8 +2,8 @@ import { database } from '../../database'
 import { Q } from '@nozbe/watermelondb'
 import HourMeterMonitoringModel from '../../database/model/HourMeterMonitoringModel'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
-import { HourMeterMonitoringRepositoryGateway } from '@gestor/domain/application/gateways/HourMeterMonitoringRepositoryGateway'
-import { HourMeterMonitoringEntity } from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
+import { HourMeterMonitoringRepositoryGateway } from '../../domain/application/gateways/HourMeterMonitoringRepositoryGateway'
+import { HourMeterMonitoringEntity } from '../../domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 import Mappers from './mappers'
 
 export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonitoringRepositoryGateway {
@@ -18,8 +18,8 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                     .create((item) => {
                         item.value = +entity.value
                         item.date = entity.date
-                        item.initialHourMeterValue = entity.initialHourMeterValue
-                        item.currentHourMeterValue = entity.currentHourMeterValue
+                        item.initialHourMeterValue = +entity.initialHourMeterValue
+                        item.currentHourMeterValue = +entity.currentHourMeterValue
                         item.totalCalculatedInThePeriodInformed = entity.totalCalculatedInThePeriodInformed
                         item.workEquipmentId = entity.workEquipmentId
                         item.observation = entity.observation
@@ -39,7 +39,7 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
             )
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
-            throw new Error('Error create  Hour Meter Monitoring in local database ', { cause: error })
+            throw new Error(`Error create  Hour Meter Monitoring in local database. ${error}`)
         }
     }
     async updateHourMeterMonitoringInLocalDatabase(
@@ -54,8 +54,8 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                 return await item.update((item) => {
                     item.value = +entity.value
                     item.date = entity.date
-                    item.initialHourMeterValue = entity.initialHourMeterValue
-                    item.currentHourMeterValue = entity.currentHourMeterValue
+                    item.initialHourMeterValue = +entity.initialHourMeterValue
+                    item.currentHourMeterValue = +entity.currentHourMeterValue
                     item.totalCalculatedInThePeriodInformed = entity.totalCalculatedInThePeriodInformed
                     item.observation = entity.observation
                     item.userId = entity.userId
@@ -68,7 +68,7 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
             )
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
-            throw new Error('Error updating  Hour Meter Monitoring in local database ', { cause: error })
+            throw new Error(`Error updating  Hour Meter Monitoring in local database . ${error}`)
         }
     }
     async deleteHourMeterMonitoringInLocalDatabase(id: string, userId: string): Promise<void> {
@@ -92,8 +92,8 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
                 })
             })
         } catch (error) {
-            console.log('[HourMeterMonitoring]: ' + error)
-            throw new Error('Error updating  Hour Meter Monitoring in local database ', { cause: error })
+            console.log('[HourM`terMonitoring]: ' + error)
+            throw new Error(`Error updating  Hour Meter Monitoring in local database. ${error}`)
         }
     }
     async findHourMeterMonitoringByIdInLocalDatabase(id: string): Promise<HourMeterMonitoringEntity> {
@@ -109,9 +109,7 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
             return null
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
-            throw new Error('Error loading HourMeterMonitoring from local database.', {
-                cause: error,
-            })
+            throw new Error(`Error loading HourMeterMonitoring from local database. ${error}`)
         }
     }
     saveHourMeterMonitoringServerId(entities: HourMeterMonitoringEntity[]): void {

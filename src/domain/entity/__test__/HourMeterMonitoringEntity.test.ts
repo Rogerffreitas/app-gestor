@@ -46,9 +46,7 @@ describe('HourMeterMonitoringEntity', () => {
                 currentHourMeterValue: 20,
             })
             entity.dtoToEntity(dto)
-
-            const errors = entity.validate(mockChangeErrorFields)
-            expect(errors.length).toBe(0)
+            expect(() => entity.validate(mockChangeErrorFields)).not.toThrow()
         })
 
         it('deve lançar erro de validação se a data estiver ausente', () => {

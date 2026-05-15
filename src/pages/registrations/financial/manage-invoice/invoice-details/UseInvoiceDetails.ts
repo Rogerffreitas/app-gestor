@@ -28,7 +28,7 @@ export default function useInvoiceDetails() {
         screenType: null as ViewType,
         invoice: {} as InvoiceDto,
         calculatedInitialValue: 0,
-        totalHoursWorked: 0,
+        totalHoursWorked: 1,
         totalInvoice: 0,
         totalDiscounts: 0,
         totalFuelSupplies: 0,

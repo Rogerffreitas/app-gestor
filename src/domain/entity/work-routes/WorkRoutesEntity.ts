@@ -150,15 +150,12 @@ export default class WorkRoutesEntity extends AbstratcEntity {
             errorMessages.push({ field: 'value', message: 'Max. 999999' })
             changeErrorFields('value')('Max. 999999')
         }
-        if (errorMessages.length > 0) {
-            console.log(errorMessages)
-        }
-        console.log('Entity valid')
 
         if (errorMessages.length > 0) {
-            throw new Error(
-                `Entity validation failed, cause: Erros de validação:\n- ${errorMessages.join('\n-')}`
-            )
+            console.info('Validation Errors:', errorMessages)
+            const formattedErrors = errorMessages.map((err) => `[${err.field}]: ${err.message}`).join('\n- ')
+            throw new Error(`Entity validation failed, cause: Erros de validação:\n- ${formattedErrors}`)
         }
+        console.info('[WorkRoutes] Entity valid')
     }
 }

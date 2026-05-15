@@ -264,8 +264,8 @@ export default class Mappers {
     ): Promise<HourMeterMonitoringProps> {
         return {
             date: model.date,
-            initialHourMeterValue: model.initialHourMeterValue,
-            currentHourMeterValue: model.currentHourMeterValue,
+            initialHourMeterValue: +model.initialHourMeterValue,
+            currentHourMeterValue: +model.currentHourMeterValue,
             totalCalculatedInThePeriodInformed: model.totalCalculatedInThePeriodInformed,
             workEquipment: await this.workEquipmentMapper(await model.workEquipment()),
             value: model.value,

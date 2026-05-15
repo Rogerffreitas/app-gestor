@@ -1,4 +1,4 @@
-import DepositEntity from '@gestor/domain/entity/deposit/DepositEntity'
+import DepositEntity from '../../../../domain/entity/deposit/DepositEntity'
 
 export const depositEntity = {
     description: 'teste',

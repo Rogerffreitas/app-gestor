@@ -12,7 +12,7 @@ export class MaterialTransportInteractor implements MaterialTransportUseCase {
     }
     async createMaterialTransportInLocalDatabase(
         dto: MaterialTransportDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaterialTransportDto> {
         const entity = new MaterialTransportEntity().dtoToEntity(dto)
         entity.validate(changeErrorFields)
@@ -28,13 +28,13 @@ export class MaterialTransportInteractor implements MaterialTransportUseCase {
     async loadAllMaterialTransportByEnterpriseIdAndWorkIdAndVehicleIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        vehicleId: string,
+        vehicleId: string
     ): Promise<MaterialTransportDto[]> {
         const entities =
             await this.repository.loadAllMaterialTransportByEnterpriseIdAndWorkIdAndVehicleIdFromLocalDatabase(
                 enterpriseId,
                 workId,
-                vehicleId,
+                vehicleId
             )
         return entities.map((entity) => new MaterialTransportDto().fromDto(entity))
     }

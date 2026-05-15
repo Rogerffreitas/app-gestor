@@ -30,7 +30,7 @@ export default function useNewInvoice() {
     async function generateInvoice() {
         try {
             setStates((state) => ({ ...state, isLoading: true }))
-            console.log(states.invoice.userId)
+            //console.log(states.invoice.userId)
             const result = await invoiceServices.generateInvoice(
                 config.urlApi,
                 '/invoices',

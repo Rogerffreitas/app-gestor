@@ -34,7 +34,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
             }
         } catch (error) {
             console.log('[Discount]: ' + error)
-            throw new Error('Error create Discount in local database ', { cause: error })
+            throw new Error(`Error create Discount in local database. ${error}`)
         }
     }
     async updateDiscountInLocalDatabase(entity: DiscountEntity): Promise<DiscountEntity> {
@@ -52,7 +52,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
             return new DiscountEntity().modelToEntity(this.discountMapper(result))
         } catch (error) {
             console.log('[Discount]: ' + error)
-            throw new Error('Error updating Discount in local database ', { cause: error })
+            throw new Error(`Error updating Discount in local database. ${error}`)
         }
     }
     async deleteDiscountInLocalDatabase(id: string, userId: string): Promise<void> {
@@ -82,9 +82,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
             return null
         } catch (error) {
             console.log('[DiscountRepository]: ' + error)
-            throw new Error('Error loading Discount from local database.', {
-                cause: error,
-            })
+            throw new Error(`Error loading Discount from local database. ${error}`)
         }
     }
     saveDiscountServerId(entitys: DiscountEntity[]): void {
@@ -117,9 +115,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
             )
         } catch (error) {
             console.log('[DiscountRepository]= ' + error)
-            throw new Error('Error loading Discount from local database.', {
-                cause: error,
-            })
+            throw new Error(`Error loading Discount from local database. ${error}`)
         }
     }
 

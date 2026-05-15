@@ -80,7 +80,7 @@ const TitleContentView = styled.View`
 
 const NumberContentView = styled.View`
     height: 100%;
-    width: 12%;
+    width: 10%;
     background-color: #fff;
     border-top-left-radius: 7px;
     border-bottom-left-radius: 7px;

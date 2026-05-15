@@ -256,7 +256,8 @@ export default function TransportNotes() {
             )}
             {states.workRoute &&
             states.material &&
-            (states.picket != null || (states.quantity != 0 && states.quantity != null)) &&
+            ((states.picket != null && states.picket != 0) ||
+                (states.quantity != 0 && states.quantity != null)) &&
             transportVehicle ? (
                 <View style={styles.viewObservacao}>
                     <View style={styles.contentObservacao}>

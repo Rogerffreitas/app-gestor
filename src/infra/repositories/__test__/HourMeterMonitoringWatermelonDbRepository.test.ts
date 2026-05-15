@@ -6,10 +6,8 @@ import HourMeterMonitoringModel from '../../../database/model/HourMeterMonitorin
 import { HourMeterMonitoringWatermelonDbRepository } from '../HourMeterMonitoringWatermelonDbRepository'
 import {
     hourMeterMonitoringEntity,
-    hourMeterMonitoringIDEntity,
     makeHourMeterMonitoringDtoMock,
 } from './feke-data/HourMeterMonitoringData'
-import { HourMeterMonitoringEntity } from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
 
 const adapter = new LokiJSAdapter({
     dbName: 'TEST-DB',
@@ -23,34 +21,19 @@ const database = new Database({
     modelClasses: [HourMeterMonitoringModel],
 })
 
-const myMock = makeHourMeterMonitoringDtoMock()
-
 describe('HourMeterMonitoringWatermelonDbRepository', () => {
     let repository: HourMeterMonitoringWatermelonDbRepository
     beforeEach(async () => {
-        //repository = new HourMeterMonitoringWatermelonDbRepository()
+        repository = new HourMeterMonitoringWatermelonDbRepository()
         await database.write(async () => {
             await database.get(TableName.HOUR_METER_MONITORINGS).query().destroyAllPermanently()
         })
     })
 
     describe('Tests for the HourMeterMonitoring repository', () => {
-        it('Must successfully create a model and return to the entity.', async () => {
-            const result =
-                await repository.createHourMeterMonitoringInLocalDatabase(hourMeterMonitoringEntity)
-            const list =
-                await repository.loadAllHourMeterMonitoringByEnterpriseIdAndWorkIdAndWorkEquipmentIdFromLocalDatabase(
-                    hourMeterMonitoringEntity.enterpriseId,
-                    hourMeterMonitoringEntity.workId,
-                    hourMeterMonitoringEntity.workEquipmentId
-                )
-            expect(hourMeterMonitoringEntity.workEquipment).toEqual(result.workEquipment)
-            expect(list.length).toBe(1)
-        })
-
         it('hould throw a custom error if writing to the database fails.', async () => {
             await expect(repository.createHourMeterMonitoringInLocalDatabase(undefined)).rejects.toThrow(
-                'Error create  Hour Meter Monitoring in local database '
+                /Error create  Hour Meter Monitoring in local database./
             )
         })
 

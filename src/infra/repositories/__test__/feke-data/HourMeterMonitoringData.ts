@@ -1,6 +1,6 @@
-import HourMeterMonitoringDto from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringDto'
-import { HourMeterMonitoringEntity } from '@gestor/domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
-import { InvoiceStatus } from '@gestor/domain/types'
+import HourMeterMonitoringDto from '../../../../domain/entity/hour-meter-monitoring/HourMeterMonitoringDto'
+import { HourMeterMonitoringEntity } from '../../../../domain/entity/hour-meter-monitoring/HourMeterMonitoringEntity'
+import { InvoiceStatus } from '../../../../domain/types'
 
 export const hourMeterMonitoringEntity = {
     value: 100,

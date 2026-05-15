@@ -145,6 +145,5 @@ export class HourMeterMonitoringEntity extends AbstratcEntity {
             throw new Error(`Entity validation failed, cause: Erros de validação:\n- ${formattedErrors}`)
         }
         console.info('[HourMeterMonitoringEntity] Entity valid')
-        return errorMessages
     }
 }

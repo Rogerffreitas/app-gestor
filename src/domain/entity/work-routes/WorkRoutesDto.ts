@@ -30,7 +30,7 @@ export default class WorkRoutesDto {
         this.value = data.value
         this.isFixedValue = data.isFixedValue
         this.work = new WorkDto().entityToDto(data.work)
-        this.deposit = data.deposit
+        this.deposit = new DepositDto().toDto(data.deposit)
         this.serverId = data.serverId
         this.id = data.id
         this.userId = data.userId

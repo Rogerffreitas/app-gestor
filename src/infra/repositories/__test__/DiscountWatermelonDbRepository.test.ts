@@ -39,7 +39,7 @@ describe('DiscountWatermelonDbRepository', () => {
 
         it('hould throw a custom error if writing to the database fails.', async () => {
             await expect(repository.createDiscountInLocalDatabase(undefined)).rejects.toThrow(
-                'Error create Discount in local database '
+                /Error create Discount in local database/
             )
         })
 

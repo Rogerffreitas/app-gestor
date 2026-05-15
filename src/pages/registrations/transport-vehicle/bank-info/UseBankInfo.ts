@@ -70,7 +70,7 @@ export default function useBankInfo() {
                     .pix(bankInformation.pix)
                     .build()
             )
-            console.log(result)
+            //console.log(result)
             Alert.alert('Informações de pagamento cadastradas!')
             navigation.goBack()
         } catch (error) {

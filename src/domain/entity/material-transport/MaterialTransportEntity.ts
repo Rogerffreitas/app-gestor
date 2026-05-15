@@ -33,7 +33,7 @@ export class MaterialTransportEntity extends AbstratcEntity {
         let totalKm = +displacementFloat + extraDMT
 
         if (data.workRoutes.isFixedValue) {
-            totalValue = data.workRoutes.value
+            totalValue = data.workRoutes.value / 10
         }
 
         if (
@@ -104,41 +104,30 @@ export class MaterialTransportEntity extends AbstratcEntity {
 
     validate(changeErrorFields: ChangeErrorFields) {
         console.log('validated entity [MaterialTransportEntity]')
-        let errorMessages: ErrorMessages[] = []
+        let errorMessages: { field: string; message: string }[] = []
+
+        const addError = (field: string, message: string) => {
+            errorMessages.push({ field, message })
+            changeErrorFields(field)(message)
+        }
 
         if (!this._workId) {
-            errorMessages.push({
-                field: 'workId',
-                message: 'Work validation failed',
-            })
-            throw new Error('Entity validation failed, cause: Work validation failed')
+            addError('workId', 'Work validation failed')
         }
 
         if (!this._value || this._value == 0) {
-            errorMessages.push({
-                field: 'value',
-                message: 'Preencha o campo obrigatório',
-            })
-            changeErrorFields('value')('Preencha o campo obrigatório')
+            addError('value', 'Preencha o campo obrigatório')
         }
 
         if (
             (!this._quantity && !this.isReferenceCapacity) ||
             (this._quantity == 0 && !this.isReferenceCapacity)
         ) {
-            errorMessages.push({
-                field: 'quantity',
-                message: 'Preencha o campo obrigatório',
-            })
-            changeErrorFields('quantity')('Preencha o campo obrigatório')
+            addError('quantity', 'Preencha o campo obrigatório')
         }
 
         if (this._totalPickets === undefined && this.totalPickets === null && this.isReferenceCapacity) {
-            errorMessages.push({
-                field: 'totalPickets',
-                message: 'Preencha o campo obrigatório',
-            })
-            changeErrorFields('totalPickets')('Preencha o campo obrigatório')
+            addError('totalPickets', 'Preencha o campo obrigatório')
         }
 
         if (
@@ -146,11 +135,7 @@ export class MaterialTransportEntity extends AbstratcEntity {
             this._distanceTraveledWithinTheWork === null &&
             this.isReferenceCapacity
         ) {
-            errorMessages.push({
-                field: 'distanceTraveledWithinTheWork',
-                message: 'Preencha o campo obrigatório',
-            })
-            changeErrorFields('distanceTraveledWithinTheWork')('Preencha o campo obrigatório')
+            addError('distanceTraveledWithinTheWork', 'Preencha o campo obrigatório')
         }
 
         this._transportVehicle.validate(changeErrorFields)

@@ -111,7 +111,7 @@ export class WorkEquipmentEntity extends AbstratcEntity {
     public dtoToEntity(data: WorkEquipmentDto): WorkEquipmentEntity {
         this._equipment = new EquipmentEntity().dtoToEntity(data.equipment)
         this._rentInformation = new RentInformation(
-            +data.hourMeterOrOdometer,
+            +data.equipment.hourMeterOrOdometer,
             data.startRental,
             +data.monthlyPayment,
             +data.valuePerHourKm,
