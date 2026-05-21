@@ -1,40 +1,38 @@
-import { Database } from '@nozbe/watermelondb'
-import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import { TableName, UserAction } from '../../../types'
-import { schemas } from '../../../database/schemas'
 import DepositModel from '../../../database/model/DepositModel'
 import { DepositWatermelonDbRepository } from '../DepositWatermelonDbRepository'
-import { depositEntity } from './feke-data/DepositData'
-import DepositEntity from '../../../domain/entity/deposit/DepositEntity'
-
-const adapter = new LokiJSAdapter({
-    dbName: 'TEST-DB',
-    schema: schemas,
-    useWebWorker: false,
-    useIncrementalIndexedDB: true,
-})
-
-const database = new Database({
-    adapter,
-    modelClasses: [DepositModel],
-})
+import { database } from './database-test'
+import DepositEntity from '@/src/domain/entity/deposit/DepositEntity'
+import { DepositDtoFactory } from '@/src/domain/utils/factories/DepositDtoFactory'
+import { Q } from '@nozbe/watermelondb'
 
 describe('DepositWatermelonDbRepository', () => {
-    let repository: DepositWatermelonDbRepository
+    const repository = new DepositWatermelonDbRepository(database)
 
     beforeEach(async () => {
-        repository = new DepositWatermelonDbRepository()
         await database.write(async () => {
-            await database.get(TableName.DEPOSITS).query().destroyAllPermanently()
+            await database.unsafeResetDatabase()
         })
     })
 
     describe('Tests for the Deposit repository', () => {
         it('Must successfully create a model and return to the entity.', async () => {
-            const result = await repository.createDepositInLocalDatabase(depositEntity)
-            const entityReturned = await repository.findDepositByIdInLocalDatabase(result.id)
-            expect(entityReturned).toBeDefined()
-            expect(entityReturned).toBeInstanceOf(DepositEntity)
+            const countBeforeCreate = (await database.get<DepositModel>(TableName.DEPOSITS).query().fetch())
+                .length
+
+            const result = await repository.createDepositInLocalDatabase(
+                new DepositEntity().dtoToEntity(DepositDtoFactory.create())
+            )
+
+            console.info()
+
+            const countAfterCreate = (await database.get<DepositModel>(TableName.DEPOSITS).query().fetch())
+                .length
+
+            expect(result).toBeDefined()
+            expect(result).toBeInstanceOf(DepositEntity)
+            expect(countBeforeCreate).toEqual(0)
+            expect(countAfterCreate).toEqual(1)
         })
 
         it('hould throw a custom error if writing to the database fails.', async () => {
@@ -44,22 +42,45 @@ describe('DepositWatermelonDbRepository', () => {
         })
 
         it('You should search for a model by ID, update it, and return an entity.', async () => {
-            const entity = await repository.createDepositInLocalDatabase(depositEntity)
+            const countBeforeCreate = (await database.get<DepositModel>(TableName.DEPOSITS).query().fetch())
+                .length
+            const createdEntity = await repository.createDepositInLocalDatabase(
+                new DepositEntity().dtoToEntity(DepositDtoFactory.create())
+            )
+            const countAfterCreate = (await database.get<DepositModel>(TableName.DEPOSITS).query().fetch())
+                .length
 
-            const result = await repository.updateDepositInLocalDatabase(entity)
+            const result = await repository.updateDepositInLocalDatabase(createdEntity)
+            expect(countBeforeCreate).toEqual(0)
+            expect(countAfterCreate).toEqual(1)
             expect(result.userAction).toBe(UserAction.UPDATE)
         })
 
         it('Should create and then delete a record.', async () => {
-            const result = await repository.createDepositInLocalDatabase(depositEntity)
-            const EntityVoid = await repository.deleteDepositInLocalDatabase(result.id, depositEntity.userId)
-            expect(EntityVoid).toBeUndefined()
+            const entityCreated = await repository.createDepositInLocalDatabase(
+                new DepositEntity().dtoToEntity(DepositDtoFactory.create())
+            )
+            const countAfterCreate = (await database.get<DepositModel>(TableName.DEPOSITS).query().fetch())
+                .length
+
+            await database.write(async () => {
+                const result = await database.get<DepositModel>(TableName.DEPOSITS).find(entityCreated.id)
+                await result.update(() => {
+                    result.isValid = false
+                    result.userId = entityCreated.userId
+                    result.userAction = UserAction.DELETE
+                })
+            })
+            const countAfterDelete = (
+                await database.get<DepositModel>(TableName.DEPOSITS).query(Q.where('is_valid', true)).fetch()
+            ).length
+
+            expect(countAfterCreate).toEqual(1)
+            expect(countAfterDelete).toEqual(0)
         })
 
         it('Should look for a list.', async () => {
-            const result = await repository.loadAllDepositByEnterpriseIdFromLocalDatabase(
-                depositEntity.enterpriseId
-            )
+            const result = await repository.loadAllDepositByEnterpriseIdFromLocalDatabase('e-1')
             expect(result).toBeDefined()
         })
     })

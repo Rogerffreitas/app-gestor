@@ -1,5 +1,4 @@
-import { Q } from '@nozbe/watermelondb'
-import { database } from '../../database'
+import { Database, Q } from '@nozbe/watermelondb'
 import WorkModel from '../../database/model/WorkModel'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
@@ -8,10 +7,16 @@ import WorkEntity from '../../domain/entity/work/WorkEntity'
 import Mappers from './mappers'
 
 export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
+    private readonly database: Database
+
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createWorkInLocalDatabase(entity: WorkEntity): Promise<WorkEntity> {
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<WorkModel>(TableName.WORKS).create((work) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<WorkModel>(TableName.WORKS).create((work) => {
                     work.name = entity.name
                     work.description = entity.description
                     work.pickets = +entity.pickets
@@ -31,8 +36,8 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     }
     async updateWorkInLocalDatabase(entity: WorkEntity): Promise<WorkEntity> {
         try {
-            const entityUpdated = await database.write(async () => {
-                const result = await database.get<WorkModel>(TableName.WORKS).find(entity.id)
+            const entityUpdated = await this.database.write(async () => {
+                const result = await this.database.get<WorkModel>(TableName.WORKS).find(entity.id)
                 return await result.update(() => {
                     result.userAction = UserAction.UPDATE
                     result.userId = entity.userId
@@ -49,9 +54,9 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     }
     async deleteWorkInLocalDatabase(id: string, userId: string): Promise<void> {
         const [transportCount, fuelCount, discountCount] = await Promise.all([
-            database.get(TableName.MATERIAL_TRANSPORTS).query(Q.where('work_id', id)).fetchCount(),
-            database.get(TableName.FUEL_SUPPLYS).query(Q.where('work_id', id)).fetchCount(),
-            database.get(TableName.DISCOUNTS).query(Q.where('work_id', id)).fetchCount(),
+            this.database.get(TableName.MATERIAL_TRANSPORTS).query(Q.where('work_id', id)).fetchCount(),
+            this.database.get(TableName.FUEL_SUPPLYS).query(Q.where('work_id', id)).fetchCount(),
+            this.database.get(TableName.DISCOUNTS).query(Q.where('work_id', id)).fetchCount(),
         ])
 
         const totalDependencies = transportCount + fuelCount + discountCount
@@ -63,8 +68,8 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
         }
 
         try {
-            await database.write(async () => {
-                const workToUpdate = await database.get<WorkModel>(TableName.WORKS).find(id)
+            await this.database.write(async () => {
+                const workToUpdate = await this.database.get<WorkModel>(TableName.WORKS).find(id)
                 await workToUpdate.update(() => {
                     workToUpdate.userAction = UserAction.DELETE
                     workToUpdate.userId = userId
@@ -78,7 +83,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     }
     async findWorkByIdInLocalDatabase(id: string): Promise<WorkEntity> {
         try {
-            const result = await database.get<WorkModel>(TableName.WORKS).find(id)
+            const result = await this.database.get<WorkModel>(TableName.WORKS).find(id)
             return new WorkEntity().toEntity(Mappers.workMapper(result))
         } catch (error) {
             throw new Error('Error loading works from local database.' + error)
@@ -86,7 +91,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     }
     async loadAllWorksByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<WorkEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<WorkModel>(TableName.WORKS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -107,7 +112,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
         userId: string
     ): Promise<WorkEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<WorkModel>(TableName.WORKS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -126,9 +131,9 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
     }
     async saveWorkServerId(entitys: WorkEntity[]): Promise<void> {
         const result = entitys.map(async (item) => {
-            await database
+            await this.database
                 .write(async () => {
-                    const result = await database.get<WorkModel>(TableName.WORKS).find(item.id)
+                    const result = await this.database.get<WorkModel>(TableName.WORKS).find(item.id)
                     await result.update(() => {
                         result.serverId = item.serverId
                     })
@@ -143,7 +148,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
         userId: string
     ): Promise<WorkEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<WorkModel>(TableName.WORKS)
                 .query(
                     Q.sortBy('created_at', Q.desc),

@@ -26,14 +26,14 @@ export class MaterialTransportEntity extends AbstratcEntity {
     public dtoToEntity(data: MaterialTransportDto): MaterialTransportEntity {
         let totalValue = 0
         let displacementFloat = +data.workRoutes.km / 100
-        let unitCostOfTheRouteFloat = +data.workRoutes.value / 1000
+        let unitCostOfTheRouteFloat = +data.workRoutes.value / 100
         let quantityFloat = +data.quantity / 100
         let dmtPicketTotal = +data.totalPickets * 20 //dmtPicketTotal em METROS / 1000 para converter em KM
         let extraDMT = +dmtPicketTotal / 1000
         let totalKm = +displacementFloat + extraDMT
 
         if (data.workRoutes.isFixedValue) {
-            totalValue = data.workRoutes.value / 10
+            totalValue = data.workRoutes.value
         }
 
         if (

@@ -1,6 +1,6 @@
 import { WorkEquipmentEntity } from '../work-equipment/WorkEquipmentEntity'
-import { WorkEquipmentDtoFactory } from './factories/WorkEquipmentDtoFactory'
-import { WorkEquipmentPropsFactory } from './factories/WorkEquipmentPropsFactory'
+import { WorkEquipmentDtoFactory } from '../../utils/factories/WorkEquipmentDtoFactory'
+import { WorkEquipmentPropsFactory } from '../../utils/factories/WorkEquipmentPropsFactory'
 
 describe('WorkEquipmentEntity', () => {
     let entity: WorkEquipmentEntity

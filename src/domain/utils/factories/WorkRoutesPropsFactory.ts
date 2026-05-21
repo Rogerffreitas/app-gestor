@@ -1,5 +1,5 @@
-import WorkRoutesProps from '../../../interfaces/props/WorkRoutesProps'
-import { UserAction } from '../../../types'
+import WorkRoutesProps from '../../interfaces/props/WorkRoutesProps'
+import { UserAction } from '../../types'
 import { WorkPropsFactory } from './WorkPropsFactory'
 
 export class WorkRoutesPropsFactory {

@@ -1,5 +1,5 @@
-import WorkProps from '../../../interfaces/props/WorkProps'
-import { UserAction } from '../../../types'
+import WorkProps from '../../interfaces/props/WorkProps'
+import { UserAction } from '../../types'
 
 export class WorkPropsFactory {
     static create(overrides: Partial<WorkProps> = {}): WorkProps {

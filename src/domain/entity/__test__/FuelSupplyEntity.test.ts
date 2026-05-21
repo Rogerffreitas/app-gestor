@@ -1,7 +1,7 @@
 import { FuelSupplyTypes } from '../../types'
 import { FuelSupplyEntity } from '../fuel-supply/FuelSupplyEntity'
-import { FuelSupplyDtoFactory } from './factories/FuelSupplyDtoFactory'
-import { FuelSupplyPropsFactory } from './factories/FuelSupplyPropsFactory'
+import { FuelSupplyDtoFactory } from '../../utils/factories/FuelSupplyDtoFactory'
+import { FuelSupplyPropsFactory } from '../../utils/factories/FuelSupplyPropsFactory'
 
 describe('FuelSupplyEntity Unit Tests', () => {
     let entity: FuelSupplyEntity

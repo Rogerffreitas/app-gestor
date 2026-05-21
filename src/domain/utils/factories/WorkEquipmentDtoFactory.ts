@@ -1,4 +1,4 @@
-import WorkEquipmentDto from '../../work-equipment/WorkEquipmentDto'
+import WorkEquipmentDto from '../../entity/work-equipment/WorkEquipmentDto'
 import { EquipmentDtoFactory } from './EquipmentDtoFactory'
 
 export class WorkEquipmentDtoFactory {

@@ -1,5 +1,5 @@
-import TransportVehicleProps from '../../../interfaces/props/TransportVehicleProps'
-import { UserAction } from '../../../types'
+import TransportVehicleProps from '../../interfaces/props/TransportVehicleProps'
+import { UserAction } from '../../types'
 
 export class TransportVehiclePropsFactory {
     static create(overrides: Partial<TransportVehicleProps> = {}): TransportVehicleProps {

@@ -1,10 +1,10 @@
 import { Reference } from '../../types'
 import { MaterialTransportEntity } from '../material-transport/MaterialTransportEntity'
-import { MaterialDtoFactory } from './factories/MaterialDtoFactory'
-import { MaterialTransportDtoFactory } from './factories/MaterialTransportDtoFactory'
-import { MaterialTransportPropsFactory } from './factories/MaterialTransportPropsFactory'
-import { TransportVehicleDtoFactory } from './factories/TransportVehicleDtoFactory'
-import { WorkRoutesDtoFactory } from './factories/WorkRoutesDtoFactory'
+import { MaterialDtoFactory } from '../../utils/factories/MaterialDtoFactory'
+import { MaterialTransportDtoFactory } from '../../utils/factories/MaterialTransportDtoFactory'
+import { MaterialTransportPropsFactory } from '../../utils/factories/MaterialTransportPropsFactory'
+import { TransportVehicleDtoFactory } from '../../utils/factories/TransportVehicleDtoFactory'
+import { WorkRoutesDtoFactory } from '../../utils/factories/WorkRoutesDtoFactory'
 
 describe('MaterialTransportEntity Unit Tests', () => {
     let entity: MaterialTransportEntity
@@ -22,7 +22,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
                 totalPickets: 10, // 10 * 20m = 200m = 0.2km
                 workRoutes: WorkRoutesDtoFactory.create({
                     km: 500, // 5.00km após /100
-                    value: 2000, // 2.00 após /1000
+                    value: 200, // 2.00 após /1000
                     isFixedValue: false,
                 }),
                 transportVehicle: TransportVehicleDtoFactory.create({ capacity: 15 }),
@@ -46,14 +46,14 @@ describe('MaterialTransportEntity Unit Tests', () => {
         it('deve utilizar o valor fixo da rota se isFixedValue for true', () => {
             const dto = MaterialTransportDtoFactory.create({
                 workRoutes: WorkRoutesDtoFactory.create({
-                    value: 500000,
+                    value: 50000,
                     isFixedValue: true,
                     km: 100,
                 }),
             })
 
             entity.dtoToEntity(dto)
-
+            console.info(entity)
             expect(entity.value).toBe(50000)
         })
 
@@ -64,7 +64,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
 
                 workRoutes: WorkRoutesDtoFactory.create({
                     km: 1000, // 10.00km
-                    value: 1000, // 1.00 unitário
+                    value: 100, // 1.00 unitário
                     isFixedValue: false,
                 }),
                 material: MaterialDtoFactory.create({

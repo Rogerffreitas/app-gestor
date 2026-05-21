@@ -1,6 +1,6 @@
 import { MaintenanceTruckEntity } from '../maintenance-truck/MaintenanceTruckEntity'
-import { MaintenanceTruckDtoFactory } from './factories/MaintenanceTruckDtoFactory'
-import { MaintenanceTruckPropsFactory } from './factories/MaintenanceTruckPropsFactory'
+import { MaintenanceTruckDtoFactory } from '../../utils/factories/MaintenanceTruckDtoFactory'
+import { MaintenanceTruckPropsFactory } from '../../utils/factories/MaintenanceTruckPropsFactory'
 
 describe('MaintenanceTruckEntity Unit Tests', () => {
     let entity: MaintenanceTruckEntity

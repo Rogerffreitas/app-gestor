@@ -1,5 +1,5 @@
-import { FuelSupplyTypes, InvoiceStatus, UserAction } from '../../../types'
-import { FuelSupplyDto } from '../../fuel-supply/FuelSupplyDto'
+import { FuelSupplyTypes, InvoiceStatus, UserAction } from '../../types'
+import { FuelSupplyDto } from '../../entity/fuel-supply/FuelSupplyDto'
 
 export class FuelSupplyDtoFactory {
     static create(overrides: Partial<FuelSupplyDto> = {}): FuelSupplyDto {

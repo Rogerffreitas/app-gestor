@@ -1,7 +1,7 @@
 import EquipmentProps from '../../interfaces/props/EquipmentProps'
 import { UserAction } from '../../types'
 import { EquipmentEntity } from '../equipment/EquipmentEntity'
-import { EquipmentDtoFactory } from './factories/EquipmentDtoFactory'
+import { EquipmentDtoFactory } from '../../utils/factories/EquipmentDtoFactory'
 
 describe('EquipmentEntity', () => {
     let entity: EquipmentEntity

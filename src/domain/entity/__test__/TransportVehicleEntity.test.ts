@@ -1,5 +1,5 @@
 import { TransportVehicleEntity } from '../transport-vehicle/TransportVehicleEntity'
-import { TransportVehiclePropsFactory } from './factories/TransportVehiclePropsFactory'
+import { TransportVehiclePropsFactory } from '../../utils/factories/TransportVehiclePropsFactory'
 
 describe('TransportVehicleEntity', () => {
     let entity: TransportVehicleEntity

@@ -1,4 +1,4 @@
-import WorkRoutesDto from '../../work-routes/WorkRoutesDto'
+import WorkRoutesDto from '../../entity/work-routes/WorkRoutesDto'
 import { DepositDtoFactory } from './DepositDtoFactory'
 import { WorkDtoFactory } from './WorkDtoFactory'
 

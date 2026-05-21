@@ -9,10 +9,10 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import CheckBox from '../../../../components/CheckBox'
 import InputMaskNumber from '../../../../components/input/InputMaskNumber'
 import ButtonActionLoading from '../../../../components/button/ButtonActionLoading'
-import InputMaskMoneyPrecision3 from '../../../../components/input/InputMaskMoneyPrecision3'
 import InputMask from '../../../../components/input/InputMask'
 import { SelectList } from 'react-native-dropdown-select-list'
 import useNewRoute from './UseNewRoute'
+import InputMaskMoney from '@/src/components/input/InputMaskMoney'
 
 export default function NewRoute() {
     const { states, erros, actions } = useNewRoute()
@@ -119,7 +119,7 @@ export default function NewRoute() {
                 <DescriptionTextInput description={'Valor:* '} erroMenssage={erros.value} />
                 <View style={{ width: '100%', flexDirection: 'row' }}>
                     <View style={{ width: '60%' }}>
-                        <InputMaskMoneyPrecision3
+                        <InputMaskMoney
                             value={null}
                             placeholder={'Valor'}
                             autoCapitalize={'none'}

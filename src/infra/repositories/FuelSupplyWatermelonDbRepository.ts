@@ -1,12 +1,16 @@
-import { database } from '../../database'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import FuelSupplyModel from '../../database/model/FuelSupplyModel'
-import { FuelSupplyRepositoryGateway } from '@gestor/domain/application/gateways/FuelSupplyRepositoryGateway'
+import { FuelSupplyRepositoryGateway } from '../../domain/application/gateways/FuelSupplyRepositoryGateway'
 import { FuelSupplyTypes, InvoiceStatus, TableName, UserAction } from '../../types'
-import { FuelSupplyEntity } from '@gestor/domain/entity/fuel-supply/FuelSupplyEntity'
-import FuelSupplyProps from '@gestor/domain/interfaces/props/FuelSupplyProps'
+import { FuelSupplyEntity } from '../../domain/entity/fuel-supply/FuelSupplyEntity'
+import FuelSupplyProps from '../../domain/interfaces/props/FuelSupplyProps'
 
 export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     loadCurrentBalanceTankByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndPreviousDateFromLocalDatabase(
         enterpriseId: string,
         workId: string,
@@ -27,8 +31,8 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
     async createFuelSupplyInLocalDatabase(entity: FuelSupplyEntity): Promise<FuelSupplyEntity> {
         console.log('Creating Fuel Supply in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).create((item) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).create((item) => {
                     item.quantity = entity.quantity
                     item.valuePerLiter = entity.valuePerLiter
                     item.value = entity.value
@@ -48,10 +52,11 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
                     item.userAction = UserAction.CREATE
                     item.isValid = true
                     item.serverId = +0
+                    //item.createdAt = Date.now()
+                    //item.updatedAt = Date.now()
                 })
             })
             if (entityCreated) {
-                console.log('Entity created: ' + entityCreated)
                 return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(entityCreated))
             }
         } catch (error) {
@@ -62,8 +67,8 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
     async updateFuelSupplyInLocalDatabase(entity: FuelSupplyEntity): Promise<FuelSupplyEntity> {
         console.log('Updating Fuel Supply in the database')
         try {
-            const result = await database.write(async () => {
-                const item = await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).find(entity.id)
+            const result = await this.database.write(async () => {
+                const item = await this.database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).find(entity.id)
                 return await item.update(() => {
                     item.quantity = +entity.quantity
                     item.valuePerLiter = +entity.valuePerLiter
@@ -83,16 +88,16 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         }
     }
     async deleteFuelSupplyInLocalDatabase(id: string, userId: string): Promise<void> {
-        const a = await database
+        const a = await this.database
             .get(TableName.FUEL_SUPPLYS)
             .query(Q.where('id', id), Q.where('invoice_status', Q.notEq(InvoiceStatus.PENDING)))
             .fetchCount()
-
+        console.info(a)
         if (a > 0) {
             throw new Error('Não é possível apagar o Abastecimento')
         }
-        await database.write(async () => {
-            const result = await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).find(id)
+        await this.database.write(async () => {
+            const result = await this.database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).find(id)
             await result.update(() => {
                 result.isValid = false
                 result.userId = userId
@@ -114,7 +119,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         maintenanceTrucksWorkEquipmentId: string
     ): Promise<FuelSupplyEntity> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<FuelSupplyModel>(TableName.FUEL_SUPPLYS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -140,7 +145,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         maintenanceTrucksWorkEquipmentId: string
     ): Promise<number> {
         try {
-            const totalTankPromise = database
+            const totalTankPromise = this.database
                 .get(TableName.FUEL_SUPPLYS)
                 .query(
                     Q.unsafeSqlQuery(
@@ -154,7 +159,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
                     )
                 )
                 .unsafeFetchRaw()
-            const totalFueSupplyPromise = await database
+            const totalFueSupplyPromise = await this.database
                 .get(TableName.FUEL_SUPPLYS)
                 .query(
                     Q.unsafeSqlQuery(
@@ -184,7 +189,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         maintenanceTrucksWorkEquipmentId: string
     ): Promise<FuelSupplyEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<FuelSupplyModel>(TableName.FUEL_SUPPLYS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -215,7 +220,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         supplyType: string
     ): Promise<FuelSupplyEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<FuelSupplyModel>(TableName.FUEL_SUPPLYS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -247,7 +252,7 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         supplyType: string
     ): Promise<FuelSupplyEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<FuelSupplyModel>(TableName.FUEL_SUPPLYS)
                 .query(
                     Q.sortBy('created_at', Q.desc),

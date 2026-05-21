@@ -1,5 +1,5 @@
 import { HourMeterMonitoringEntity } from '../hour-meter-monitoring/HourMeterMonitoringEntity'
-import { HourMeterMonitoringDtoFactory } from './factories/HourMeterMonitoringDtoFactory'
+import { HourMeterMonitoringDtoFactory } from '../../utils/factories/HourMeterMonitoringDtoFactory'
 
 describe('HourMeterMonitoringEntity', () => {
     let entity: HourMeterMonitoringEntity

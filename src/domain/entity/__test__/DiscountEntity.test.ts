@@ -1,5 +1,5 @@
 import DiscountEntity from '../discount/DiscountEntity'
-import { DiscountDtoFactory } from './factories/DiscountDtoFactory'
+import { DiscountDtoFactory } from '../../utils/factories/DiscountDtoFactory'
 
 describe('DiscountEntity', () => {
     const mockDto = DiscountDtoFactory.create()

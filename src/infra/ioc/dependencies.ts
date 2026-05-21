@@ -33,18 +33,19 @@ import { MaterialTransportInteractor } from '@gestor/domain/interactors/Material
 import { HourMeterMonitoringInteractor } from '@gestor/domain/interactors/HourMeterMonitoringInteractor'
 import { DiscountInteractor } from '@gestor/domain/interactors/DiscountInteractor'
 import { FuelSupplyInteractor } from '@gestor/domain/interactors/FuelSupplyInteractor'
+import { database } from '@/src/database'
 
 const httpClientGateway = new AxiosHttpClientAdapter()
 
 // Repositórios
 const syncRepositoryGateway = new SyncWatermelonDbRepository()
-const workRepositoryGateway = new WorkWatermelonDbRepository()
+const workRepositoryGateway = new WorkWatermelonDbRepository(database)
 const workEquipmentRepositoryGateway = new WorkEquipmentWatermelonDbRepository()
-const workRoutesRepositoryGateway = new WorkRoutesWatermelonDbRepository()
-const depositRepositoryGateway = new DepositWatermelonDbRepository()
-const discountRepositoryGateway = new DiscountWatermelonDbRepository()
+const workRoutesRepositoryGateway = new WorkRoutesWatermelonDbRepository(database)
+const depositRepositoryGateway = new DepositWatermelonDbRepository(database)
+const discountRepositoryGateway = new DiscountWatermelonDbRepository(database)
 const equipmentRepositoryGateway = new EquipmentWatermelonDbResitory()
-const fuelSupplyRepositoryGateway = new FuelSupplyWatermelonDbRepository()
+const fuelSupplyRepositoryGateway = new FuelSupplyWatermelonDbRepository(database)
 const hourMeterMonitoringRepositoryGateway = new HourMeterMonitoringWatermelonDbRepository()
 const maintenanceTruckRepositoryGateway = new MaintenanceTruckWatermelonDbRepository()
 const materialRepositoryGateway = new MaterialWatermelonDbRepository()

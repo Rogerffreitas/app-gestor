@@ -8,4 +8,8 @@ module.exports = {
     transform: {
         ...tsJestTransformCfg,
     },
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/$1',
+        '^@gestor/domain/(.*)$': '<rootDir>/src/domain/$1',
+    },
 }

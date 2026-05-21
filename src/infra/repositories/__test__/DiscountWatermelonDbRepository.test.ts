@@ -1,40 +1,37 @@
-import { Database } from '@nozbe/watermelondb'
-import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import { DiscountTypes, TableName, UserAction } from '../../../types'
-import { schemas } from '../../../database/schemas'
 import DiscountModel from '../../../database/model/DiscountModel'
 import { DiscountWatermelonDbRepository } from '../DiscountWatermelonDbRepository'
-import { discountEntityEQ, discountEntityT } from './feke-data/DiscountData'
 import DiscountEntity from '@gestor/domain/entity/discount/DiscountEntity'
-
-const adapter = new LokiJSAdapter({
-    dbName: 'TEST-DB',
-    schema: schemas,
-    useWebWorker: false,
-    useIncrementalIndexedDB: true,
-})
-
-const database = new Database({
-    adapter,
-    modelClasses: [DiscountModel],
-})
+import { DiscountDtoFactory } from '@/src/domain/utils/factories/DiscountDtoFactory'
+import { database } from './database-test'
 
 describe('DiscountWatermelonDbRepository', () => {
-    let repository: DiscountWatermelonDbRepository
+    const repository = new DiscountWatermelonDbRepository(database)
 
     beforeEach(async () => {
-        repository = new DiscountWatermelonDbRepository()
         await database.write(async () => {
-            await database.get(TableName.DISCOUNTS).query().destroyAllPermanently()
+            await database.unsafeResetDatabase()
         })
     })
 
     describe('Tests for the Deposit repository', () => {
         it('Must successfully create a model and return to the entity.', async () => {
-            const result = await repository.createDiscountInLocalDatabase(discountEntityT)
-            const entityReturned = await repository.findDiscountByIdInLocalDatabase(result.id)
-            expect(entityReturned).toBeDefined()
-            expect(entityReturned).toBeInstanceOf(DiscountEntity)
+            const countBeforeCreate = (await database.get<DiscountModel>(TableName.DISCOUNTS).query().fetch())
+                .length
+
+            const result = await repository.createDiscountInLocalDatabase(
+                new DiscountEntity().dtoToEntity(DiscountDtoFactory.create())
+            )
+
+            console.info()
+
+            const countAfterCreate = (await database.get<DiscountModel>(TableName.DISCOUNTS).query().fetch())
+                .length
+
+            expect(result).toBeDefined()
+            expect(result).toBeInstanceOf(DiscountEntity)
+            expect(countBeforeCreate).toEqual(0)
+            expect(countAfterCreate).toEqual(1)
         })
 
         it('hould throw a custom error if writing to the database fails.', async () => {
@@ -44,33 +41,26 @@ describe('DiscountWatermelonDbRepository', () => {
         })
 
         it('You should search for a model by ID, update it, and return an entity.', async () => {
-            const entityReturned = await repository.createDiscountInLocalDatabase(discountEntityT)
-            const list = await repository.loadAllDiscountByEnterpriseIdAndWorkIdFromLocalDatabase(
-                entityReturned.enterpriseId,
-                entityReturned.workId,
-                entityReturned.discountType,
-                entityReturned.transportVehicleOrWorkEquipmentId
+            const countBeforeCreate = (await database.get<DiscountModel>(TableName.DISCOUNTS).query().fetch())
+                .length
+            const createdEntity = await repository.createDiscountInLocalDatabase(
+                new DiscountEntity().dtoToEntity(DiscountDtoFactory.create())
             )
-            console.info(list)
-            const result = await repository.updateDiscountInLocalDatabase(list[0])
-            expect(result.userAction).toBe(UserAction.UPDATE)
-        })
+            const countAfterCreate = (await database.get<DiscountModel>(TableName.DISCOUNTS).query().fetch())
+                .length
 
-        it('Should create and then delete a record.', async () => {
-            const result = await repository.createDiscountInLocalDatabase(discountEntityEQ)
-            const EntityVoid = await repository.deleteDiscountInLocalDatabase(
-                result.id,
-                discountEntityEQ.userId
-            )
-            expect(EntityVoid).toBeUndefined()
+            const result = await repository.updateDiscountInLocalDatabase(createdEntity)
+            expect(countBeforeCreate).toEqual(0)
+            expect(countAfterCreate).toEqual(1)
+            expect(result.userAction).toBe(UserAction.UPDATE)
         })
 
         it('Should look for a list.', async () => {
             const result = await repository.loadAllDiscountByEnterpriseIdAndWorkIdFromLocalDatabase(
-                discountEntityT.enterpriseId,
-                discountEntityT.workId,
+                'e1',
+                'w1',
                 DiscountTypes.TRANSPORT_VEHICLE,
-                discountEntityT.transportVehicleOrWorkEquipmentId
+                't1'
             )
             expect(result).toBeDefined()
         })

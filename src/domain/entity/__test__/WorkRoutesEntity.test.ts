@@ -1,9 +1,9 @@
 import WorkRoutesEntity from '../work-routes/WorkRoutesEntity'
-import { DepositDtoFactory } from './factories/DepositDtoFactory'
-import { WorkDtoFactory } from './factories/WorkDtoFactory'
-import { WorkPropsFactory } from './factories/WorkPropsFactory'
-import { WorkRoutesDtoFactory } from './factories/WorkRoutesDtoFactory'
-import { WorkRoutesPropsFactory } from './factories/WorkRoutesPropsFactory'
+import { DepositDtoFactory } from '../../utils/factories/DepositDtoFactory'
+import { WorkDtoFactory } from '../../utils/factories/WorkDtoFactory'
+import { WorkPropsFactory } from '../../utils/factories/WorkPropsFactory'
+import { WorkRoutesDtoFactory } from '../../utils/factories/WorkRoutesDtoFactory'
+import { WorkRoutesPropsFactory } from '../../utils/factories/WorkRoutesPropsFactory'
 
 describe('WorkRoutesEntity', () => {
     let entity: WorkRoutesEntity

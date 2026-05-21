@@ -1,5 +1,5 @@
-import { UserAction } from '../../../types'
-import WorkDto from '../../work/WorkDto'
+import { UserAction } from '../../types'
+import WorkDto from '../../entity/work/WorkDto'
 
 export class WorkDtoFactory {
     static create(overrides: Partial<WorkDto> = {}): WorkDto {

@@ -1,5 +1,5 @@
-import MaterialTransportProps from '../../../interfaces/props/MaterialTransportProps'
-import { InvoiceStatus, UserAction } from '../../../types'
+import MaterialTransportProps from '../../interfaces/props/MaterialTransportProps'
+import { InvoiceStatus, UserAction } from '../../types'
 import { MaterialPropsFactory } from './MaterialPropsFactory'
 import { TransportVehiclePropsFactory } from './TransportVehiclePropsFactory'
 import { WorkRoutesPropsFactory } from './WorkRoutesPropsFactory'

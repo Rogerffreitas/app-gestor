@@ -1,5 +1,4 @@
-import { Q } from '@nozbe/watermelondb'
-import { database } from '../../database'
+import { Database, Q } from '@nozbe/watermelondb'
 import WorkRoutesModel from '../../database/model/WorkRouteModel'
 import { UserAction } from '../../types'
 import { TableName } from '../../types'
@@ -8,10 +7,15 @@ import WorkRoutesEntity from '@gestor/domain/entity/work-routes/WorkRoutesEntity
 import Mappers from './mappers'
 
 export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createWorkRoutesInLocalDatabase(entity: WorkRoutesEntity): Promise<WorkRoutesEntity> {
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<WorkRoutesModel>(TableName.WORK_ROUTES).create((item) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<WorkRoutesModel>(TableName.WORK_ROUTES).create((item) => {
                     item.workId = entity.work.id
                     item.depositId = entity.deposit.id
                     item.arrivalLocation = entity.arrivalLocation
@@ -37,8 +41,8 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
     }
     async updateWorkRoutesInLocalDatabase(entity: WorkRoutesEntity): Promise<WorkRoutesEntity> {
         try {
-            const entityUpdated = await database.write(async () => {
-                const item = await database.get<WorkRoutesModel>(TableName.WORK_ROUTES).find(entity.id)
+            const entityUpdated = await this.database.write(async () => {
+                const item = await this.database.get<WorkRoutesModel>(TableName.WORK_ROUTES).find(entity.id)
                 return await item.update(() => {
                     item.arrivalLocation = entity.arrivalLocation
                     item.departureLocation = entity.departureLocation
@@ -57,7 +61,7 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
         }
     }
     async deleteWorkRoutesInLocalDatabase(id: string, userId: string): Promise<void> {
-        const t = await database
+        const t = await this.database
             .get(TableName.MATERIAL_TRANSPORTS)
             .query(
                 Q.unsafeSqlQuery(
@@ -73,8 +77,8 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
         try {
             let result
 
-            await database.write(async () => {
-                const result = await database.get<WorkRoutesModel>(TableName.WORK_ROUTES).find(id)
+            await this.database.write(async () => {
+                const result = await this.database.get<WorkRoutesModel>(TableName.WORK_ROUTES).find(id)
                 await result.update(() => {
                     result.userAction = UserAction.DELETE
                     result.userId = userId
@@ -87,8 +91,13 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
             throw new Error('Error deleting route in local database.')
         }
     }
-    findWorkRoutesByIdInLocalDatabase(id: string): Promise<WorkRoutesEntity> {
-        throw new Error('Method not implemented.')
+    async findWorkRoutesByIdInLocalDatabase(id: string): Promise<WorkRoutesEntity> {
+        try {
+            const result = await this.database.get<WorkRoutesModel>(TableName.WORK_ROUTES).find(id)
+            return new WorkRoutesEntity().modelToEntity(await Mappers.workRoutesMapper(result))
+        } catch (error) {
+            throw new Error('Error loading record from local database.' + error)
+        }
     }
 
     async loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
@@ -96,7 +105,7 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
         workId: string
     ): Promise<WorkRoutesEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<WorkRoutesModel>(TableName.WORK_ROUTES)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -122,7 +131,7 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
         workId: string
     ): Promise<WorkRoutesEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<WorkRoutesModel>(TableName.WORK_ROUTES)
                 .query(
                     Q.where('is_valid', true),
@@ -145,9 +154,11 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
 
     async saveWorkRoutesServerId(entitys: WorkRoutesEntity[]): Promise<void> {
         const result = entitys.map(async (item) => {
-            await database
+            await this.database
                 .write(async () => {
-                    const result = await database.get<WorkRoutesModel>(TableName.WORK_ROUTES).find(item.id)
+                    const result = await this.database
+                        .get<WorkRoutesModel>(TableName.WORK_ROUTES)
+                        .find(item.id)
                     await result.update(() => {
                         result.serverId = item.serverId
                     })

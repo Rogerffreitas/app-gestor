@@ -1,5 +1,4 @@
-import { Q } from '@nozbe/watermelondb'
-import { database } from '../../database'
+import { Database, Q } from '@nozbe/watermelondb'
 import DepositModel from '../../database/model/DepositModel'
 import { DepositRepositoryGateway } from '../../domain/application/gateways/DepositRepositoryGateway'
 import { TableName, UserAction } from '../../types'
@@ -7,13 +6,18 @@ import DepositEntity from '../../domain/entity/deposit/DepositEntity'
 import Mappers from './mappers'
 
 export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     saveDepositServerId(entitys: DepositEntity[]): void {
         throw new Error('Method not implemented.')
     }
     async createDepositInLocalDatabase(entity: DepositEntity): Promise<DepositEntity> {
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<DepositModel>('deposits').create((item) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<DepositModel>('deposits').create((item) => {
                     item.description = entity.description
                     item.name = entity.name
                     item.serverId = +0
@@ -32,8 +36,8 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
     }
     async updateDepositInLocalDatabase(entity: DepositEntity): Promise<DepositEntity> {
         try {
-            const entityUpdeted = await database.write(async () => {
-                const item = await database.get<DepositModel>('deposits').find(entity.id)
+            const entityUpdeted = await this.database.write(async () => {
+                const item = await this.database.get<DepositModel>('deposits').find(entity.id)
                 return await item.update(() => {
                     item.description = entity.description
                     item.name = entity.name
@@ -48,7 +52,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
         }
     }
     async deleteDepositInLocalDatabase(id: string, userId: string): Promise<void> {
-        const t = await database
+        const t = await this.database
             .get('work_routes')
             .query(Q.unsafeSqlQuery(`select count(*) as count from work_routes where deposit_id = ?`, [id]))
 
@@ -61,8 +65,8 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
         try {
             let result
 
-            await database.write(async () => {
-                const result = await database.get<DepositModel>('deposits').find(id)
+            await this.database.write(async () => {
+                const result = await this.database.get<DepositModel>('deposits').find(id)
                 await result.update(() => {
                     result.userAction = UserAction.DELETE
                     result.userId = userId
@@ -77,7 +81,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
     }
     async findDepositByIdInLocalDatabase(id: string): Promise<DepositEntity> {
         try {
-            const result = await database.get<DepositModel>(TableName.DEPOSITS).find(id)
+            const result = await this.database.get<DepositModel>(TableName.DEPOSITS).find(id)
             if (result) {
                 return new DepositEntity().modelToEntity(Mappers.depositMapper(result))
             }
@@ -89,7 +93,7 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
     }
     async loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<DepositEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<DepositModel>('deposits')
                 .query(
                     Q.sortBy('created_at', Q.desc),

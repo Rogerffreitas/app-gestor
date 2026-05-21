@@ -1,6 +1,6 @@
-import EquipmentProps from '../../../interfaces/props/EquipmentProps'
-import WorkEquipmentProps from '../../../interfaces/props/WorkEquipmentProps'
-import { UserAction } from '../../../types'
+import EquipmentProps from '../../interfaces/props/EquipmentProps'
+import WorkEquipmentProps from '../../interfaces/props/WorkEquipmentProps'
+import { UserAction } from '../../types'
 
 export class WorkEquipmentPropsFactory {
     static create(overrides: Partial<WorkEquipmentProps> = {}): WorkEquipmentProps {

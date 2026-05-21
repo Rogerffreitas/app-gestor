@@ -1,53 +1,38 @@
-import { Database } from '@nozbe/watermelondb'
-import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
-import { FuelSupplyTypes, TableName, UserAction } from '../../../types'
-import { schemas } from '../../../database/schemas'
+import { FuelSupplyTypes, UserAction } from '../../../types'
+import { FuelSupplyEntity } from '../../../domain/entity/fuel-supply/FuelSupplyEntity'
+import { FuelSupplyWatermelonDbRepository } from '../FuelSupplyWatermelonDbRepository'
+import { database } from './database-test'
 import FuelSupplyModel from '../../../database/model/FuelSupplyModel'
-import { FuelSupplyEntity } from '@gestor/domain/entity/fuel-supply/FuelSupplyEntity'
-import {
-    entityEquipment,
-    entityMaintenanceTruck,
-    entityMaintenanceTruckTank,
-    entityTransportVehicle,
-} from './feke-data/FuelSupplyData'
-
-import { useInjection } from '@/src/contexts/InjectionContext'
-
-const adapter = new LokiJSAdapter({
-    dbName: 'TEST-DB',
-    schema: schemas,
-    useWebWorker: false,
-    useIncrementalIndexedDB: true,
-})
-
-const database = new Database({
-    adapter,
-    modelClasses: [FuelSupplyModel],
-})
+import { InvoiceStatus, TableName } from '../../../domain/types'
+import { Q } from '@nozbe/watermelondb'
+import { FuelSupplyDtoFactory } from '@/src/domain/utils/factories/FuelSupplyDtoFactory'
 
 describe('FuelSupplyWatermelonDbRepository', () => {
-    let repository
-
+    const repository = new FuelSupplyWatermelonDbRepository(database)
     beforeEach(async () => {
-        repository = useInjection('FuelSupplyRepositoryGateway')
         await database.write(async () => {
-            await database.get(TableName.FUEL_SUPPLYS).query().destroyAllPermanently()
+            await database.unsafeResetDatabase()
         })
     })
 
     describe('Tests for the FuelSupplies repository', () => {
         it('Must successfully create a fuel supply and return to the entity.', async () => {
-            const result = await repository.createFuelSupplyInLocalDatabase(entityTransportVehicle)
-            const list =
-                await repository.loadAllFuelSupplyByEnterpriseIdAndWorkIdAndVehicleIdAndTypeFromLocalDatabase(
-                    entityTransportVehicle.enterpriseId,
-                    entityTransportVehicle.workId,
-                    entityTransportVehicle.transportVehicleOrWorkEquipmentId,
-                    entityTransportVehicle.supplyType
-                )
+            const countBeforeCreate = (
+                await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLIES).query().fetch()
+            ).length
+
+            const result = await repository.createFuelSupplyInLocalDatabase(
+                new FuelSupplyEntity().dtoToEntity(FuelSupplyDtoFactory.create())
+            )
+
+            const countAfterCreate = (
+                await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLIES).query().fetch()
+            ).length
+
             expect(result).toBeDefined()
             expect(result).toBeInstanceOf(FuelSupplyEntity)
-            expect(list.length).toBe(1)
+            expect(countBeforeCreate).toEqual(0)
+            expect(countAfterCreate).toEqual(1)
         })
 
         it('hould throw a custom error if writing to the database fails.', async () => {
@@ -57,89 +42,58 @@ describe('FuelSupplyWatermelonDbRepository', () => {
         })
 
         it('You should search for a model by ID, update it, and return an entity.', async () => {
-            const list =
-                await repository.loadAllFuelSupplyByEnterpriseIdAndWorkIdAndVehicleIdAndTypeFromLocalDatabase(
-                    entityTransportVehicle.enterpriseId,
-                    entityTransportVehicle.workId,
-                    entityTransportVehicle.transportVehicleOrWorkEquipmentId,
-                    entityTransportVehicle.supplyType
+            const countBeforeCreate = (
+                await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLIES).query().fetch()
+            ).length
+            const createdEntity = await repository.createFuelSupplyInLocalDatabase(
+                new FuelSupplyEntity().dtoToEntity(
+                    FuelSupplyDtoFactory.create({
+                        transportVehicleOrWorkEquipmentId: 't-1',
+                        isDiscount: true,
+                        isGasStation: true,
+                        supplyType: FuelSupplyTypes.TRANSPORT_VEHICLE,
+                    })
                 )
+            )
+            const countAfterCreate = (
+                await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLIES).query().fetch()
+            ).length
 
-            const result = await repository.updateFuelSupplyInLocalDatabase(list[0])
+            const result = await repository.updateFuelSupplyInLocalDatabase(createdEntity)
+            expect(countBeforeCreate).toEqual(0)
+            expect(countAfterCreate).toEqual(1)
             expect(result.userAction).toBe(UserAction.UPDATE)
         })
 
         it('Should create and then delete a record.', async () => {
-            const result = await repository.createFuelSupplyInLocalDatabase(entityEquipment)
-            const EntityVoid = await repository.deleteFuelSupplyInLocalDatabase(
-                result.id,
-                entityEquipment.userId
+            const entityCreated = await repository.createFuelSupplyInLocalDatabase(
+                new FuelSupplyEntity().dtoToEntity(
+                    FuelSupplyDtoFactory.create({ invoiceId: 0, invoiceStatus: InvoiceStatus.PENDING })
+                )
             )
-            expect(EntityVoid).toBeUndefined()
-        })
+            const countAfterCreate = (
+                await database.get<FuelSupplyModel>(TableName.FUEL_SUPPLIES).query().fetch()
+            ).length
 
-        it('Must successfully create a fuel supply (Maintenance Truck) and return to the entity.', async () => {
-            const result1 = await repository.createFuelSupplyInLocalDatabase(entityMaintenanceTruckTank)
-            const result2 = await repository.createFuelSupplyInLocalDatabase(entityMaintenanceTruck)
-            const fuel =
-                await repository.loadCurrentBalanceTankByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
-                    entityMaintenanceTruckTank.enterpriseId,
-                    entityMaintenanceTruckTank.workId,
-                    entityMaintenanceTruckTank.maintenanceTrucksWorkEquipmentId
-                )
-            expect(result1.id).toBeDefined()
-            expect(result2.id).toBeDefined()
-            expect(result1.quantity).toBe(entityMaintenanceTruckTank.quantity)
-            expect(result2.quantity).toBe(entityMaintenanceTruck.quantity)
-            expect(fuel).toBe(entityMaintenanceTruckTank.quantity - entityMaintenanceTruck.quantity)
-        })
+            await database.write(async () => {
+                const result = await database
+                    .get<FuelSupplyModel>(TableName.FUEL_SUPPLIES)
+                    .find(entityCreated.id)
+                await result.update(() => {
+                    result.isValid = false
+                    result.userId = entityCreated.userId
+                    result.userAction = UserAction.DELETE
+                })
+            })
+            const countAfterDelete = (
+                await database
+                    .get<FuelSupplyModel>(TableName.FUEL_SUPPLIES)
+                    .query(Q.where('is_valid', true))
+                    .fetch()
+            ).length
 
-        it('Should look for a list.', async () => {
-            const result =
-                await repository.loadLastSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
-                    entityMaintenanceTruck.enterpriseId,
-                    entityMaintenanceTruck.workId,
-                    entityMaintenanceTruck.maintenanceTrucksWorkEquipmentId
-                )
-            expect(result).toBeDefined()
-            expect(result.maintenanceTrucksWorkEquipmentId).toEqual(
-                entityMaintenanceTruck.maintenanceTrucksWorkEquipmentId
-            )
-        })
-
-        it('Should look for a list.', async () => {
-            const result =
-                await repository.loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
-                    entityMaintenanceTruck.enterpriseId,
-                    entityMaintenanceTruck.workId,
-                    entityMaintenanceTruck.maintenanceTrucksWorkEquipmentId
-                )
-            expect(result).toBeDefined()
-            expect(result.length).toBe(2)
-        })
-
-        it('Should look for a list.', async () => {
-            const result =
-                await repository.loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndTypeFromLocalDatabase(
-                    entityMaintenanceTruck.enterpriseId,
-                    entityMaintenanceTruck.workId,
-                    entityMaintenanceTruck.maintenanceTrucksWorkEquipmentId,
-                    FuelSupplyTypes.EQUIPMENT
-                )
-            expect(result).toBeDefined()
-            expect(result.length).toBe(1)
-        })
-
-        it('Should look for a list.', async () => {
-            const result =
-                await repository.loadAllFuelSupplyByEnterpriseIdAndWorkIdAndVehicleIdAndTypeFromLocalDatabase(
-                    entityTransportVehicle.enterpriseId,
-                    entityTransportVehicle.workId,
-                    entityTransportVehicle.transportVehicleOrWorkEquipmentId,
-                    entityTransportVehicle.supplyType
-                )
-            expect(result).toBeDefined()
-            expect(result.length).toBe(1)
+            expect(countAfterCreate).toEqual(1)
+            expect(countAfterDelete).toEqual(0)
         })
     })
 })

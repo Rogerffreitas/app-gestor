@@ -1,4 +1,4 @@
-import DepositDto from '../../deposit/DepositDto'
+import DepositDto from '../../entity/deposit/DepositDto'
 
 export class DepositDtoFactory {
     static create(overrides: Partial<DepositDto> = {}): DepositDto {

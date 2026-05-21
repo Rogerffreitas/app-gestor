@@ -1,5 +1,5 @@
-import { InvoiceStatus } from '../../../types'
-import HourMeterMonitoringDto from '../../hour-meter-monitoring/HourMeterMonitoringDto'
+import { InvoiceStatus } from '../../types'
+import HourMeterMonitoringDto from '../../entity/hour-meter-monitoring/HourMeterMonitoringDto'
 import { WorkEquipmentDtoFactory } from './WorkEquipmentDtoFactory'
 
 export class HourMeterMonitoringDtoFactory {

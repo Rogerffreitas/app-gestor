@@ -1,35 +1,26 @@
 import WorkEntity from '../../../domain/entity/work/WorkEntity'
-import { Database, Q } from '@nozbe/watermelondb'
-import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import { WorkWatermelonDbRepository } from '../WorkWatermelonDbRepository'
-import { schemas } from '../../../database/schemas'
-import WorkModel from '../../../database/model/WorkModel'
-import { WorkDtoFactory } from '../../../domain/entity/__test__/factories/WorkDtoFactory'
-import { UserAction } from '../../../domain/types'
-
-const adapter = new LokiJSAdapter({
-    dbName: 'TEST-DB',
-    schema: schemas,
-    useWebWorker: false,
-    useIncrementalIndexedDB: true,
-})
-
-const database = new Database({
-    adapter,
-    modelClasses: [WorkModel],
-})
+import { TableName, UserAction } from '../../../domain/types'
+import { database } from './database-test'
+import { WorkDtoFactory } from '@/src/domain/utils/factories/WorkDtoFactory'
+import WorkModel from '@/src/database/model/WorkModel'
+import { Q } from '@nozbe/watermelondb'
 
 describe('WorkWatermelonDbRepository', () => {
-    let repository: WorkWatermelonDbRepository
+    const repository = new WorkWatermelonDbRepository(database)
 
     beforeEach(async () => {
-        repository = new WorkWatermelonDbRepository()
+        await database.write(async () => {
+            await database.unsafeResetDatabase()
+        })
     })
 
     it('deve criar uma nova obra com sucesso no banco local', async () => {
         const fakeWork = new WorkEntity().dtoToEntity(WorkDtoFactory.create())
 
-        const result = await repository.createWorkInLocalDatabase(fakeWork)
+        const result = await repository.createWorkInLocalDatabase(
+            new WorkEntity().dtoToEntity(WorkDtoFactory.create())
+        )
 
         expect(result).toBeDefined()
         expect(result.name).toBe(fakeWork.name)
@@ -38,6 +29,33 @@ describe('WorkWatermelonDbRepository', () => {
 
         expect(persisted).toBeDefined()
         expect(persisted.isValid).toBe(true)
+    })
+
+    it('hould throw a custom error if writing to the database fails.', async () => {
+        await expect(repository.createWorkInLocalDatabase(undefined)).rejects.toThrow(
+            /Error create work in local database/
+        )
+    })
+
+    it('Should create and then delete a record.', async () => {
+        const fakeWork = new WorkEntity().dtoToEntity(WorkDtoFactory.create())
+        const entityCreated = await repository.createWorkInLocalDatabase(fakeWork)
+        const countAfterCreate = (await database.get<WorkModel>(TableName.WORKS).query().fetch()).length
+
+        await database.write(async () => {
+            const result = await database.get<WorkModel>(TableName.WORKS).find(entityCreated.id)
+            await result.update(() => {
+                result.isValid = false
+                result.userId = entityCreated.userId
+                result.userAction = UserAction.DELETE
+            })
+        })
+        const countAfterDelete = (
+            await database.get<WorkModel>(TableName.WORKS).query(Q.where('is_valid', true)).fetch()
+        ).length
+
+        expect(countAfterCreate).toEqual(1)
+        expect(countAfterDelete).toEqual(0)
     })
 
     it('deve atualiza uma nova obra com sucesso no banco local', async () => {

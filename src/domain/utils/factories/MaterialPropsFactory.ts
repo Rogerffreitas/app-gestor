@@ -1,5 +1,5 @@
-import MaterialProps from '../../../interfaces/props/MaterialProps'
-import { Reference, UserAction } from '../../../types'
+import MaterialProps from '../../interfaces/props/MaterialProps'
+import { Reference, UserAction } from '../../types'
 
 export class MaterialPropsFactory {
     static create(overrides: Partial<MaterialProps> = {}): MaterialProps {

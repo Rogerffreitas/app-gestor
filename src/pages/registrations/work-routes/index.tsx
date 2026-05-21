@@ -100,7 +100,7 @@ export default function WorkRoutes() {
                                             <TextConteudoCardLine
                                                 conteudo={
                                                     'R$ ' +
-                                                    (item.value / 1000).toLocaleString('pt-br', {
+                                                    (item.value / 100).toLocaleString('pt-br', {
                                                         style: 'decimal',
                                                         maximumFractionDigits: 3,
                                                     })

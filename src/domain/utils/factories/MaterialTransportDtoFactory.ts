@@ -1,5 +1,5 @@
-import { InvoiceStatus } from '../../../types'
-import MaterialTransportDto from '../../material-transport/MaterialTransportDto'
+import { InvoiceStatus } from '../../types'
+import MaterialTransportDto from '../../entity/material-transport/MaterialTransportDto'
 import { MaterialDtoFactory } from './MaterialDtoFactory'
 import { TransportVehicleDtoFactory } from './TransportVehicleDtoFactory'
 import { WorkRoutesDtoFactory } from './WorkRoutesDtoFactory'

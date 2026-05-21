@@ -1,5 +1,5 @@
-import FuelSupplyProps from '../../../interfaces/props/FuelSupplyProps'
-import { FuelSupplyTypes, InvoiceStatus, UserAction } from '../../../types'
+import FuelSupplyProps from '../../interfaces/props/FuelSupplyProps'
+import { FuelSupplyTypes, InvoiceStatus, UserAction } from '../../types'
 
 export class FuelSupplyPropsFactory {
     static create(overrides: Partial<FuelSupplyProps> = {}): FuelSupplyProps {

@@ -1,5 +1,4 @@
-import { database } from '../../database'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import DiscountModel from '../../database/model/DiscountModel'
 
 import { InvoiceStatus, TableName, UserAction } from '../../types'
@@ -9,11 +8,17 @@ import DiscountProps from '@gestor/domain/interfaces/props/DiscountProps'
 import { DiscountTypes } from '@gestor/domain/types'
 
 export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway {
+    private readonly database: Database
+
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createDiscountInLocalDatabase(entity: DiscountEntity): Promise<DiscountEntity> {
         console.log('Creating Discount in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<DiscountModel>(TableName.DISCOUNTS).create((item) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<DiscountModel>(TableName.DISCOUNTS).create((item) => {
                     item.value = +entity.value
                     item.description = entity.description
                     item.discountType = entity.discountType
@@ -40,8 +45,8 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
     async updateDiscountInLocalDatabase(entity: DiscountEntity): Promise<DiscountEntity> {
         console.log('Updating Discount in the database')
         try {
-            const result = await database.write(async () => {
-                const item = await database.get<DiscountModel>(TableName.DISCOUNTS).find(entity.id)
+            const result = await this.database.write(async () => {
+                const item = await this.database.get<DiscountModel>(TableName.DISCOUNTS).find(entity.id)
                 return await item.update((item) => {
                     item.value = +entity.value
                     item.description = entity.description
@@ -56,7 +61,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
         }
     }
     async deleteDiscountInLocalDatabase(id: string, userId: string): Promise<void> {
-        const a = await database
+        const a = await this.database
             .get(TableName.DISCOUNTS)
             .query(Q.where('id', id), Q.where('invoice_status', Q.notEq(InvoiceStatus.PENDING)))
             .fetchCount()
@@ -64,8 +69,8 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
         if (a > 0) {
             throw new Error('Não é possível apagar o Desconto')
         }
-        await database.write(async () => {
-            const result = await database.get<DiscountModel>(TableName.DISCOUNTS).find(id)
+        await this.database.write(async () => {
+            const result = await this.database.get<DiscountModel>(TableName.DISCOUNTS).find(id)
             await result.update(() => {
                 result.isValid = false
                 result.userId = userId
@@ -75,7 +80,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
     }
     async findDiscountByIdInLocalDatabase(id: string): Promise<DiscountEntity> {
         try {
-            const result = await database.get<DiscountModel>(TableName.DISCOUNTS).find(id)
+            const result = await this.database.get<DiscountModel>(TableName.DISCOUNTS).find(id)
             if (result) {
                 return new DiscountEntity().modelToEntity(this.discountMapper(result))
             }
@@ -95,7 +100,7 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
         transportVehicleOrWorkEquipmentId: string
     ): Promise<DiscountEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<DiscountModel>(TableName.DISCOUNTS)
                 .query(
                     Q.sortBy('created_at', Q.desc),

@@ -1,4 +1,4 @@
-import EquipmentDto from '../../equipment/EquipmentDto'
+import EquipmentDto from '../../entity/equipment/EquipmentDto'
 
 export class EquipmentDtoFactory {
     static create(overrides: Partial<EquipmentDto> = {}): EquipmentDto {

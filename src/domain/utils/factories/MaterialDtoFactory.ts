@@ -1,5 +1,5 @@
-import { Reference, UserAction } from '../../../types'
-import { MaterialDto } from '../../material/MaterialDto'
+import { Reference, UserAction } from '../../types'
+import { MaterialDto } from '../../entity/material/MaterialDto'
 
 export class MaterialDtoFactory {
     static create(overrides: Partial<MaterialDto> = {}): MaterialDto {

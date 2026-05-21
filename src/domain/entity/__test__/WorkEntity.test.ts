@@ -1,5 +1,5 @@
 import WorkEntity from '../work/WorkEntity'
-import { WorkPropsFactory } from './factories/WorkPropsFactory'
+import { WorkPropsFactory } from '../../utils/factories/WorkPropsFactory'
 
 describe('WorkEntity', () => {
     let entity: WorkEntity

@@ -1,5 +1,5 @@
-import { DiscountTypes } from '../../../types'
-import DiscountDto from '../../discount/DiscountDto'
+import { DiscountTypes } from '../../types'
+import DiscountDto from '../../entity/discount/DiscountDto'
 
 export class DiscountDtoFactory {
     static create(overrides: Partial<DiscountDto> = {}): DiscountDto {

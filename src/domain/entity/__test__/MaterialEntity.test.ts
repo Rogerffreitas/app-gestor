@@ -1,5 +1,5 @@
 import MaterialEntity from '../material/MaterialEntity'
-import { MaterialPropsFactory } from './factories/MaterialPropsFactory'
+import { MaterialPropsFactory } from '../../utils/factories/MaterialPropsFactory'
 
 describe('MaterialEntity', () => {
     let entity: MaterialEntity

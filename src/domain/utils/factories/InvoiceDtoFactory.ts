@@ -1,5 +1,5 @@
-import { InvoiceStatus, InvoiceTypes } from '../../../types'
-import { InvoiceDto } from '../../invoice/InvoiceDto'
+import { InvoiceStatus, InvoiceTypes } from '../../types'
+import { InvoiceDto } from '../../entity/invoice/InvoiceDto'
 
 export class InvoiceDtoFactory {
     static create(overrides: Partial<InvoiceDto> = {}): InvoiceDto {

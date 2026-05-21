@@ -11,7 +11,6 @@ import DescriptionTextInput from '../../../../components/input/DescriptionTextIn
 import CheckBox from '../../../../components/CheckBox'
 import InputMaskNumber from '../../../../components/input/InputMaskNumber'
 import ButtonActionLoading from '../../../../components/button/ButtonActionLoading'
-import InputMaskMoneyPrecision3 from '../../../../components/input/InputMaskMoneyPrecision3'
 import InputMask from '../../../../components/input/InputMask'
 import useEditRoute from './UseEditRoute'
 import { useConfig } from '../../../../contexts/ConfigContext'
@@ -113,7 +112,7 @@ export default function EditWorkRoute() {
                         <DescriptionTextInput description={'Valor:* '} erroMenssage={erros.value} />
                         <View style={{ width: '100%', flexDirection: 'row' }}>
                             <View style={{ width: '60%' }}>
-                                <InputMaskMoneyPrecision3
+                                <InputMaskMoney
                                     value={states.value / 1000}
                                     placeholder={'Valor'}
                                     autoCapitalize={'none'}

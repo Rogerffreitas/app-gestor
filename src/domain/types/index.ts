@@ -46,18 +46,18 @@ export enum ModelSyncType {
 }
 
 export enum TableName {
-    WORKS = 'WorkModel',
-    DEPOSITS = 'DepositModel',
-    MATERIALS = 'MaterialModel',
-    WORK_ROUTES = 'WorkRouteModel',
-    DISCOUNTS = 'DiscountModel',
-    EQUIPMENTS = 'EquipmentModel',
-    FUEL_SUPPLIES = 'FuelSupplyModel',
-    WORK_EQUIPMENTS = 'WorkEquipmentModel',
-    HOUR_METER_MONITORINGS = 'HourMeterMonitoringModel',
-    MAINTENANCE_TRUCKS = 'MaintenanceTruckModel',
-    TRANSPORT_VEHICLES = 'TransportVehicleModel',
-    MATERIAL_TRANSPORTS = 'MaterialTransportModel',
+    WORKS = 'works',
+    WORK_ROUTES = 'work_routes',
+    DEPOSITS = 'deposits',
+    EQUIPMENTS = 'equipments',
+    WORK_EQUIPMENTS = 'work_equipments',
+    MATERIAL_TRANSPORTS = 'material_transports',
+    TRANSPORT_VEHICLES = 'transport_vehicles',
+    FUEL_SUPPLIES = 'fuel_supplies',
+    DISCOUNTS = 'discounts',
+    HOUR_METER_MONITORINGS = 'hour_meter_monitorings',
+    MAINTENANCE_TRUCKS = 'maintenance_trucks',
+    MATERIAL = 'materials',
 }
 
 export enum InvoiceTypes {

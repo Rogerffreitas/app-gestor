@@ -1,5 +1,5 @@
-import { UserAction } from '../../../types'
-import { MaintenanceTruckDto } from '../../maintenance-truck/MaintenanceTruckDto'
+import { UserAction } from '../../types'
+import { MaintenanceTruckDto } from '../../entity/maintenance-truck/MaintenanceTruckDto'
 
 export class MaintenanceTruckDtoFactory {
     static create(overrides: Partial<MaintenanceTruckDto> = {}): MaintenanceTruckDto {
