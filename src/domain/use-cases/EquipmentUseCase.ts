@@ -5,11 +5,11 @@ import EquipmentDto from '../entity/equipment/EquipmentDto'
 export interface EquipmentUseCase {
     createEquipmentInLocalDatabase(
         dto: EquipmentDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<EquipmentDto>
     updateEquipmentInLocalDatabase(
         dto: EquipmentDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<EquipmentDto>
     /**
      * Atualiza o Horímetro ou Hodômetro
@@ -20,18 +20,13 @@ export interface EquipmentUseCase {
      */
     updateHourMeterOrOdometerInLocalDatabase(
         dto: EquipmentDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<EquipmentDto>
     updateEquipmentBankInformation(id: string, bankInformation: BankInformation): Promise<EquipmentDto>
     deleteEquipmentInLocalDatabase(id: string, userId: string): Promise<void>
     findEquipmentByIdInLocalDatabase(id: string): Promise<EquipmentDto | null>
-    saveEquipmentServerId(dtos: EquipmentDto[]): void
-    loadAllEquipmentByEnterpriseIdAndWorkIdFromLocalDatabase(
-        enterpriseId: string,
-        workId: string,
-    ): Promise<EquipmentDto[]>
     loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
-        enterpriseId: string,
+        enterpriseId: string
     ): Promise<EquipmentDto[]>
     loadAllEquipmentByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<EquipmentDto[]>
 }

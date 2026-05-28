@@ -11,7 +11,7 @@ export interface FuelSupplyUseCase {
      */
     createFuelSupplyInLocalDatabase(
         dto: FuelSupplyDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<FuelSupplyDto>
 
     /**
@@ -23,7 +23,7 @@ export interface FuelSupplyUseCase {
      */
     updateFuelSupplyInLocalDatabase(
         dto: FuelSupplyDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<FuelSupplyDto>
 
     /**
@@ -34,14 +34,6 @@ export interface FuelSupplyUseCase {
      * @returns {void} Resultado.
      */
     deleteFuelSupplyInLocalDatabase(id: string, userId: string): Promise<void>
-
-    /**
-     * Salva os ID_SERVER retornado pela API
-     *
-     * @param {FuelSupplyDto} dtos - lista IDs retornados pela API.
-     * @returns {void} Resultado.
-     */
-    saveFuelSupplyServerId(dtos: FuelSupplyDto[]): void
 
     loadById(id: string): Promise<FuelSupplyDto>
 
@@ -56,7 +48,7 @@ export interface FuelSupplyUseCase {
     loadLastSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        maintenanceTrucksWorkEquipmentId: string,
+        maintenanceTrucksWorkEquipmentId: string
     ): Promise<FuelSupplyDto>
 
     /**
@@ -70,7 +62,7 @@ export interface FuelSupplyUseCase {
     loadCurrentBalanceTankByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        maintenanceTrucksWorkEquipmentId: string,
+        maintenanceTrucksWorkEquipmentId: string
     ): Promise<number>
 
     /**
@@ -86,7 +78,7 @@ export interface FuelSupplyUseCase {
         enterpriseId: string,
         workId: string,
         transportVehicleOrWorkEquipmentId: string,
-        type: string,
+        type: string
     ): Promise<FuelSupplyDto[]>
 
     /**
@@ -102,7 +94,7 @@ export interface FuelSupplyUseCase {
         enterpriseId: string,
         workId: string,
         maintenanceTrucksWorkEquipmentId: string,
-        type: string,
+        type: string
     ): Promise<FuelSupplyDto[]>
 
     /**
@@ -116,6 +108,6 @@ export interface FuelSupplyUseCase {
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        maintenanceTrucksWorkEquipmentId: string,
+        maintenanceTrucksWorkEquipmentId: string
     ): Promise<FuelSupplyDto[]>
 }

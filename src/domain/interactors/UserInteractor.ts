@@ -17,7 +17,7 @@ export class UserInteractor implements UserUseCase {
         userRepository: UserRepositoryGateway,
         enterpriseRepository: EnterpriseRepositoryGateway,
         encrypter: Encrypter,
-        tokenGenerator: TokenGenerator,
+        tokenGenerator: TokenGenerator
     ) {
         this.userRepository = userRepository
         this.enterpriseRepository = enterpriseRepository
@@ -57,7 +57,7 @@ export class UserInteractor implements UserUseCase {
     }
     async loginByUsernameAndPassword(
         username: string,
-        password: string,
+        password: string
     ): Promise<{ accessToken: { token: string; type: string } }> {
         const user = await this.userRepository.loginByUsername(username)
         if (!user) {

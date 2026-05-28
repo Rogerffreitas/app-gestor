@@ -7,15 +7,14 @@ export interface MaintenanceTruckRepositoryGateway {
     findMaintenanceTruckByIdInLocalDatabase(
         id: string,
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckEntity | null>
-    saveMaintenanceTruckServerId(entities: MaintenanceTruckEntity[]): void
     loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckEntity[]>
     loadAllMaintenanceTruckByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckEntity[]>
 }

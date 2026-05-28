@@ -11,7 +11,7 @@ export interface HourMeterMonitoringUseCase {
      */
     createHourMeterMonitoringInLocalDatabase(
         dto: HourMeterMonitoringDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<HourMeterMonitoringDto>
 
     /**
@@ -23,7 +23,7 @@ export interface HourMeterMonitoringUseCase {
      */
     updateHourMeterMonitoringInLocalDatabase(
         dto: HourMeterMonitoringDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<HourMeterMonitoringDto>
 
     /**
@@ -44,14 +44,6 @@ export interface HourMeterMonitoringUseCase {
     findHourMeterMonitoringByIdInLocalDatabase(id: string): Promise<HourMeterMonitoringDto | null>
 
     /**
-     * Salva os ID_SERVER retornado pela API
-     *
-     * @param {HourMeterMonitoringDto} dtos - lista IDs retornados pela API.
-     * @returns {void} Resultado.
-     */
-    saveHourMeterMonitoringServerId(dtos: HourMeterMonitoringDto[]): void
-
-    /**
      * Carrega os Apontamentos de horimentro
      *
      * @param {string} enterpriseId - Empresa.
@@ -62,7 +54,7 @@ export interface HourMeterMonitoringUseCase {
     loadAllHourMeterMonitoringByEnterpriseIdAndWorkIdAndWorkEquipmentIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        workEquipmentId: string,
+        workEquipmentId: string
     ): Promise<HourMeterMonitoringDto[]>
 
     /**
@@ -76,7 +68,7 @@ export interface HourMeterMonitoringUseCase {
     findLastHourMeterReading(
         enterpriseId: string,
         workId: string,
-        workEquipmentId: string,
+        workEquipmentId: string
     ): Promise<HourMeterMonitoringDto>
 
     /**
@@ -90,6 +82,6 @@ export interface HourMeterMonitoringUseCase {
     loadAllHourMeterMonitoringByEnterpriseIdAndWorkIdAndDateFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        date: string,
+        date: string
     ): Promise<HourMeterMonitoringDto[]>
 }

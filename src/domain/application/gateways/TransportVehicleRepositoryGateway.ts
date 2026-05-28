@@ -6,7 +6,6 @@ export interface TransportVehicleRepositoryGateway {
     updateTransportVehicleInLocalDatabase(entity: TransportVehicleEntity): Promise<TransportVehicleEntity>
     deleteTransportVehicleInLocalDatabase(id: string, userId: string): Promise<void>
     findTransportVehicleByIdInLocalDatabase(id: string): Promise<TransportVehicleEntity | null>
-    saveTransportVehicleServerId(entities: TransportVehicleEntity[]): void
     loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string

@@ -7,5 +7,4 @@ export interface DepositUseCase {
     deleteDepositInLocalDatabase(id: string, userId: string): Promise<void>
     findDepositByIdInLocalDatabase(id: string): Promise<DepositDto | null>
     loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<DepositDto[]>
-    saveDepositServerId(dtos: DepositDto[]): void
 }

@@ -10,9 +10,7 @@ export class DepositInteractor implements DepositUseCase {
     constructor(depositRepository: DepositRepositoryGateway) {
         this.depositRepositoryGateway = depositRepository
     }
-    saveDepositServerId(dtos: DepositDto[]): void {
-        this.saveDepositServerId(dtos)
-    }
+
     deleteDepositInLocalDatabase(id: string, userId: string) {
         return this.depositRepositoryGateway.deleteDepositInLocalDatabase(id, userId)
     }
@@ -44,9 +42,8 @@ export class DepositInteractor implements DepositUseCase {
     }
 
     async loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<DepositDto[]> {
-        const retuls = await this.depositRepositoryGateway.loadAllDepositByEnterpriseIdFromLocalDatabase(
-            enterpriseId
-        )
+        const retuls =
+            await this.depositRepositoryGateway.loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId)
         return retuls.map((item) => new DepositDto().toDto(item))
     }
 }

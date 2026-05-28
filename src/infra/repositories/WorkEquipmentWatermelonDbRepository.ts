@@ -1,33 +1,38 @@
 import WorkEquipmentModel from '../../database/model/WorkEquipmentModel'
-import { database } from '../../database'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import { TableName, UserAction } from '../../types'
 import { WorkEquipmentRepositoryGateway } from '@gestor/domain/application/gateways/WorkEquipmentRepositoryGateway'
 import { WorkEquipmentEntity } from '@gestor/domain/entity/work-equipment/WorkEquipmentEntity'
 import Mappers from './mappers'
 
 export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
     async createWorkEquipmentInLocalDatabase(entity: WorkEquipmentEntity): Promise<WorkEquipmentEntity> {
         console.log('Creating WorkEquipment in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS).create((item) => {
-                    item.equipmentId = entity.equipment.id
-                    item.isEquipment = entity.isEquipment
-                    item.nameProprietary = entity.nameProprietary
-                    item.startRental = entity.startRental
-                    item.monthlyPayment = +entity.monthlyPayment
-                    item.valuePerHourKm = +entity.valuePerHourKm
-                    item.valuePerDay = +entity.valuePerDay
-                    item.operatorMotorist = entity.operatorMotorist
-                    item.modelOrPlate = entity.modelOrPlate
-                    item.workId = entity.workId
-                    item.enterpriseId = entity.enterpriseId
-                    item.userId = entity.userId
-                    item.userAction = UserAction.CREATE
-                    item.isValid = true
-                    item.serverId = 0
-                })
+            const entityCreated = await this.database.write(async () => {
+                return await this.database
+                    .get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS)
+                    .create((item) => {
+                        item.equipmentId = entity.equipment.id
+                        item.isEquipment = entity.isEquipment
+                        item.nameProprietary = entity.nameProprietary
+                        item.startRental = entity.startRental
+                        item.monthlyPayment = +entity.monthlyPayment
+                        item.valuePerHourKm = +entity.valuePerHourKm
+                        item.valuePerDay = +entity.valuePerDay
+                        item.operatorMotorist = entity.operatorMotorist
+                        item.modelOrPlate = entity.modelOrPlate
+                        item.workId = entity.workId
+                        item.enterpriseId = entity.enterpriseId
+                        item.userId = entity.userId
+                        item.userAction = UserAction.CREATE
+                        item.isValid = true
+                        item.serverId = 0
+                    })
             })
             return new WorkEquipmentEntity().modelToEntity(await Mappers.workEquipmentMapper(entityCreated))
         } catch (error) {
@@ -37,15 +42,15 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
     }
     async deleteWorkEquipmentInLocalDatabase(id: string, userId: string): Promise<void> {
         const [hourMeterCount, fuelCount, discountCount] = await Promise.all([
-            database
+            this.database
                 .get(TableName.HOUR_METER_MONITORINGS)
                 .query(Q.where('work_equipment_id', id))
                 .fetchCount(),
-            database
+            this.database
                 .get(TableName.FUEL_SUPPLYS)
                 .query(Q.where('transport_vehicle_or_work_equipment_id', id))
                 .fetchCount(),
-            database
+            this.database
                 .get(TableName.DISCOUNTS)
                 .query(Q.where('transport_vehicle_or_work_equipment_id', id))
                 .fetchCount(),
@@ -57,8 +62,8 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
             throw new Error('Existem registros associados (Horimetro, combustível ou descontos).')
         }
         try {
-            await database.write(async () => {
-                const result = await database.get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS).find(id)
+            await this.database.write(async () => {
+                const result = await this.database.get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS).find(id)
                 await result.update(() => {
                     result.userId = userId
                     result.userAction = UserAction.DELETE
@@ -75,7 +80,7 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
         workId: string
     ): Promise<WorkEquipmentEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -93,15 +98,13 @@ export class WorkEquipmentWatermelonDbRepository implements WorkEquipmentReposit
             throw new Error('Error loading work equipments from local database.', { cause: error })
         }
     }
-    saveWorkEquipmentServerId(entitys: WorkEquipmentEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
         workId: string
     ): Promise<WorkEquipmentEntity[]> {
         try {
-            const result = await database.get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS).query(
+            const result = await this.database.get<WorkEquipmentModel>(TableName.WORK_EQUIPMENTS).query(
                 Q.sortBy('created_at', Q.desc),
                 Q.where('is_valid', true),
                 Q.where('enterprise_id', enterpriseId),

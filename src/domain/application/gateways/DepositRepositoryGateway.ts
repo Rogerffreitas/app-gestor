@@ -6,5 +6,4 @@ export interface DepositRepositoryGateway {
     deleteDepositInLocalDatabase(id: string, userId: string): Promise<void>
     findDepositByIdInLocalDatabase(id: string): Promise<DepositEntity | null>
     loadAllDepositByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<DepositEntity[]>
-    saveDepositServerId(entitys: DepositEntity[]): void
 }

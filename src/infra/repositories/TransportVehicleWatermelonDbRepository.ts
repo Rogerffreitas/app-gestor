@@ -1,20 +1,24 @@
 import { BankInformation } from '@gestor/domain/entity/bank-information/BankInformation'
-import { database } from '../../database'
 import TransportVehicleModel from '../../database/model/TransportVehicleModel'
 import { TableName, UserAction } from '../../types'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import { TransportVehicleEntity } from '@gestor/domain/entity/transport-vehicle/TransportVehicleEntity'
 import { TransportVehicleRepositoryGateway } from '@gestor/domain/application/gateways/TransportVehicleRepositoryGateway'
 import Mappers from './mappers'
 
 export class TransportVehicleWatermelonDbRepository implements TransportVehicleRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async updateTransportVehicleBankInformation(
         id: string,
         bankInformation: BankInformation
     ): Promise<TransportVehicleEntity> {
         try {
-            const modelUpdated = await database.write(async () => {
-                const result = await database
+            const modelUpdated = await this.database.write(async () => {
+                const result = await this.database
                     .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
                     .find(id)
                 return await result.update((item) => {
@@ -36,8 +40,8 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
     ): Promise<TransportVehicleEntity> {
         console.log('Creating TransportVehicle in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                return await database
+            const entityCreated = await this.database.write(async () => {
+                return await this.database
                     .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
                     .create((item) => {
                         item.nameProprietary = entity.nameProprietary
@@ -66,8 +70,8 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
     ): Promise<TransportVehicleEntity> {
         console.log('Updating TransportVehicle in the database')
         try {
-            const entityUpdated = await database.write(async () => {
-                const result = await database
+            const entityUpdated = await this.database.write(async () => {
+                const result = await this.database
                     .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
                     .find(entity.id)
                 return await result.update((item) => {
@@ -90,15 +94,15 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
     }
     async deleteTransportVehicleInLocalDatabase(id: string, userId: string): Promise<void> {
         const [transportCount, fuelCount, discountCount] = await Promise.all([
-            database
+            this.database
                 .get(TableName.MATERIAL_TRANSPORTS)
                 .query(Q.where('transport_vehicle_id', id))
                 .fetchCount(),
-            database
+            this.database
                 .get(TableName.FUEL_SUPPLYS)
                 .query(Q.where('transport_vehicle_or_work_equipment_id', id))
                 .fetchCount(),
-            database
+            this.database
                 .get(TableName.DISCOUNTS)
                 .query(Q.where('transport_vehicle_or_work_equipment_id', id))
                 .fetchCount(),
@@ -110,8 +114,11 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
             throw new Error('Existem registros associados (Transportes, combustível ou descontos).')
         }
 
-        await database.write(async () => {
-            const equipment = await database.get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES).find(id)
+        await this.database.write(async () => {
+            const equipment = await this.database
+                .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
+                .find(id)
+
             await equipment.update(() => {
                 equipment.userAction = UserAction.DELETE
                 equipment.userId = userId
@@ -121,7 +128,9 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
     }
     async findTransportVehicleByIdInLocalDatabase(id: string): Promise<TransportVehicleEntity> {
         try {
-            const result = await database.get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES).find(id)
+            const result = await this.database
+                .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
+                .find(id)
 
             return new TransportVehicleEntity().modelToEntity(Mappers.transportVehicleMapper(result))
         } catch (error) {
@@ -129,15 +138,13 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
             throw new Error('an error occurred while trying to load model ', { cause: error })
         }
     }
-    saveTransportVehicleServerId(entities: TransportVehicleEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string
     ): Promise<TransportVehicleEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -160,7 +167,7 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
         workId: string
     ): Promise<TransportVehicleEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -185,8 +192,8 @@ export class TransportVehicleWatermelonDbRepository implements TransportVehicleR
         bankInformation: BankInformation
     ): Promise<TransportVehicleEntity> {
         try {
-            const entityUpdated = await database.write(async () => {
-                const result = await database
+            const entityUpdated = await this.database.write(async () => {
+                const result = await this.database
                     .get<TransportVehicleModel>(TableName.TRANSPORT_VEHICLES)
                     .find(id)
                 return await result.update((item) => {

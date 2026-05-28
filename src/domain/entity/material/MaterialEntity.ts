@@ -46,43 +46,42 @@ export default class MaterialEntity extends AbstratcEntity {
         console.log('validated entity [MaterialEntity]')
         let errorMessages: ErrorMessages[] = []
 
+        const addError = (field: string, message: string) => {
+            errorMessages.push({ field, message })
+            changeErrorFields(field)(message)
+        }
+
         if (this._name == null || this._name.length == 0) {
-            changeErrorFields('name')('Preencha o campo obrigatório')
-            errorMessages.push({
-                field: 'name',
-                message: 'Preencha o campo obrigatório',
-            })
+            addError('name', 'Preencha o campo obrigatório')
         }
 
         if (this._name.length > 50) {
-            changeErrorFields('name')('Max. 50 caracteres')
-            errorMessages.push({ field: 'name', message: 'Max. 50 caracteres' })
+            addError('name', 'Max. 50 caracteres')
         }
 
         if (this._density == null || this._density == 0) {
-            changeErrorFields('density')('Preencha o campo obrigatório')
-            errorMessages.push({
-                field: 'density',
-                message: 'Preencha o campo obrigatório',
-            })
+            addError('density', 'Preencha o campo obrigatório')
         }
 
         if (this._value == null || this._value == 0) {
-            changeErrorFields('value')('Preencha o campo obrigatório')
-            errorMessages.push({
-                field: 'value',
-                message: 'Preencha o campo obrigatório',
-            })
+            addError('value', 'Preencha o campo obrigatório')
         }
 
         if (this._density > 9999) {
-            changeErrorFields('density')('Max. 99')
-            errorMessages.push({ field: 'density', message: 'Max. 99' })
+            addError('density', 'Max. 99')
         }
 
         if (this._value > 999999999) {
-            changeErrorFields('value')('Max. 999999')
-            errorMessages.push({ field: 'value', message: 'Max. 999999' })
+            addError('value', 'Max. 999999')
+        }
+
+        // Validação para impedir casas decimais (ex: 29.10 gera erro, 2910 passa)
+        if (this._value != null && this._value % 1 !== 0) {
+            addError('value', 'Não são permitidas casas decimais')
+        }
+
+        if (this._density != null && this._density % 1 !== 0) {
+            addError('value', 'Não são permitidas casas decimais')
         }
 
         if (errorMessages.length > 0) {

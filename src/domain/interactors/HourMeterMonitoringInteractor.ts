@@ -36,12 +36,12 @@ export class HourMeterMonitoringInteractor implements HourMeterMonitoringUseCase
             userId
         )
     }
-    findHourMeterMonitoringByIdInLocalDatabase(id: string): Promise<HourMeterMonitoringDto> {
-        throw new Error('Method not implemented.')
+    async findHourMeterMonitoringByIdInLocalDatabase(id: string): Promise<HourMeterMonitoringDto> {
+        return new HourMeterMonitoringDto().entityToDto(
+            await this.hourMeterMonitoringRepositoryGateway.findHourMeterMonitoringByIdInLocalDatabase(id)
+        )
     }
-    saveHourMeterMonitoringServerId(dtos: HourMeterMonitoringDto[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllHourMeterMonitoringByEnterpriseIdAndWorkIdAndWorkEquipmentIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,

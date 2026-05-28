@@ -12,7 +12,7 @@ export default class RentInformation {
         startRental: string,
         monthlyPayment: number,
         valuePerHourKm: number,
-        valuePerDay: number,
+        valuePerDay: number
     ) {
         this._hourMeterOrOdometer = hourMeterOrOdometer
         this._startRental = startRental
@@ -108,6 +108,27 @@ export default class RentInformation {
         if (!Number.isInteger(this._valuePerDay)) {
             errorMessages.push({ field: 'valuePerDay', message: 'Informe um Número Inteiro.' })
             changeErrorFields('valuePerDay')('Informe um Número Inteiro.')
+        }
+
+        // Validação para impedir casas decimais (ex: 29.10 gera erro, 2910 passa)
+        if (this._hourMeterOrOdometer != null && this._hourMeterOrOdometer % 1 !== 0) {
+            errorMessages.push({
+                field: 'hourMeterOrOdometer',
+                message: 'Não são permitidas casas decimais.',
+            })
+            changeErrorFields('hourMeterOrOdometer')('Não são permitidas casas decimais.')
+        }
+        if (this._monthlyPayment != null && this._monthlyPayment % 1 !== 0) {
+            errorMessages.push({ field: 'monthlyPayment', message: 'Não são permitidas casas decimais.' })
+            changeErrorFields('monthlyPayment')('Não são permitidas casas decimais.')
+        }
+        if (this._valuePerDay != null && this._valuePerDay % 1 !== 0) {
+            errorMessages.push({ field: 'valuePerDay', message: 'Não são permitidas casas decimais.' })
+            changeErrorFields('valuePerDay')('Não são permitidas casas decimais.')
+        }
+        if (this._valuePerHourKm != null && this._valuePerHourKm % 1 !== 0) {
+            errorMessages.push({ field: 'valuePerHourKm', message: 'Não são permitidas casas decimais.' })
+            changeErrorFields('valuePerHourKm')('Não são permitidas casas decimais.')
         }
 
         return errorMessages

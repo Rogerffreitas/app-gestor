@@ -116,6 +116,12 @@ export class TransportVehicleEntity extends AbstratcEntity {
             errorMessages.push({ field: 'color', message: 'A cor é obrigatória.' })
         }
 
+        // Validação para impedir casas decimais (ex: 29.10 gera erro, 2910 passa)
+        if (this._capacity != null && this._capacity % 1 !== 0) {
+            changeErrorFields('capacity')('Não são permitidas casas decimais')
+            errorMessages.push({ field: 'capacity', message: 'Não são permitidas casas decimais.' })
+        }
+
         errorMessages.push(...this._proprietary.validate(changeErrorFields))
         if (errorMessages.length > 0) {
             console.info('Validation Errors:', errorMessages)

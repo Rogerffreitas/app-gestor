@@ -10,5 +10,4 @@ export interface WorkRepositoryGateway {
         enterpriseId: string,
         userId: string
     ): Promise<WorkEntity[]>
-    saveWorkServerId(entitys: WorkEntity[]): void
 }

@@ -12,7 +12,6 @@ export class WorkEquipmentEntity extends AbstratcEntity {
     private _workId: string
 
     public modelToEntity(data: WorkEquipmentProps) {
-        console.info(data)
         this._rentInformation = new RentInformation(
             +data.hourMeterOrOdometer,
             data.startRental,

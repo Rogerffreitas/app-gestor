@@ -18,17 +18,13 @@ describe('WorkRoutesEntity', () => {
     })
 
     describe('Lógica de Negócio (isFixedValue)', () => {
-        it('deve zerar o KM se a rota for de valor fixo no dtoToEntity', () => {
+        it('should fail if the value is fixed and the initial pick is null.', () => {
             const dto = WorkRoutesDtoFactory.create({
-                isFixedValue: true,
-                km: 50.0,
-                arrivalLocation: 'A',
-                departureLocation: 'B',
-                work: WorkDtoFactory.create(),
-                deposit: DepositDtoFactory.create(),
+                isFixedValue: false,
+                initialPicket: undefined,
             })
             entity.dtoToEntity(dto)
-            expect(entity.km).toBe(0)
+            expect(() => entity.validate(mockChangeErrorFields)).toThrow(/Preencha o campo obrigatório/)
         })
 
         it('deve invalidar se KM for zero e não for valor fixo', () => {
@@ -76,18 +72,29 @@ describe('WorkRoutesEntity', () => {
             entity.dtoToEntity(dto)
             expect(() => entity.validate(mockChangeErrorFields)).toThrow(/value/)
         })
+
+        it('should fail if it contains decimal numbers.', () => {
+            const dto = WorkRoutesDtoFactory.create({
+                km: 10.1,
+                initialPicket: 200.1,
+                value: 203.3,
+            })
+            entity.dtoToEntity(dto)
+            expect(() => entity.validate(mockChangeErrorFields)).toThrow(/Não são permitidas casas decimais/)
+        })
     })
 
     describe('Mapeamento', () => {
         it('deve converter corretamente strings para números via modelToEntity', () => {
             const props = WorkRoutesPropsFactory.create({
-                km: '25.5' as any,
-                value: '100.20' as any,
+                km: '2550' as any,
+                value: '10020' as any,
+                initialPicket: '200' as any,
             })
             entity.modelToEntity(props)
 
-            expect(entity.km).toBe(25.5)
-            expect(entity.value).toBe(100.2)
+            expect(entity.km).toBe(2550)
+            expect(entity.value).toBe(10020)
         })
     })
 })

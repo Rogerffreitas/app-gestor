@@ -35,9 +35,6 @@ export class WorkEquipmentInteractor implements WorkEquipmentUseCase {
     async deleteWorkEquipmentInLocalDatabase(id: string, userId: string): Promise<void> {
         await this.repository.deleteWorkEquipmentInLocalDatabase(id, userId)
     }
-    saveWorkEquipmentServerId(dtos: WorkEquipmentDto[]): void {
-        throw new Error('Method not implemented.')
-    }
 
     async loadAllWorkEquipmentByEnterpriseIdFromLocalDatabase(
         enterpriseId: string,

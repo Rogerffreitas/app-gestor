@@ -33,9 +33,6 @@ export class FuelSupplyInteractor implements FuelSupplyUseCase {
     deleteFuelSupplyInLocalDatabase(id: string, userId: string): Promise<void> {
         return this.fuelSupplyRepositoryGateway.deleteFuelSupplyInLocalDatabase(id, userId)
     }
-    saveFuelSupplyServerId(dtos: FuelSupplyDto[]): void {
-        throw new Error('Method not implemented.')
-    }
 
     async loadAllFuelSupplyByEnterpriseIdAndWorkIdAndVehicleIdAndTypeFromLocalDatabase(
         enterpriseId: string,
@@ -55,8 +52,8 @@ export class FuelSupplyInteractor implements FuelSupplyUseCase {
         })
     }
 
-    loadById(id: string): Promise<FuelSupplyDto> {
-        throw new Error('Method not implemented.')
+    async loadById(id: string): Promise<FuelSupplyDto> {
+        return new FuelSupplyDto().entityToDto(await this.fuelSupplyRepositoryGateway.loadById(id))
     }
 
     async loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndTypeFromLocalDatabase(

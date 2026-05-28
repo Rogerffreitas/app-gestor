@@ -1,14 +1,14 @@
 import { ChangeErrorFields } from '../types'
-import { TransportVehicleRespositoryGateway } from '../application/gateways/TransportVehicleRepositoryGateway'
 import { BankInformation } from '../entity/bank-information/BankInformation'
 import TransportVehicleDto from '../entity/transport-vehicle/TransportVehicleDto'
 import { TransportVehicleEntity } from '../entity/transport-vehicle/TransportVehicleEntity'
 import { TransportVehicleUseCase } from '../use-cases/TransportVehicleUseCase'
+import { TransportVehicleRepositoryGateway } from '../application/gateways/TransportVehicleRepositoryGateway'
 
 export class TransportVehicleInteractor implements TransportVehicleUseCase {
-    private repository: TransportVehicleRespositoryGateway
+    private repository: TransportVehicleRepositoryGateway
 
-    constructor(transportVehicleGateway: TransportVehicleRespositoryGateway) {
+    constructor(transportVehicleGateway: TransportVehicleRepositoryGateway) {
         this.repository = transportVehicleGateway
     }
     async updateTransportVehicleBankInformation(
@@ -40,16 +40,11 @@ export class TransportVehicleInteractor implements TransportVehicleUseCase {
     async deleteTransportVehicleInLocalDatabase(id: string, userId: string): Promise<void> {
         await this.repository.deleteTransportVehicleInLocalDatabase(id, userId)
     }
-    async findTransportVehicleByIdInLocalDatabase(id: string): Promise<TransportVehicleDto | null> {
+    async findTransportVehicleByIdInLocalDatabase(id: string): Promise<TransportVehicleDto> {
         const result = await this.repository.findTransportVehicleByIdInLocalDatabase(id)
-        if (!result) {
-            return null
-        }
         return new TransportVehicleDto().entityToDto(result)
     }
-    saveTransportVehicleServerId(dtos: TransportVehicleDto[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string

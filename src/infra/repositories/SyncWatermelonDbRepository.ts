@@ -1,14 +1,17 @@
-import { Model } from '@nozbe/watermelondb'
+import { Database, Model } from '@nozbe/watermelondb'
 import { SyncPushResponse } from '../../interfaces/SyncPushResponse'
-import { database } from '../../database'
 import { TableName } from '../../types'
 import { SyncResponseRepositoryGateway } from '@gestor/domain/application/gateways/SyncResponseRepositoryGateway'
 
 export class SyncWatermelonDbRepository implements SyncResponseRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
     async saveAllServerIds(syncData: SyncPushResponse): Promise<void> {
         //console.log(syncData)
         try {
-            await database.write(async () => {
+            await this.database.write(async () => {
                 const allPreparedUpdates: Model[] = []
                 const tableMap: Record<keyof SyncPushResponse, string> = {
                     transportVehicles: TableName.TRANSPORT_VEHICLES,
@@ -34,7 +37,7 @@ export class SyncWatermelonDbRepository implements SyncResponseRepositoryGateway
                         //console.log(tableName)
                         //console.log('entities')
                         //console.log(entities)
-                        const collection = database.get(tableName)
+                        const collection = this.database.get(tableName)
 
                         const prepared = await Promise.all(
                             entities.map(async (item: any) => {
@@ -59,7 +62,7 @@ export class SyncWatermelonDbRepository implements SyncResponseRepositoryGateway
                 }
 
                 if (allPreparedUpdates.length > 0) {
-                    await database.batch(...allPreparedUpdates)
+                    await this.database.batch(...allPreparedUpdates)
                     console.log(`[Sync] Sucesso: ${allPreparedUpdates.length} registros atualizados.`)
                 }
             })
@@ -72,7 +75,7 @@ export class SyncWatermelonDbRepository implements SyncResponseRepositoryGateway
     async saveServerId(data: any, modelName): Promise<void> {
         //console.log(data)
         try {
-            await database.write(async () => {
+            await this.database.write(async () => {
                 const tableMap: Record<keyof SyncPushResponse, string> = {
                     transportVehicles: TableName.TRANSPORT_VEHICLES,
                     workEquipments: TableName.WORK_EQUIPMENTS,
@@ -91,9 +94,9 @@ export class SyncWatermelonDbRepository implements SyncResponseRepositoryGateway
                 const tableName = tableMap[modelName as keyof SyncPushResponse]
 
                 if (tableName) {
-                    //console.log('table name')
-                    //console.log(tableName)
-                    const collection = database.get(tableName)
+                    console.log('table name')
+                    console.log(tableName)
+                    const collection = this.database.get(tableName)
 
                     try {
                         const record = await collection.find(data.id)

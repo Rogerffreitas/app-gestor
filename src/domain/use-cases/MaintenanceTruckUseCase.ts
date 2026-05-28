@@ -4,25 +4,24 @@ import { MaintenanceTruckDto } from '../entity/maintenance-truck/MaintenanceTruc
 export interface MaintenanceTruckUseCase {
     createMaintenanceTruckInLocalDatabase(
         dto: MaintenanceTruckDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaintenanceTruckDto>
     updateMaintenanceTruckInLocalDatabase(
         dto: MaintenanceTruckDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaintenanceTruckDto>
     deleteMaintenanceTruckInLocalDatabase(id: string, workEquipmentId: string, userId: string): void
     findMaintenanceTruckByIdInLocalDatabase(
         id: string,
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckDto | null>
-    saveMaintenanceTruckServerId(dtos: MaintenanceTruckDto[]): void
     loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckDto[]>
     loadAllMaintenanceTruckByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckDto[]>
 }

@@ -32,11 +32,9 @@ export class DiscountInteractor implements DiscountUseCase {
         return this.discountRepositoryGateway.deleteDiscountInLocalDatabase(id, userId)
     }
     findDiscountByIdInLocalDatabase(id: string): Promise<DiscountDto> {
-        throw new Error('Method not implemented.')
+        return this.discountRepositoryGateway.findDiscountByIdInLocalDatabase(id)
     }
-    saveDiscountServerId(dtos: DiscountDto[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllDiscountByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,

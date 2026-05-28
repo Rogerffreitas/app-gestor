@@ -10,11 +10,11 @@ export class WorkRoutesDtoFactory {
             // Localização e Trajeto
             departureLocation: 'Jazida Principal',
             arrivalLocation: 'Frente de Serviço A',
-            km: 12.5,
+            km: 1250,
             initialPicket: 450,
 
             // Valores
-            value: 15.75,
+            value: 1575,
             isFixedValue: false,
 
             // Relacionamentos Complexos

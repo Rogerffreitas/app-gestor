@@ -1,19 +1,23 @@
 import { MaterialTransportRepositoryGateway } from '@gestor/domain/application/gateways/MaterialTransportRepositoryGateway'
-import { database } from '../../database'
 import MaterialTransportModel from '../../database/model/MaterialTransportModel'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import { MaterialTransportEntity } from '@gestor/domain/entity/material-transport/MaterialTransportEntity'
 import Mappers from './mappers'
 
 export class MaterialTransportWatermelonDbRepository implements MaterialTransportRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createMaterialTransportInLocalDatabase(
         entity: MaterialTransportEntity
     ): Promise<MaterialTransportEntity> {
         console.log('Creating Material Transport in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                return await database
+            const entityCreated = await this.database.write(async () => {
+                return await this.database
                     .get<MaterialTransportModel>(TableName.MATERIAL_TRANSPORTS)
                     .create((item) => {
                         item.workRoutesId = entity.workRoutesId
@@ -60,8 +64,8 @@ export class MaterialTransportWatermelonDbRepository implements MaterialTranspor
     }
     async deleteMaterialTransportInLocalDatabase(id: string, userId: string): Promise<void> {
         try {
-            await database.write(async () => {
-                const result = await database
+            await this.database.write(async () => {
+                const result = await this.database
                     .get<MaterialTransportModel>(TableName.MATERIAL_TRANSPORTS)
                     .find(id)
                 await result.update(() => {
@@ -84,7 +88,7 @@ export class MaterialTransportWatermelonDbRepository implements MaterialTranspor
         vehicleId: string
     ): Promise<MaterialTransportEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<MaterialTransportModel>(TableName.MATERIAL_TRANSPORTS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -106,6 +110,19 @@ export class MaterialTransportWatermelonDbRepository implements MaterialTranspor
         } catch (error) {
             console.log('[MaintenanceTruckRepository]: ' + error)
             throw new Error('Error loading maintenace trucks from local database.', { cause: error })
+        }
+    }
+
+    async findMaterialTransportVehicleByIdInLocalDatabase(id: string): Promise<MaterialTransportEntity> {
+        try {
+            const result = await this.database
+                .get<MaterialTransportModel>(TableName.MATERIAL_TRANSPORTS)
+                .find(id)
+
+            return new MaterialTransportEntity().modelToEntity(await Mappers.materialTransportMapper(result))
+        } catch (error) {
+            console.log('[TransportVehicleEntityRepository]: ' + error)
+            throw new Error('an error occurred while trying to load model ', { cause: error })
         }
     }
 }

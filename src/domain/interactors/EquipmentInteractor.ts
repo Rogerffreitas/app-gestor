@@ -21,9 +21,10 @@ export class EquipmentInteractor implements EquipmentUseCase {
         )
     }
     async loadAllEquipmentByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<EquipmentDto[]> {
-        const result = await this.equipmentRepositoryGateway.loadAllEquipmentByEnterpriseIdFromLocalDatabase(
-            enterpriseId
-        )
+        const result =
+            await this.equipmentRepositoryGateway.loadAllEquipmentByEnterpriseIdFromLocalDatabase(
+                enterpriseId
+            )
         return result.map((item) => new EquipmentDto().entityToDto(item))
     }
 
@@ -58,25 +59,12 @@ export class EquipmentInteractor implements EquipmentUseCase {
     deleteEquipmentInLocalDatabase(id: string, userId: string): Promise<void> {
         return this.equipmentRepositoryGateway.deleteEquipmentInLocalDatabase(id, userId)
     }
-    findEquipmentByIdInLocalDatabase(id: string): Promise<EquipmentDto> {
-        throw new Error('Method not implemented.')
+    async findEquipmentByIdInLocalDatabase(id: string): Promise<EquipmentDto> {
+        return new EquipmentDto().entityToDto(
+            await this.equipmentRepositoryGateway.findEquipmentByIdInLocalDatabase(id)
+        )
     }
-    saveEquipmentServerId(dtos: EquipmentDto[]): void {
-        throw new Error('Method not implemented.')
-    }
-    async loadAllEquipmentByEnterpriseIdAndWorkIdFromLocalDatabase(
-        enterpriseId: string,
-        workId: string
-    ): Promise<EquipmentDto[]> {
-        const result =
-            await this.equipmentRepositoryGateway.loadAllEquipmentByEnterpriseIdAndWorkIdFromLocalDatabase(
-                enterpriseId,
-                workId
-            )
-        return result.map((item) => {
-            return new EquipmentDto().entityToDto(item)
-        })
-    }
+
     async loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string
     ): Promise<EquipmentDto[]> {

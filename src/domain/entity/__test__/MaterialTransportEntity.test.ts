@@ -16,7 +16,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
     })
 
     describe('dtoToEntity - Lógica de Cálculo', () => {
-        it('deve calcular o valor total baseado no VOLUME e incluir DMT de estacas', () => {
+        it('Must calculate the total value based on the VOLUME and include DMT.', () => {
             const dto = MaterialTransportDtoFactory.create({
                 quantity: 1000, // 10.00 após /100
                 totalPickets: 10, // 10 * 20m = 200m = 0.2km
@@ -25,9 +25,54 @@ describe('MaterialTransportEntity Unit Tests', () => {
                     value: 200, // 2.00 após /1000
                     isFixedValue: false,
                 }),
-                transportVehicle: TransportVehicleDtoFactory.create({ capacity: 15 }),
+                transportVehicle: TransportVehicleDtoFactory.create({ capacity: 1500 }),
                 material: MaterialDtoFactory.create({ referenceMaterialCalculation: Reference.VOLUME }),
             })
+
+            let totalValue = 0
+            let displacementFloat = +dto.workRoutes.km / 100
+            let unitCostOfTheRouteFloat = +dto.workRoutes.value / 100
+            let quantityFloat = +dto.quantity / 100
+            let dmtPicketTotal = +dto.totalPickets * 20 //dmtPicketTotal em METROS / 1000 para converter em KM
+            let extraDMT = +dmtPicketTotal / 1000
+            let totalKm = +displacementFloat + extraDMT
+            let tQuantity = 0
+            let tDistanceTraveledWithinTheWork = 0
+            let tIsReferenceCapacity: boolean
+            let capacityFloat = dto.transportVehicle.capacity / 100
+
+            if (dto.workRoutes.isFixedValue) {
+                totalValue = dto.workRoutes.value
+            }
+
+            if (
+                !dto.workRoutes.isFixedValue &&
+                dto.material.referenceMaterialCalculation === Reference.VOLUME
+            ) {
+                let costCapacity = unitCostOfTheRouteFloat * capacityFloat
+                totalValue = parseInt(
+                    (parseFloat(costCapacity.toFixed(3)) * totalKm).toFixed(2).replace('.', '')
+                )
+            }
+
+            if (
+                !dto.workRoutes.isFixedValue &&
+                dto.material.referenceMaterialCalculation === Reference.WEIGHT
+            ) {
+                let costDisplacement = unitCostOfTheRouteFloat * quantityFloat
+                totalValue = parseInt(
+                    (parseFloat(costDisplacement.toFixed(3)) * totalKm).toFixed(2).replace('.', '')
+                )
+            }
+
+            tQuantity = dto.quantity
+            if (dto.material.referenceMaterialCalculation === Reference.VOLUME) {
+                tQuantity = dto.transportVehicle.capacity
+            }
+
+            tDistanceTraveledWithinTheWork = parseInt(extraDMT.toFixed(2).replace('.', ''))
+
+            tIsReferenceCapacity = dto.material.referenceMaterialCalculation === Reference.VOLUME
 
             entity.dtoToEntity(dto)
 
@@ -38,9 +83,13 @@ describe('MaterialTransportEntity Unit Tests', () => {
             // costCapacity = 2.0 * 15 = 30.0
             // totalValue = (30.0 * 5.2) = 156.00 -> 15600 (devido ao replace e parseInt)
 
+            expect(entity.isReferenceCapacity).toBe(tIsReferenceCapacity)
+            expect(entity.distanceTraveledWithinTheWork).toBe(tDistanceTraveledWithinTheWork)
+            expect(entity.quantity).toBe(tQuantity)
+            expect(entity.capacity).toBe(dto.transportVehicle.capacity)
             expect(entity.value).toBe(15600)
             expect(entity.isReferenceCapacity).toBe(true)
-            expect(entity.quantity).toBe(15) // Assume capacidade do veículo no Volume
+            expect(entity.quantity).toBe(1500) // Assume capacidade do veículo no Volume
         })
 
         it('deve utilizar o valor fixo da rota se isFixedValue for true', () => {
@@ -53,7 +102,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
             })
 
             entity.dtoToEntity(dto)
-            console.info(entity)
+
             expect(entity.value).toBe(50000)
         })
 

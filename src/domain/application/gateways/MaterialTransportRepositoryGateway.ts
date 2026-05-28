@@ -9,4 +9,6 @@ export interface MaterialTransportRepositoryGateway {
         workId: string,
         vehicleId: string
     ): Promise<MaterialTransportEntity[]>
+
+    findMaterialTransportVehicleByIdInLocalDatabase(id: string): Promise<MaterialTransportEntity>
 }

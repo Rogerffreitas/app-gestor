@@ -25,14 +25,13 @@ export interface FuelSupplyRepositoryGateway {
      * @returns {void} Resultado.
      */
     deleteFuelSupplyInLocalDatabase(id: string, userId: string): Promise<void>
-    saveFuelSupplyServerId(entiteis: FuelSupplyEntity[]): void
 
     loadById(id: string): Promise<FuelSupplyEntity>
 
     loadLastSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        maintenanceTrucksWorkEquipmentId: string,
+        maintenanceTrucksWorkEquipmentId: string
     ): Promise<FuelSupplyEntity>
 
     /**
@@ -46,7 +45,7 @@ export interface FuelSupplyRepositoryGateway {
     loadCurrentBalanceTankByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        maintenanceTrucksWorkEquipmentId: string,
+        maintenanceTrucksWorkEquipmentId: string
     ): Promise<number>
 
     /**
@@ -62,7 +61,7 @@ export interface FuelSupplyRepositoryGateway {
         enterpriseId: string,
         workId: string,
         transportVehicleOrWorkEquipmentId: string,
-        type: string,
+        type: string
     ): Promise<FuelSupplyEntity[]>
 
     /**
@@ -78,7 +77,7 @@ export interface FuelSupplyRepositoryGateway {
         enterpriseId: string,
         workId: string,
         maintenanceTrucksWorkEquipmentId: string,
-        type: string,
+        type: string
     ): Promise<FuelSupplyEntity[]>
 
     /**
@@ -92,7 +91,7 @@ export interface FuelSupplyRepositoryGateway {
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        maintenanceTrucksWorkEquipmentId: string,
+        maintenanceTrucksWorkEquipmentId: string
     ): Promise<FuelSupplyEntity[]>
 
     /**
@@ -108,7 +107,7 @@ export interface FuelSupplyRepositoryGateway {
         enterpriseId: string,
         workId: string,
         maintenanceTrucksWorkEquipmentId: string,
-        previousDate: number,
+        previousDate: number
     ): Promise<number>
 
     loadAllFuelSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdAndStartDateAndEndDateFromLocalDatabase(
@@ -116,6 +115,6 @@ export interface FuelSupplyRepositoryGateway {
         workId: string,
         maintenanceTrucksWorkEquipmentId: string,
         startDate: number,
-        endDate: number,
+        endDate: number
     ): Promise<FuelSupplyEntity[]>
 }

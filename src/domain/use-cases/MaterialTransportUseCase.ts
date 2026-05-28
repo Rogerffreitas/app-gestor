@@ -4,13 +4,13 @@ import MaterialTransportDto from '../entity/material-transport/MaterialTransport
 export interface MaterialTransportUseCase {
     createMaterialTransportInLocalDatabase(
         dto: MaterialTransportDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaterialTransportDto>
     deleteMaterialTransportInLocalDatabase(id: string, userId: string): Promise<void>
-    saveMaterialTransportServerId(dtos: MaterialTransportDto[]): void
+
     loadAllMaterialTransportByEnterpriseIdAndWorkIdAndVehicleIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
-        vehicleId: string,
+        vehicleId: string
     ): Promise<MaterialTransportDto[]>
 }

@@ -5,25 +5,24 @@ import TransportVehicleDto from '../entity/transport-vehicle/TransportVehicleDto
 export interface TransportVehicleUseCase {
     createTransportVehicleInLocalDatabase(
         dto: TransportVehicleDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<TransportVehicleDto>
     updateTransportVehicleInLocalDatabase(
         dto: TransportVehicleDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<TransportVehicleDto>
     deleteTransportVehicleInLocalDatabase(id: string, userId: string): Promise<void>
     findTransportVehicleByIdInLocalDatabase(id: string): Promise<TransportVehicleDto | null>
-    saveTransportVehicleServerId(dtos: TransportVehicleDto[]): void
     loadAllTransportVehicleByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<TransportVehicleDto[]>
     loadAllTransportVehicleByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<TransportVehicleDto[]>
     updateTransportVehicleBankInformation(
         id: string,
-        bankInformation: BankInformation,
+        bankInformation: BankInformation
     ): Promise<TransportVehicleDto>
 }

@@ -11,7 +11,7 @@ export interface DiscountUseCase {
      */
     createDiscountInLocalDatabase(
         dto: DiscountDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<DiscountDto>
 
     /**
@@ -23,7 +23,7 @@ export interface DiscountUseCase {
      */
     updateDiscountInLocalDatabase(
         dto: DiscountDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<DiscountDto>
 
     /**
@@ -44,14 +44,6 @@ export interface DiscountUseCase {
     findDiscountByIdInLocalDatabase(id: string): Promise<DiscountDto | null>
 
     /**
-     * Salva os ID_SERVER retornado pela API
-     *
-     * @param {DiscountDto} DTOS - lista IDs retornados pela API.
-     * @returns {void} Resultado.
-     */
-    saveDiscountServerId(dtos: DiscountDto[]): void
-
-    /**
      * Carrega os Descontos do Veiculo de transporte ou Equipamento
      *
      * @param {string} enterpriseId - Empresa.
@@ -64,6 +56,6 @@ export interface DiscountUseCase {
         enterpriseId: string,
         workId: string,
         typ_e: string,
-        transportVehicleOrWorkEquipmentId: string,
+        transportVehicleOrWorkEquipmentId: string
     ): Promise<DiscountDto[]>
 }

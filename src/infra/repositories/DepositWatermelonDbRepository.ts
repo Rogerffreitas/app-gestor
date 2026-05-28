@@ -11,9 +11,6 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
         this.database = db
     }
 
-    saveDepositServerId(entitys: DepositEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
     async createDepositInLocalDatabase(entity: DepositEntity): Promise<DepositEntity> {
         try {
             const entityCreated = await this.database.write(async () => {
@@ -82,10 +79,8 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
     async findDepositByIdInLocalDatabase(id: string): Promise<DepositEntity> {
         try {
             const result = await this.database.get<DepositModel>(TableName.DEPOSITS).find(id)
-            if (result) {
-                return new DepositEntity().modelToEntity(Mappers.depositMapper(result))
-            }
-            return null
+
+            return new DepositEntity().modelToEntity(Mappers.depositMapper(result))
         } catch (error) {
             console.error('[Deposits]: ' + error)
             throw new Error('Error deleting deposit routes in local database. ' + error)
@@ -109,23 +104,4 @@ export class DepositWatermelonDbRepository implements DepositRepositoryGateway {
             throw new Error('Error loading deposit from local database. ' + error)
         }
     }
-
-    /*async saveDepositServerId(entity: DepositEntity): Promise<void> {
-        try {
-            await database.write(async () => {
-                const deposit = await database.get<DepositModel>(TableName.DEPOSITS).find(entity.id)
-
-                await deposit.update((record) => {
-                    record.serverId = entity.serverId
-                })
-            })
-        } catch (error) {
-            console.error(`[Deposits Error] ID: ${entity.id}:`, error)
-            throw new Error(
-                `Não foi possível salvar o Server ID do depósito: ${
-                    error instanceof Error ? error.message : 'Erro desconhecido'
-                }`
-            )
-        }
-    }*/
 }

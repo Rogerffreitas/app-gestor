@@ -8,9 +8,9 @@ export class MaterialDtoFactory {
         const defaultData: Partial<MaterialDto> = {
             // Dados do Material
             name: 'Brita Graduada',
-            density: 1.65, // Densidade comum para materiais de base
+            density: 165, // Densidade comum para materiais de base
             referenceMaterialCalculation: Reference.VOLUME, // Assumindo que Reference seja um Enum
-            value: 85.5,
+            value: 8550,
             depositId: 'dep-123',
 
             // Metadados e Controle (AbstractEntity)

@@ -13,23 +13,23 @@ export class MaterialInteractor implements MaterialUseCase {
 
     async createMaterialInLocalDatabase(
         dto: MaterialDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaterialDto> {
         const material = new MaterialEntity().dtoToEntity(dto)
         material.validate(changeErrorFields)
         return new MaterialDto().entityToDto(
-            await this.materialRepositoryGateway.createMaterialInLocalDatabase(material),
+            await this.materialRepositoryGateway.createMaterialInLocalDatabase(material)
         )
     }
 
     async updateMaterialInLocalDatabase(
         dto: MaterialDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaterialDto> {
         const material = new MaterialEntity().dtoToEntity(dto)
         material.validate(changeErrorFields)
         return new MaterialDto().entityToDto(
-            await this.materialRepositoryGateway.updateMaterialInLocalDatabase(material),
+            await this.materialRepositoryGateway.updateMaterialInLocalDatabase(material)
         )
     }
 
@@ -37,22 +37,19 @@ export class MaterialInteractor implements MaterialUseCase {
         return this.materialRepositoryGateway.deleteMaterialInLocalDatabase(id, userId)
     }
 
-    async findMaterialByIdInLocalDatabase(id: string): Promise<MaterialDto | null> {
+    async findMaterialByIdInLocalDatabase(id: string): Promise<MaterialDto> {
         const result = await this.materialRepositoryGateway.findMaterialByIdInLocalDatabase(id)
-        if (!result) {
-            return null
-        }
         return new MaterialDto().entityToDto(result)
     }
 
     async loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
         enterpriseId: string,
-        depositId: string,
+        depositId: string
     ): Promise<MaterialDto[]> {
         const result =
             await this.materialRepositoryGateway.loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
                 enterpriseId,
-                depositId,
+                depositId
             )
         return result.map((item) => {
             return new MaterialDto().entityToDto(item)
@@ -60,17 +57,15 @@ export class MaterialInteractor implements MaterialUseCase {
     }
     async loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
-        depositId: string,
+        depositId: string
     ): Promise<MaterialDto[]> {
         const result =
             await this.materialRepositoryGateway.loadAllMaterialByEnterpriseIdAndServerIdValidFromLocalDatabase(
                 enterpriseId,
-                depositId,
+                depositId
             )
         return result.map((item) => {
             return new MaterialDto().entityToDto(item)
         })
     }
-
-    saveMaterialServerId(dtos: MaterialDto[]): void {}
 }

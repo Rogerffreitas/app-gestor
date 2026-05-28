@@ -81,18 +81,14 @@ export class DiscountWatermelonDbRepository implements DiscountRepositoryGateway
     async findDiscountByIdInLocalDatabase(id: string): Promise<DiscountEntity> {
         try {
             const result = await this.database.get<DiscountModel>(TableName.DISCOUNTS).find(id)
-            if (result) {
-                return new DiscountEntity().modelToEntity(this.discountMapper(result))
-            }
-            return null
+
+            return new DiscountEntity().modelToEntity(this.discountMapper(result))
         } catch (error) {
             console.log('[DiscountRepository]: ' + error)
             throw new Error(`Error loading Discount from local database. ${error}`)
         }
     }
-    saveDiscountServerId(entitys: DiscountEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllDiscountByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,

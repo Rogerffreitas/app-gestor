@@ -1,18 +1,22 @@
 import { MaintenanceTruckRepositoryGateway } from '@gestor/domain/application/gateways/MaintenanceTruckRepositoryGateway'
-import { database } from '../../database'
 import MaintenanceTruckModel from '../../database/model/MaintenanceTruckModel'
 import { TableName, UserAction } from '../../types'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import { MaintenanceTruckEntity } from '@gestor/domain/entity/maintenance-truck/MaintenanceTruckEntity'
 import Mappers from './mappers'
 
 export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createMaintenanceTruckInLocalDatabase(
         entity: MaintenanceTruckEntity
     ): Promise<MaintenanceTruckEntity> {
         try {
-            const entityCreated = await database.write(async () => {
-                return await database
+            const entityCreated = await this.database.write(async () => {
+                return await this.database
                     .get<MaintenanceTruckModel>(TableName.MAINTENANCE_TRUCKS)
                     .create((item) => {
                         item.capacity = +entity.capacity
@@ -39,8 +43,8 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
         entity: MaintenanceTruckEntity
     ): Promise<MaintenanceTruckEntity> {
         try {
-            const entityUpdated = await database.write(async () => {
-                const result = await database
+            const entityUpdated = await this.database.write(async () => {
+                const result = await this.database
                     .get<MaintenanceTruckModel>(TableName.MAINTENANCE_TRUCKS)
                     .find(entity.id)
                 return await result.update(() => {
@@ -66,11 +70,11 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
     ): Promise<void> {
         try {
             const [fuelCount1, fuelCount2] = await Promise.all([
-                database
+                this.database
                     .get(TableName.FUEL_SUPPLYS)
                     .query(Q.where('transport_vehicle_or_work_equipment_id', workEquipmentId))
                     .fetchCount(),
-                database
+                this.database
                     .get(TableName.FUEL_SUPPLYS)
                     .query(Q.where('maintenance_trucks_work_equipment_id', workEquipmentId))
                     .fetchCount(),
@@ -82,8 +86,8 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
                 throw new Error('Error deleting maintenace trucks in local database.')
             }
 
-            await database.write(async () => {
-                const result = await database
+            await this.database.write(async () => {
+                const result = await this.database
                     .get<MaintenanceTruckModel>(TableName.MAINTENANCE_TRUCKS)
                     .find(id)
                 await result.update(() => {
@@ -97,18 +101,22 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
             throw new Error('Error deleting maintenace trucks in local database.')
         }
     }
-    findMaintenanceTruckByIdInLocalDatabase(id: string): Promise<MaintenanceTruckEntity> {
-        throw new Error('Method not implemented.')
+    async findMaintenanceTruckByIdInLocalDatabase(id: string): Promise<MaintenanceTruckEntity> {
+        try {
+            const result = await this.database.get<MaintenanceTruckModel>(TableName.EQUIPMENTS).find(id)
+            return new MaintenanceTruckEntity().modelToEntity(Mappers.maintenanceTruckMapper(result))
+        } catch (error) {
+            console.log('[MaintenanceTruckRepository]: ' + error)
+            throw new Error('Error find MaintenanceTruck in local database: ', { cause: error })
+        }
     }
-    saveMaintenanceTruckServerId(entities: MaintenanceTruckEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
         workId: string
     ): Promise<MaintenanceTruckEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<MaintenanceTruckModel>(TableName.MAINTENANCE_TRUCKS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -130,7 +138,7 @@ export class MaintenanceTruckWatermelonDbRepository implements MaintenanceTruckR
         workId: string
     ): Promise<MaintenanceTruckEntity[]> {
         try {
-            const result = await database.get<MaintenanceTruckModel>(TableName.MAINTENANCE_TRUCKS).query(
+            const result = await this.database.get<MaintenanceTruckModel>(TableName.MAINTENANCE_TRUCKS).query(
                 Q.sortBy('created_at', Q.desc),
                 Q.where('is_valid', true),
                 Q.where('enterprise_id', enterpriseId),

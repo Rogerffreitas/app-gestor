@@ -31,16 +31,17 @@ export class MaterialTransportEntity extends AbstratcEntity {
         let dmtPicketTotal = +data.totalPickets * 20 //dmtPicketTotal em METROS / 1000 para converter em KM
         let extraDMT = +dmtPicketTotal / 1000
         let totalKm = +displacementFloat + extraDMT
+        let capacityFloat = data.transportVehicle.capacity / 100
 
         if (data.workRoutes.isFixedValue) {
-            totalValue = data.workRoutes.value
+            totalValue = +data.workRoutes.value
         }
 
         if (
             !data.workRoutes.isFixedValue &&
             data.material.referenceMaterialCalculation === Reference.VOLUME
         ) {
-            let costCapacity = unitCostOfTheRouteFloat * data.transportVehicle.capacity
+            let costCapacity = unitCostOfTheRouteFloat * capacityFloat
             totalValue = parseInt((parseFloat(costCapacity.toFixed(3)) * totalKm).toFixed(2).replace('.', ''))
         }
 
@@ -54,9 +55,9 @@ export class MaterialTransportEntity extends AbstratcEntity {
             )
         }
 
-        this._quantity = data.quantity
+        this._quantity = +data.quantity
         if (data.material.referenceMaterialCalculation === Reference.VOLUME) {
-            this._quantity = data.transportVehicle.capacity
+            this._quantity = +data.transportVehicle.capacity
         }
 
         this._distanceTraveledWithinTheWork = parseInt(extraDMT.toFixed(2).replace('.', ''))
@@ -67,7 +68,7 @@ export class MaterialTransportEntity extends AbstratcEntity {
         this._transportVehicle = new TransportVehicleEntity().dtoToEntity(data.transportVehicle)
         this._material = new MaterialEntity().dtoToEntity(data.material)
         this._value = totalValue
-        this._totalPickets = data.totalPickets
+        this._totalPickets = +data.totalPickets
         this._observation = data.observation
         this._workId = data.workId
         this.userId = data.userId
@@ -141,6 +142,11 @@ export class MaterialTransportEntity extends AbstratcEntity {
         this._transportVehicle.validate(changeErrorFields)
         this._workRoutes.validate(changeErrorFields)
         this._material.validate(changeErrorFields)
+
+        // Validação para impedir casas decimais (ex: 29.10 gera erro, 2910 passa)
+        if (this._value != null && this._value % 1 !== 0) {
+            addError('value', 'Não são permitidas casas decimais')
+        }
 
         if (errorMessages.length > 0) {
             console.info('Validation Errors:', errorMessages)

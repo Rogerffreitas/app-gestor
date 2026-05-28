@@ -129,20 +129,7 @@ export class WorkWatermelonDbRepository implements WorkRepositoryGateway {
             throw new Error('Error loading works from local database.' + error)
         }
     }
-    async saveWorkServerId(entitys: WorkEntity[]): Promise<void> {
-        const result = entitys.map(async (item) => {
-            await this.database
-                .write(async () => {
-                    const result = await this.database.get<WorkModel>(TableName.WORKS).find(item.id)
-                    await result.update(() => {
-                        result.serverId = item.serverId
-                    })
-                })
-                .catch((error) => {
-                    throw new Error(error)
-                })
-        })
-    }
+
     async loadAllWorkByEnterpriseIdAndUserIdAndValidServerIdFromDatabase(
         enterpriseId: string,
         userId: string

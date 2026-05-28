@@ -7,7 +7,7 @@ export interface WorkEquipmentRepositoryGateway {
         enterpriseId: string,
         workId: string
     ): Promise<WorkEquipmentEntity[]>
-    saveWorkEquipmentServerId(entitys: WorkEquipmentEntity[]): void
+
     loadAllWorkEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
         workId: string

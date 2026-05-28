@@ -21,11 +21,8 @@ export class WorkInteractor implements WorkUseCase {
         return new WorkDto().entityToDto(await this.workRepositoryGateway.updateWorkInLocalDatabase(work))
     }
 
-    async findWorkByIdInLocalDatabase(id: string): Promise<WorkDto | null> {
+    async findWorkByIdInLocalDatabase(id: string): Promise<WorkDto> {
         const result = await this.workRepositoryGateway.findWorkByIdInLocalDatabase(id)
-        if (!result) {
-            return null
-        }
 
         return new WorkDto().entityToDto(result)
     }

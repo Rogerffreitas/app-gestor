@@ -6,8 +6,8 @@ export class MaterialPropsFactory {
         return {
             id: 'mat-123',
             name: 'Areia Grossa',
-            density: 1.5,
-            value: 85.0,
+            density: 15,
+            value: 8500,
             referenceMaterialCalculation: Reference.VOLUME,
             depositId: 'dep-456',
             serverId: 101,

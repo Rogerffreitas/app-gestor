@@ -1,5 +1,6 @@
 import { TransportVehicleEntity } from '../transport-vehicle/TransportVehicleEntity'
 import { TransportVehiclePropsFactory } from '../../utils/factories/TransportVehiclePropsFactory'
+import { TransportVehicleDtoFactory } from '../../utils/factories/TransportVehicleDtoFactory'
 
 describe('TransportVehicleEntity', () => {
     let entity: TransportVehicleEntity
@@ -20,6 +21,15 @@ describe('TransportVehicleEntity', () => {
         it('deve aceitar uma placa válida (formato antigo e mercosul)', () => {
             const plates = ['ABC1234', 'ABC1D23']
             plates.forEach((plate) => {
+                const dto = TransportVehicleDtoFactory.create({ plate })
+                entity.dtoToEntity(dto)
+                expect(() => entity.validate(mockChangeErrorFields)).not.toThrow()
+            })
+        })
+
+        it('deve aceitar uma placa válida (formato antigo e mercosul)', () => {
+            const plates = ['ABC1234', 'ABC1D23']
+            plates.forEach((plate) => {
                 const props = TransportVehiclePropsFactory.create({ plate })
                 entity.modelToEntity(props)
                 expect(() => entity.validate(mockChangeErrorFields)).not.toThrow()
@@ -27,8 +37,8 @@ describe('TransportVehicleEntity', () => {
         })
 
         it('deve lançar erro para placa em formato inválido', () => {
-            const props = TransportVehiclePropsFactory.create({ plate: 'AB123' })
-            entity.modelToEntity(props)
+            const dto = TransportVehicleDtoFactory.create({ plate: 'AB123' })
+            entity.dtoToEntity(dto)
 
             expect(() => {
                 entity.validate(mockChangeErrorFields)
@@ -36,16 +46,16 @@ describe('TransportVehicleEntity', () => {
         })
 
         it('deve lançar erro para placa vazia', () => {
-            const props = TransportVehiclePropsFactory.create({ plate: '' })
-            entity.modelToEntity(props)
+            const dto = TransportVehicleDtoFactory.create({ plate: '' })
+            entity.dtoToEntity(dto)
             expect(() => entity.validate(mockChangeErrorFields)).toThrow(/A placa é obrigatória/)
         })
     })
 
     describe('Validação de Capacidade', () => {
         it('deve invalidar se a capacidade não for um número inteiro', () => {
-            const props = TransportVehiclePropsFactory.create({ capacity: 10.5 })
-            entity.modelToEntity(props)
+            const dto = TransportVehicleDtoFactory.create({ capacity: 10.5 })
+            entity.dtoToEntity(dto)
 
             expect(() => {
                 entity.validate(mockChangeErrorFields)
@@ -53,8 +63,8 @@ describe('TransportVehicleEntity', () => {
         })
 
         it('deve invalidar se a capacidade ultrapassar 99999', () => {
-            const props = TransportVehiclePropsFactory.create({ capacity: 100000 })
-            entity.modelToEntity(props)
+            const dto = TransportVehicleDtoFactory.create({ capacity: 100000 })
+            entity.dtoToEntity(dto)
 
             expect(() => {
                 entity.validate(mockChangeErrorFields)
@@ -64,42 +74,62 @@ describe('TransportVehicleEntity', () => {
 
     describe('Composição e Mapeamento', () => {
         it('deve mapear corretamente os dados via dtoToEntity', () => {
-            const dto = {
+            const dto = TransportVehicleDtoFactory.create({
                 motorist: 'Carlos',
                 plate: 'AAA0A00',
-                capacity: '20', // Testando conversão de string
+                capacity: '20' as any, // Testando conversão de string
                 color: 'Preto',
                 workId: 'obra-1',
-            } as any
+            })
 
             entity.dtoToEntity(dto)
 
             expect(entity.motorist).toBe('Carlos')
             expect(entity.capacity).toBe(20)
+            expect(entity.plate).toBe('AAA0A00')
+            expect(entity.color).toBe('Preto')
             expect(typeof entity.capacity).toBe('number')
         })
 
-        it('deve propagar erro de validação do proprietário (Proprietary)', () => {
-            const props = TransportVehiclePropsFactory.create({ nameProprietary: '' })
+        it('deve mapear corretamente os dados via modelToEntity', () => {
+            const props = TransportVehiclePropsFactory.create({
+                motorist: 'Carlos',
+                plate: 'AAA0A00',
+                capacity: '20' as any, // Testando conversão de string
+                color: 'Preto',
+                workId: 'obra-1',
+            })
+
             entity.modelToEntity(props)
 
-            expect(() => {
-                entity.validate(mockChangeErrorFields)
-            }).toThrow(/Entity validation failed/)
+            expect(entity.motorist).toBe('Carlos')
+            expect(entity.capacity).toBe(20)
+            expect(entity.plate).toBe('AAA0A00')
+            expect(entity.color).toBe('Preto')
+            expect(typeof entity.capacity).toBe('number')
         })
     })
 
     describe('Obrigatoriedade de Campos', () => {
         it('deve invalidar se o workId estiver vazio', () => {
-            const props = TransportVehiclePropsFactory.create({ workId: '' })
-            entity.modelToEntity(props)
+            const dto = TransportVehicleDtoFactory.create({ workId: '' })
+            entity.dtoToEntity(dto)
             expect(() => entity.validate(mockChangeErrorFields)).toThrow(/id da obra é obrigatório/)
         })
 
         it('deve invalidar se a cor estiver vazia', () => {
-            const props = TransportVehiclePropsFactory.create({ color: '  ' })
-            entity.modelToEntity(props)
+            const dto = TransportVehicleDtoFactory.create({ color: '  ' })
+            entity.dtoToEntity(dto)
             expect(() => entity.validate(mockChangeErrorFields)).toThrow(/A cor é obrigatória/)
+        })
+
+        it('deve propagar erro de validação do proprietário (Proprietary)', () => {
+            const dto = TransportVehicleDtoFactory.create({ nameProprietary: '' })
+            entity.dtoToEntity(dto)
+
+            expect(() => {
+                entity.validate(mockChangeErrorFields)
+            }).toThrow(/Entity validation failed/)
         })
     })
 })

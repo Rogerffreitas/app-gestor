@@ -88,15 +88,15 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
         }
     }
     async deleteFuelSupplyInLocalDatabase(id: string, userId: string): Promise<void> {
-        const a = await this.database
-            .get(TableName.FUEL_SUPPLYS)
-            .query(Q.where('id', id), Q.where('invoice_status', Q.notEq(InvoiceStatus.PENDING)))
-            .fetchCount()
-        console.info(a)
-        if (a > 0) {
-            throw new Error('Não é possível apagar o Abastecimento')
-        }
         await this.database.write(async () => {
+            const a = await this.database
+                .get(TableName.FUEL_SUPPLYS)
+                .query(Q.where('id', id), Q.where('invoice_status', Q.notEq(InvoiceStatus.PENDING)))
+                .fetchCount()
+
+            if (a > 0) {
+                throw new Error('Não é possível apagar o Abastecimento')
+            }
             const result = await this.database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).find(id)
             await result.update(() => {
                 result.isValid = false
@@ -105,12 +105,15 @@ export class FuelSupplyWatermelonDbRepository implements FuelSupplyRepositoryGat
             })
         })
     }
-    saveFuelSupplyServerId(entiteis: FuelSupplyEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
 
-    loadById(id: string): Promise<FuelSupplyEntity> {
-        throw new Error('Method not implemented.')
+    async loadById(id: string): Promise<FuelSupplyEntity> {
+        try {
+            const result = await this.database.get<FuelSupplyModel>(TableName.FUEL_SUPPLYS).find(id)
+            return new FuelSupplyEntity().modelToEntity(this.fuelSupplyMapper(result))
+        } catch (error) {
+            console.log('[TransportVehicleEntityRepository]: ' + error)
+            throw new Error('an error occurred while trying to load model ', { cause: error })
+        }
     }
 
     async loadLastSupplyByEnterpriseIdAndWorkIdAndMaintenanceTruckIdFromLocalDatabase(

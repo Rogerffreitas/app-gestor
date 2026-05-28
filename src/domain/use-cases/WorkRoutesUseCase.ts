@@ -9,7 +9,7 @@ export interface WorkRoutesUseCase {
      */
     createWorkRoutesInLocalDatabase: (
         dto: WorkRoutesDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ) => Promise<WorkRoutesDto>
 
     /**
@@ -19,7 +19,7 @@ export interface WorkRoutesUseCase {
      */
     updateWorkRoutesInLocalDatabase: (
         dto: WorkRoutesDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ) => Promise<WorkRoutesDto>
 
     /**
@@ -32,18 +32,13 @@ export interface WorkRoutesUseCase {
     findWorkRoutesByIdInLocalDatabase: (id: string) => Promise<WorkRoutesDto | null>
 
     /**
-     * @param entitys work entitys
-     */
-    saveWorkRoutesServerId(entitys: WorkRoutesDto[]): void
-
-    /**
      * Search all routes by company and work
      * @param enterpriseId enterprise entity id
      * @param workId work entity id
      */
     loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<WorkRoutesDto[]>
 
     /**
@@ -53,6 +48,6 @@ export interface WorkRoutesUseCase {
      */
     loadAllWorkRoutesByEnterpriseIdAndServeridValidFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<WorkRoutesDto[]>
 }

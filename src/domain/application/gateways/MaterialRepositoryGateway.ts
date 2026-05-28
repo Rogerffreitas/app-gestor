@@ -13,5 +13,4 @@ export interface MaterialRepositoryGateway {
         enterpriseId: string,
         depositId: string
     ): Promise<MaterialEntity[]>
-    saveMaterialServerId(entitys: MaterialEntity[]): void
 }

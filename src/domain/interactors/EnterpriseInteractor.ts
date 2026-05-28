@@ -8,11 +8,11 @@ export class EnterpriseInteractor implements EnterpriseUseCase {
     constructor(repository: EnterpriseRepositoryGateway) {
         this.repository = repository
     }
-    async loadEnterpriseByID(id: string): Promise<EnterpriseDto | null> {
+    async loadEnterpriseByID(id: string): Promise<EnterpriseDto> {
         const result = await this.repository.loadEnterpriseByID(id)
-        if (result) {
-            new EnterpriseDto({ name: result.name, id: result.id, companyName: result.companyName })
+        if (!result) {
+            return null
         }
-        return null
+        return new EnterpriseDto({ name: result.name, id: result.id, companyName: result.companyName })
     }
 }

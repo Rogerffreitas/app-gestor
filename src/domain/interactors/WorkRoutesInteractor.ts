@@ -10,51 +10,46 @@ export class WorkRoutesInteractor implements WorkRoutesUseCase {
     constructor(workRoutesRepository: WorkRoutesRepositoryGateway) {
         this.workRoutesRepositoryGateway = workRoutesRepository
     }
-    saveWorkRoutesServerId(dtos: WorkRoutesDto[]): void {
-        this.saveWorkRoutesServerId(dtos)
-    }
+
     deleteWorkRoutesInLocalDatabase(id: string, userId: string) {
         return this.workRoutesRepositoryGateway.deleteWorkRoutesInLocalDatabase(id, userId)
     }
 
     async updateWorkRoutesInLocalDatabase(
         dto: WorkRoutesDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<WorkRoutesDto> {
         const workRoutes = new WorkRoutesEntity().dtoToEntity(dto)
         workRoutes.validate(changeErrorFields)
         return new WorkRoutesDto().entityToDto(
-            await this.workRoutesRepositoryGateway.updateWorkRoutesInLocalDatabase(workRoutes),
+            await this.workRoutesRepositoryGateway.updateWorkRoutesInLocalDatabase(workRoutes)
         )
     }
 
-    async findWorkRoutesByIdInLocalDatabase(id: string): Promise<WorkRoutesDto | null> {
+    async findWorkRoutesByIdInLocalDatabase(id: string): Promise<WorkRoutesDto> {
         const result = await this.workRoutesRepositoryGateway.findWorkRoutesByIdInLocalDatabase(id)
-        if (!result) {
-            return null
-        }
         return new WorkRoutesDto().entityToDto(result)
     }
 
     async createWorkRoutesInLocalDatabase(
         dto: WorkRoutesDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<WorkRoutesDto> {
         const workRoutes = new WorkRoutesEntity().dtoToEntity(dto)
         workRoutes.validate(changeErrorFields)
         return new WorkRoutesDto().entityToDto(
-            await this.workRoutesRepositoryGateway.createWorkRoutesInLocalDatabase(workRoutes),
+            await this.workRoutesRepositoryGateway.createWorkRoutesInLocalDatabase(workRoutes)
         )
     }
 
     async loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<WorkRoutesDto[]> {
         const result =
             await this.workRoutesRepositoryGateway.loadAllWorkRoutesByEnterpriseIdAndWorkIdFromLocalDatabase(
                 enterpriseId,
-                workId,
+                workId
             )
         return result.map((item) => {
             return new WorkRoutesDto().entityToDto(item)
@@ -62,12 +57,12 @@ export class WorkRoutesInteractor implements WorkRoutesUseCase {
     }
     async loadAllWorkRoutesByEnterpriseIdAndServeridValidFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<WorkRoutesDto[]> {
         const result =
             await this.workRoutesRepositoryGateway.loadAllWorkRoutesByEnterpriseIdAndServerIdValidFromLocalDatabase(
                 enterpriseId,
-                workId,
+                workId
             )
 
         return result.map((item) => {

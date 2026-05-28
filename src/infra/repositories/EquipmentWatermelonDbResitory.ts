@@ -1,5 +1,4 @@
-import { Q } from '@nozbe/watermelondb'
-import { database } from '../../database'
+import { Database, Q } from '@nozbe/watermelondb'
 import EquipmentModel from '../../database/model/EquipmentModel'
 import { TableName, UserAction } from '../../types'
 import { EquipmentRepositoryGateway } from '@gestor/domain/application/gateways/EquipmentRepositoryGateway'
@@ -8,11 +7,16 @@ import { BankInformation } from '@gestor/domain/entity/bank-information/BankInfo
 import Mappers from './mappers'
 
 export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async updateHourMeterOrOdometerInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity> {
         console.log('Updating equipment in the database')
         try {
-            const result = await database.write(async () => {
-                const item = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(entity.id)
+            const result = await this.database.write(async () => {
+                const item = await this.database.get<EquipmentModel>(TableName.EQUIPMENTS).find(entity.id)
                 return await item.update(() => {
                     item.hourMeterOrOdometer = +entity.hourMeterOrOdometer
                     item.userId = entity.userId
@@ -30,8 +34,8 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
         bankInformation: BankInformation
     ): Promise<EquipmentEntity> {
         try {
-            const entityUpdated = await database.write(async () => {
-                const result = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
+            const entityUpdated = await this.database.write(async () => {
+                const result = await this.database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
                 return await result.update((item) => {
                     item.bank = bankInformation.bank
                     item.beneficiary = bankInformation.beneficiary
@@ -46,38 +50,13 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
             throw new Error('An error occurred while updating bank information', { cause: error })
         }
     }
-    async loadAllEquipmentByEnterpriseIdAndWorkIdFromLocalDatabase(
-        enterpriseId: string,
-        workId: string
-    ): Promise<EquipmentEntity[]> {
-        try {
-            const result = await database
-                .get<EquipmentModel>(TableName.EQUIPMENTS)
-                .query(
-                    Q.unsafeSqlQuery(
-                        `select equipamentos.* from equipamentos inner join obra_equipamentos on ` +
-                            `obra_equipamentos.obra_id = '` +
-                            workId +
-                            `' and obra_equipamentos.equipamento_id = equipamentos.id  ` +
-                            `where equipamentos.empresa_id = ` +
-                            enterpriseId +
-                            ` group by(equipamentos.id)`
-                    )
-                )
-                .fetch()
 
-            return result.map((item) => new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(item)))
-        } catch (error) {
-            console.log('[Equipment]: ' + error)
-            throw new Error('an error occurred while trying to load list ', { cause: error })
-        }
-    }
     async createEquipmentInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity> {
         console.log('Creating equipment in the database')
 
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<EquipmentModel>(TableName.EQUIPMENTS).create((item) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<EquipmentModel>(TableName.EQUIPMENTS).create((item) => {
                     item.nameProprietary = entity.nameProprietary
                     item.cpfCnpjProprietary = entity.cpfCnpjProprietary
                     item.telProprietary = entity.telProprietary
@@ -105,8 +84,8 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
     async updateEquipmentInLocalDatabase(entity: EquipmentEntity): Promise<EquipmentEntity> {
         console.log('Updating equipment in the database')
         try {
-            const result = await database.write(async () => {
-                const item = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(entity.id)
+            const result = await this.database.write(async () => {
+                const item = await this.database.get<EquipmentModel>(TableName.EQUIPMENTS).find(entity.id)
                 return await item.update(() => {
                     item.nameProprietary = entity.nameProprietary
                     item.cpfCnpjProprietary = entity.cpfCnpjProprietary
@@ -130,15 +109,15 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
     }
     async deleteEquipmentInLocalDatabase(id: string, userId: string): Promise<void> {
         const [hourMeterCount, fuelCount, discountCount] = await Promise.all([
-            database
+            this.database
                 .get(TableName.HOUR_METER_MONITORINGS)
                 .query(Q.where('work_equipment_id', id))
                 .fetchCount(),
-            database
+            this.database
                 .get(TableName.FUEL_SUPPLYS)
                 .query(Q.where('transport_vehicle_or_equipment_id', id))
                 .fetchCount(),
-            database
+            this.database
                 .get(TableName.DISCOUNTS)
                 .query(Q.where('transport_vehicle_or_equipment_id', id))
                 .fetchCount(),
@@ -149,9 +128,8 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
         if (totalDependencies > 0) {
             throw new Error('Existem registros associados (Horimetro, combustível ou descontos).')
         }
-
-        await database.write(async () => {
-            const equipment = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
+        await this.database.write(async () => {
+            const equipment = await this.database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
             await equipment.update(() => {
                 equipment.userAction = UserAction.DELETE
                 equipment.userId = userId
@@ -161,11 +139,8 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
     }
     async findEquipmentByIdInLocalDatabase(id: string): Promise<EquipmentEntity> {
         try {
-            const result = await database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
-            if (result) {
-                return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(result))
-            }
-            return null
+            const result = await this.database.get<EquipmentModel>(TableName.EQUIPMENTS).find(id)
+            return new EquipmentEntity().modelToEntity(Mappers.equipmentMapper(result))
         } catch (error) {
             console.log('[Equipment]: ' + error)
             throw new Error('Error find equipament in local database: ', { cause: error })
@@ -173,7 +148,7 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
     }
     async loadAllEquipmentByEnterpriseIdFromLocalDatabase(enterpriseId: string): Promise<EquipmentEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<EquipmentModel>(TableName.EQUIPMENTS)
                 .query(Q.where('enterprise_id', enterpriseId), Q.where('is_valid', true))
                 .fetch()
@@ -184,14 +159,12 @@ export class EquipmentWatermelonDbResitory implements EquipmentRepositoryGateway
             throw new Error('an error occurred while trying to load list ', { cause: error })
         }
     }
-    saveEquipmentServerId(entitys: EquipmentEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllEquipmentByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string
     ): Promise<EquipmentEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<EquipmentModel>(TableName.EQUIPMENTS)
                 .query(
                     Q.where('enterprise_id', enterpriseId),

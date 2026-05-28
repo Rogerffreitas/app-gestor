@@ -151,21 +151,4 @@ export class WorkRoutesWatermelonDbRepository implements WorkRoutesRepositoryGat
             throw new Error('Error loading routes from local database.' + error)
         }
     }
-
-    async saveWorkRoutesServerId(entitys: WorkRoutesEntity[]): Promise<void> {
-        const result = entitys.map(async (item) => {
-            await this.database
-                .write(async () => {
-                    const result = await this.database
-                        .get<WorkRoutesModel>(TableName.WORK_ROUTES)
-                        .find(item.id)
-                    await result.update(() => {
-                        result.serverId = item.serverId
-                    })
-                })
-                .catch((error) => {
-                    throw new Error(error)
-                })
-        })
-    }
 }

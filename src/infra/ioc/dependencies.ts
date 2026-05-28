@@ -38,19 +38,19 @@ import { database } from '@/src/database'
 const httpClientGateway = new AxiosHttpClientAdapter()
 
 // Repositórios
-const syncRepositoryGateway = new SyncWatermelonDbRepository()
+const syncRepositoryGateway = new SyncWatermelonDbRepository(database)
 const workRepositoryGateway = new WorkWatermelonDbRepository(database)
-const workEquipmentRepositoryGateway = new WorkEquipmentWatermelonDbRepository()
+const workEquipmentRepositoryGateway = new WorkEquipmentWatermelonDbRepository(database)
 const workRoutesRepositoryGateway = new WorkRoutesWatermelonDbRepository(database)
 const depositRepositoryGateway = new DepositWatermelonDbRepository(database)
 const discountRepositoryGateway = new DiscountWatermelonDbRepository(database)
-const equipmentRepositoryGateway = new EquipmentWatermelonDbResitory()
+const equipmentRepositoryGateway = new EquipmentWatermelonDbResitory(database)
 const fuelSupplyRepositoryGateway = new FuelSupplyWatermelonDbRepository(database)
-const hourMeterMonitoringRepositoryGateway = new HourMeterMonitoringWatermelonDbRepository()
-const maintenanceTruckRepositoryGateway = new MaintenanceTruckWatermelonDbRepository()
-const materialRepositoryGateway = new MaterialWatermelonDbRepository()
-const materialTransportRepositoryGateway = new MaterialTransportWatermelonDbRepository()
-const transportVehicleReposirotyGateway = new TransportVehicleWatermelonDbRepository()
+const hourMeterMonitoringRepositoryGateway = new HourMeterMonitoringWatermelonDbRepository(database)
+const maintenanceTruckRepositoryGateway = new MaintenanceTruckWatermelonDbRepository(database)
+const materialRepositoryGateway = new MaterialWatermelonDbRepository(database)
+const materialTransportRepositoryGateway = new MaterialTransportWatermelonDbRepository(database)
+const transportVehicleReposirotyGateway = new TransportVehicleWatermelonDbRepository(database)
 const invoiceRepositoryGateway = new InvoiceApiRepositoryGateway(httpClientGateway)
 
 // Adaptadores Específicos

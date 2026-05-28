@@ -13,7 +13,7 @@ export class MaintenanceTruckInteractor implements MaintenanceTruckUseCase {
 
     async createMaintenanceTruckInLocalDatabase(
         dto: MaintenanceTruckDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaintenanceTruckDto> {
         const entity = new MaintenanceTruckEntity().dtoToEntity(dto)
         entity.validate(changeErrorFields)
@@ -22,7 +22,7 @@ export class MaintenanceTruckInteractor implements MaintenanceTruckUseCase {
     }
     async updateMaintenanceTruckInLocalDatabase(
         dto: MaintenanceTruckDto,
-        changeErrorFields: ChangeErrorFields,
+        changeErrorFields: ChangeErrorFields
     ): Promise<MaintenanceTruckDto> {
         const entity = new MaintenanceTruckEntity().dtoToEntity(dto)
         entity.validate(changeErrorFields)
@@ -32,14 +32,14 @@ export class MaintenanceTruckInteractor implements MaintenanceTruckUseCase {
     async deleteMaintenanceTruckInLocalDatabase(
         id: string,
         workEquipmentId: string,
-        userId: string,
+        userId: string
     ): Promise<void> {
         return await this.repository.deleteMaintenanceTruckInLocalDatabase(id, workEquipmentId, userId)
     }
     async findMaintenanceTruckByIdInLocalDatabase(
         id: string,
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckDto | null> {
         const result = await this.repository.findMaintenanceTruckByIdInLocalDatabase(id, enterpriseId, workId)
         if (!result) {
@@ -47,28 +47,26 @@ export class MaintenanceTruckInteractor implements MaintenanceTruckUseCase {
         }
         return new MaintenanceTruckDto().entityToDto(result)
     }
-    saveMaintenanceTruckServerId(dtos: MaintenanceTruckDto[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckDto[]> {
         const entities =
             await this.repository.loadAllMaintenanceTruckByEnterpriseIdAndWorkIdFromLocalDatabase(
                 enterpriseId,
-                workId,
+                workId
             )
         return entities.map((entity) => new MaintenanceTruckDto().entityToDto(entity))
     }
     async loadAllMaintenanceTruckByEnterpriseIdAndServerIdValidFromLocalDatabase(
         enterpriseId: string,
-        workId: string,
+        workId: string
     ): Promise<MaintenanceTruckDto[]> {
         const entities =
             await this.repository.loadAllMaintenanceTruckByEnterpriseIdAndServerIdValidFromLocalDatabase(
                 enterpriseId,
-                workId,
+                workId
             )
         return entities.map((entity) => new MaintenanceTruckDto().entityToDto(entity))
     }

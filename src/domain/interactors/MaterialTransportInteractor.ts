@@ -22,9 +22,7 @@ export class MaterialTransportInteractor implements MaterialTransportUseCase {
     deleteMaterialTransportInLocalDatabase(id: string, userId: string): Promise<void> {
         return this.repository.deleteMaterialTransportInLocalDatabase(id, userId)
     }
-    saveMaterialTransportServerId(dtos: MaterialTransportDto[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllMaterialTransportByEnterpriseIdAndWorkIdAndVehicleIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,

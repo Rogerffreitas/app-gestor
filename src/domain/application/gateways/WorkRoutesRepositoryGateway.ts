@@ -13,5 +13,4 @@ export interface WorkRoutesRepositoryGateway {
         enterpriseId: string,
         workId: string
     ): Promise<WorkRoutesEntity[]>
-    saveWorkRoutesServerId(entitys: WorkRoutesEntity[]): void
 }

@@ -1,5 +1,4 @@
-import { database } from '../../database'
-import { Q } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import HourMeterMonitoringModel from '../../database/model/HourMeterMonitoringModel'
 import { InvoiceStatus, TableName, UserAction } from '../../types'
 import { HourMeterMonitoringRepositoryGateway } from '../../domain/application/gateways/HourMeterMonitoringRepositoryGateway'
@@ -7,13 +6,18 @@ import { HourMeterMonitoringEntity } from '../../domain/entity/hour-meter-monito
 import Mappers from './mappers'
 
 export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonitoringRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createHourMeterMonitoringInLocalDatabase(
         entity: HourMeterMonitoringEntity
     ): Promise<HourMeterMonitoringEntity> {
         console.log('Creating Hour Meter Monitoring in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                return await database
+            const entityCreated = await this.database.write(async () => {
+                return await this.database
                     .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                     .create((item) => {
                         item.value = +entity.value
@@ -47,8 +51,8 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
     ): Promise<HourMeterMonitoringEntity> {
         console.log('Updating Hour Meter Monitoring in the database')
         try {
-            const entityCreated = await database.write(async () => {
-                const item = await database
+            const entityCreated = await this.database.write(async () => {
+                const item = await this.database
                     .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                     .find(entity.id)
                 return await item.update((item) => {
@@ -73,7 +77,7 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
     }
     async deleteHourMeterMonitoringInLocalDatabase(id: string, userId: string): Promise<void> {
         try {
-            const a = await database
+            const a = await this.database
                 .get(TableName.HOUR_METER_MONITORINGS)
                 .query(Q.where('id', id), Q.where('invoice_status', Q.notEq(InvoiceStatus.PENDING)))
                 .fetchCount()
@@ -81,8 +85,8 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
             if (a > 0) {
                 throw new Error('Não é possível apagar o Apontamento')
             }
-            await database.write(async () => {
-                const result = await database
+            await this.database.write(async () => {
+                const result = await this.database
                     .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                     .find(id)
                 await result.update(() => {
@@ -98,30 +102,26 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
     }
     async findHourMeterMonitoringByIdInLocalDatabase(id: string): Promise<HourMeterMonitoringEntity> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                 .find(id)
-            if (result) {
-                return new HourMeterMonitoringEntity().modelToEntity(
-                    await Mappers.hourMeterMonitoringMapper(result)
-                )
-            }
-            return null
+
+            return new HourMeterMonitoringEntity().modelToEntity(
+                await Mappers.hourMeterMonitoringMapper(result)
+            )
         } catch (error) {
             console.log('[HourMeterMonitoring]: ' + error)
             throw new Error(`Error loading HourMeterMonitoring from local database. ${error}`)
         }
     }
-    saveHourMeterMonitoringServerId(entities: HourMeterMonitoringEntity[]): void {
-        throw new Error('Method not implemented.')
-    }
+
     async loadAllHourMeterMonitoringByEnterpriseIdAndWorkIdAndWorkEquipmentIdFromLocalDatabase(
         enterpriseId: string,
         workId: string,
         workEquipmentId: string
     ): Promise<HourMeterMonitoringEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -152,7 +152,7 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
         workEquipmentId: string
     ): Promise<HourMeterMonitoringEntity> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                 .query(
                     Q.sortBy('current_hour_meter_value', Q.desc),
@@ -177,7 +177,7 @@ export class HourMeterMonitoringWatermelonDbRepository implements HourMeterMonit
         date: string
     ): Promise<HourMeterMonitoringEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<HourMeterMonitoringModel>(TableName.HOUR_METER_MONITORINGS)
                 .query(
                     Q.sortBy('created_at', Q.desc),

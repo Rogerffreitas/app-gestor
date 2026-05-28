@@ -1,5 +1,4 @@
-import { Q } from '@nozbe/watermelondb'
-import { database } from '../../database'
+import { Database, Q } from '@nozbe/watermelondb'
 import MaterialModel from '../../database/model/MaterialModel'
 import { TableName, UserAction } from '../../types'
 import { MaterialRepositoryGateway } from '@gestor/domain/application/gateways/MaterialRepositoryGateway'
@@ -7,10 +6,15 @@ import MaterialEntity from '@gestor/domain/entity/material/MaterialEntity'
 import Mappers from './mappers'
 
 export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway {
+    private readonly database: Database
+    constructor(db: Database) {
+        this.database = db
+    }
+
     async createMaterialInLocalDatabase(entity: MaterialEntity): Promise<MaterialEntity> {
         try {
-            const entityCreated = await database.write(async () => {
-                return await database.get<MaterialModel>('materials').create((item) => {
+            const entityCreated = await this.database.write(async () => {
+                return await this.database.get<MaterialModel>('materials').create((item) => {
                     item.name = entity.name
                     item.density = +entity.density
                     item.referenceMaterialCalculation = entity.referenceMaterialCalculation
@@ -34,8 +38,8 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
     }
     async updateMaterialInLocalDatabase(entity: MaterialEntity): Promise<MaterialEntity> {
         try {
-            const entityUpdated = await database.write(async () => {
-                const item = await database.get<MaterialModel>('materials').find(entity.id)
+            const entityUpdated = await this.database.write(async () => {
+                const item = await this.database.get<MaterialModel>('materials').find(entity.id)
                 return await item.update(() => {
                     item.name = entity.name
                     item.density = entity.density
@@ -55,7 +59,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
     }
     async deleteMaterialInLocalDatabase(id: string, userId: string): Promise<void> {
         try {
-            const t = await database
+            const t = await this.database
                 .get(TableName.MATERIAL_TRANSPORTS)
                 .query(
                     Q.unsafeSqlQuery(
@@ -69,8 +73,8 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
                 throw new Error('Não é possível apagar a Rota')
             }
 
-            await database.write(async () => {
-                const item = await database.get<MaterialModel>('materials').find(id)
+            await this.database.write(async () => {
+                const item = await this.database.get<MaterialModel>('materials').find(id)
                 await item.update(() => {
                     item.userAction = UserAction.DELETE
                     item.userId = userId
@@ -84,8 +88,13 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
             })
         }
     }
-    findMaterialByIdInLocalDatabase(id: string): Promise<MaterialEntity> {
-        throw new Error('Method not implemented.')
+    async findMaterialByIdInLocalDatabase(id: string): Promise<MaterialEntity> {
+        try {
+            const result = await this.database.get<MaterialModel>(TableName.MATERIAL).find(id)
+            return new MaterialEntity().modelToEntity(Mappers.materialMapper(result))
+        } catch (error) {
+            throw new Error('Error loading record from local database.' + error)
+        }
     }
 
     async loadAllMaterialByEnterpriseIdAndDepositIdFromLocalDatabase(
@@ -93,7 +102,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
         depositId: string
     ): Promise<MaterialEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<MaterialModel>('materials')
                 .query(
                     Q.sortBy('created_at', Q.desc),
@@ -118,7 +127,7 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
         depositId: string
     ): Promise<MaterialEntity[]> {
         try {
-            const result = await database
+            const result = await this.database
                 .get<MaterialModel>('materials')
                 .query(
                     Q.where('is_valid', true),
@@ -138,20 +147,5 @@ export class MaterialWatermelonDbRepository implements MaterialRepositoryGateway
                 cause: error,
             })
         }
-    }
-
-    async saveMaterialServerId(entitys: MaterialEntity[]): Promise<void> {
-        const result = entitys.map(async (item) => {
-            await database
-                .write(async () => {
-                    const result = await database.get<MaterialModel>('materials').find(item.id)
-                    await result.update(() => {
-                        result.serverId = item.serverId
-                    })
-                })
-                .catch((error) => {
-                    throw new Error(error)
-                })
-        })
     }
 }
