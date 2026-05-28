@@ -5,7 +5,6 @@ on:
         branches: [main]
 
 jobs:
-    # 1. Job de Testes
     test:
         name: 🧪 Run Tests
         runs-on: ubuntu-latest
@@ -25,7 +24,6 @@ jobs:
             - name: 🧪 Run tests
               run: npm test
 
-    # 2. Job do EAS
     eas-preview:
         name: 🚀 EAS Preview (Android)
         needs: test
@@ -40,19 +38,22 @@ jobs:
                   node-version: 22
                   cache: 'npm'
 
-            # 🔥 CORREÇÃO DO ENOENT: Garante que os sub-processos do Expo encontrem o Node 22 no caminho padrão do Linux
             - name: 🔗 Fix Node Path for Child Processes
               run: sudo ln -sf $(which node) /usr/local/bin/node
 
             - name: 📦 Install dependencies
               run: npm ci
 
+            # 🔥 CORREÇÃO: Instala o EAS CLI globalmente para evitar falhas de escopo do npx
+            - name: 🛠️ Install EAS CLI globally
+              run: npm install -g eas-cli
+
             - name: 🔍 Check Fingerprint & Existing Builds
               id: fingerprint
               env:
                   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
               run: |
-                  # 1. Gera o fingerprint e garante apenas a string limpa do hash
+                  # 1. Gera o fingerprint usando o pacote local
                   ANDROID_HASH=$(npx @expo/fingerprint android | jq -r '.hash')
 
                   if [ -z "$ANDROID_HASH" ] || [ "$ANDROID_HASH" = "null" ]; then
@@ -62,8 +63,13 @@ jobs:
 
                   echo "Fingerprint Hash limpo: $ANDROID_HASH"
 
-                  # 2. Consulta o EAS usando npx para saber se o build com esse hash já existe
-                  BUILD_COUNT=$(npx eas build:list --platform=android --profile=preview --fingerprint=$ANDROID_HASH --json --non-interactive | jq 'length')
+                  # 2. Consulta o EAS usando o comando global 'eas' direto
+                  BUILD_LIST_JSON=$(eas build:list --platform=android --profile=preview --fingerprint=$ANDROID_HASH --json --non-interactive)
+
+                  # Garante que, se o comando falhar ou voltar vazio, o COUNT seja 0 em vez de quebrar a expressão matemática
+                  BUILD_COUNT=$(echo "$BUILD_LIST_JSON" | jq 'length' 2>/dev/null || echo "0")
+
+                  echo "Quantidade de builds encontrados: $BUILD_COUNT"
 
                   if [ "$BUILD_COUNT" -gt 0 ]; then
                     echo "build_exists=true" >> $GITHUB_OUTPUT
@@ -77,10 +83,10 @@ jobs:
               if: steps.fingerprint.outputs.build_exists == 'true'
               env:
                   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-              run: npx eas update --platform=android --channel=preview --non-interactive
+              run: eas update --platform=android --channel=preview --non-interactive
 
             - name: 🛠 Trigger EAS Build (Se não existir build com esse fingerprint)
               if: steps.fingerprint.outputs.build_exists == 'false'
               env:
                   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-              run: npx eas build --platform=android --profile=preview --non-interactive --no-wait
+              run: eas build --platform=android --profile=preview --non-interactive --no-wait
