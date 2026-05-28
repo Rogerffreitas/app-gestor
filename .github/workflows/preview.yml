@@ -1,0 +1,77 @@
+name: Build or update preview version
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  # 1. Job de Testes: Roda sempre que um PR para a main for aberto/atualizado
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run tests
+        run: npm test
+
+  # 2. Job do EAS: Só executa se o job de testes passar com sucesso
+  eas-preview:
+    name: 🚀 EAS Preview (Android)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: 🚀 Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Check Fingerprint & Existing Builds
+        id: fingerprint
+        run: |
+          # Calcula o hash do fingerprint para a plataforma Android
+          ANDROID_HASH=$(npx @expo/fingerprint android)
+          echo "Fingerprint Hash calculado: $ANDROID_HASH"
+          
+          # Consulta a API do EAS para ver se já existe um build com esse hash específico
+          BUILD_COUNT=$(eas build:list --platform=android --profile=preview --fingerprint=$ANDROID_HASH --json --non-interactive | jq 'length')
+          
+          if [ "$BUILD_COUNT" -gt 0 ]; then
+            echo "build_exists=true" >> $GITHUB_OUTPUT
+            echo "Build correspondente encontrado no EAS."
+          else
+            echo "build_exists=false" >> $GITHUB_OUTPUT
+            echo "Nenhum build correspondente encontrado. Um novo build será gerado."
+          fi
+
+      - name: ⚡️ Publish EAS Update (Se o build já existir)
+        if: steps.fingerprint.outputs.build_exists == 'true'
+        run: eas update --platform=android --channel=preview --non-interactive
+
+      - name: 🛠 Trigger EAS Build (Se não existir build com esse fingerprint)
+        if: steps.fingerprint.outputs.build_exists == 'false'
+        run: eas build --platform=android --profile=preview --non-interactive --no-wait
