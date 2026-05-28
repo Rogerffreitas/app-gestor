@@ -25,7 +25,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
                     value: 200, // 2.00 após /1000
                     isFixedValue: false,
                 }),
-                transportVehicle: TransportVehicleDtoFactory.create({ capacity: 1500 }),
+                transportVehicle: TransportVehicleDtoFactory.create({ capacity: 15 }),
                 material: MaterialDtoFactory.create({ referenceMaterialCalculation: Reference.VOLUME }),
             })
 
@@ -39,7 +39,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
             let tQuantity = 0
             let tDistanceTraveledWithinTheWork = 0
             let tIsReferenceCapacity: boolean
-            let capacityFloat = dto.transportVehicle.capacity / 100
+            let capacityFloat = dto.transportVehicle.capacity // 100
 
             if (dto.workRoutes.isFixedValue) {
                 totalValue = dto.workRoutes.value
@@ -89,7 +89,7 @@ describe('MaterialTransportEntity Unit Tests', () => {
             expect(entity.capacity).toBe(dto.transportVehicle.capacity)
             expect(entity.value).toBe(15600)
             expect(entity.isReferenceCapacity).toBe(true)
-            expect(entity.quantity).toBe(1500) // Assume capacidade do veículo no Volume
+            expect(entity.quantity).toBe(15) // Assume capacidade do veículo no Volume
         })
 
         it('deve utilizar o valor fixo da rota se isFixedValue for true', () => {

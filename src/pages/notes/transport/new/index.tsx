@@ -132,7 +132,7 @@ export default function TransportNotes() {
                     onPress={actions.handlerClickButtonQuantity}
                     numero={'5'}
                     titulo={'QUANTIDADE:'}
-                    conteudo={states.quantity ? states.quantity / 100 + ' t' : 'Informe o peso (t)'}
+                    conteudo={states.quantity ? states.quantity + ' kg' : 'Informe o peso em (kg)'}
                     corIcon={icon.quantity == 'check' ? 'green' : theme.colors.menu}
                     nomeIcon={icon.quantity}
                     tamanho={icon.quantity == 'check' ? 15 : 30}
@@ -156,8 +156,7 @@ export default function TransportNotes() {
                                 description={'Quantidade:* '}
                                 erroMenssage={states.erroMessagePicket}
                             />
-                            <InputMaskNumber
-                                value={null}
+                            <InputComponent
                                 placeholder={'Quantidade'}
                                 autoCapitalize={'none'}
                                 autoCorrect={false}

@@ -97,7 +97,7 @@ export default function TransportList() {
                                                 <TextDescricao>
                                                     {item.isReferenceCapacity
                                                         ? item.quantity + ' m³'
-                                                        : item.quantity / 100 + ' t'}
+                                                        : item.quantity + ' kg'}
                                                 </TextDescricao>
                                             </ViewLeft>
                                             <ViewRight>

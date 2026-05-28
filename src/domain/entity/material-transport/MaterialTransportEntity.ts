@@ -31,7 +31,7 @@ export class MaterialTransportEntity extends AbstratcEntity {
         let dmtPicketTotal = +data.totalPickets * 20 //dmtPicketTotal em METROS / 1000 para converter em KM
         let extraDMT = +dmtPicketTotal / 1000
         let totalKm = +displacementFloat + extraDMT
-        let capacityFloat = data.transportVehicle.capacity / 100
+        let capacityFloat = data.transportVehicle.capacity // 100
 
         if (data.workRoutes.isFixedValue) {
             totalValue = +data.workRoutes.value
@@ -255,10 +255,10 @@ export class MaterialTransportEntity extends AbstratcEntity {
     }
 
     public get km(): number {
-        return this._workRoutes.km
+        return Number(this._workRoutes.km)
     }
 
     public get unitValue(): number {
-        return this._workRoutes.value
+        return Number(this._workRoutes.value)
     }
 }

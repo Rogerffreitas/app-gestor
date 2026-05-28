@@ -79,7 +79,7 @@ export default function Matirials() {
                                             conteudo={
                                                 item.referenceMaterialCalculation == Reference.VOLUME
                                                     ? 'Valor por m³:'
-                                                    : 'Valor por tonelada:'
+                                                    : 'Valor por quilo:'
                                             }
                                         />
                                     </CardLineContentLeft>

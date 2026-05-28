@@ -82,7 +82,7 @@ describe('MaterialTransportWatermelonDbRepository', () => {
             let tQuantity = 0
             let tDistanceTraveledWithinTheWork = 0
             let tIsReferenceCapacity: boolean
-            let capacityFloat = dto.transportVehicle.capacity / 100
+            let capacityFloat = dto.transportVehicle.capacity // 100
 
             if (dto.workRoutes.isFixedValue) {
                 totalValue = dto.workRoutes.value

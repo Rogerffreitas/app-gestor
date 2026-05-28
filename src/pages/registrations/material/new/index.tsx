@@ -81,7 +81,7 @@ export default function NewMaterial() {
                                 actions.onChange('weight')(true)
                                 actions.onChange('reference')(Reference.WEIGHT)
                             }}
-                            description={'Peso (t)'}
+                            description={'Peso (kg)'}
                         />
                     </View>
                 </View>

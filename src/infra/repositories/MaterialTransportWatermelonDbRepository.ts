@@ -23,15 +23,15 @@ export class MaterialTransportWatermelonDbRepository implements MaterialTranspor
                         item.workRoutesId = entity.workRoutesId
                         item.arrivalLocation = entity.arrivalLocation
                         item.departureLocation = entity.departureLocation
-                        item.km = entity.km
-                        item.unitValue = entity.unitValue
+                        item.km = +entity.km
+                        item.unitValue = +entity.unitValue
                         item.transportVehicleId = entity.transportVehicleId
                         item.nameProprietary = entity.nameProprietary
                         item.cpfCnpjProprietary = entity.cpfCnpjProprietary
                         item.telProprietary = entity.telProprietary
                         item.motorist = entity.motorist
                         item.plate = entity.plate
-                        item.capacity = entity.capacity
+                        item.capacity = +entity.capacity
                         item.materialId = entity.materialId
                         item.materialName = entity.materialName
 

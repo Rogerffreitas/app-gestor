@@ -113,7 +113,7 @@ export default function EditWorkRoute() {
                         <View style={{ width: '100%', flexDirection: 'row' }}>
                             <View style={{ width: '60%' }}>
                                 <InputMaskMoney
-                                    value={states.value / 1000}
+                                    value={states.value / 100}
                                     placeholder={'Valor'}
                                     autoCapitalize={'none'}
                                     autoCorrect={false}
