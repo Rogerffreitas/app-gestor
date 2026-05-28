@@ -5,6 +5,7 @@ on:
         branches: [main]
 
 jobs:
+    # 1. Job de Testes
     test:
         name: 🧪 Run Tests
         runs-on: ubuntu-latest
@@ -24,6 +25,7 @@ jobs:
             - name: 🧪 Run tests
               run: npm test
 
+    # 2. Job do EAS
     eas-preview:
         name: 🚀 EAS Preview (Android)
         needs: test
@@ -38,13 +40,15 @@ jobs:
                   node-version: 22
                   cache: 'npm'
 
+            # 🔥 CORREÇÃO DEFINITIVA: Vincula o Node 22 ao caminho mais estrito e protegido do Linux (/usr/bin)
             - name: 🔗 Fix Node Path for Child Processes
-              run: sudo ln -sf $(which node) /usr/local/bin/node
+              run: |
+                  sudo ln -sf $(which node) /usr/bin/node
+                  sudo ln -sf $(which node) /usr/local/bin/node
 
             - name: 📦 Install dependencies
               run: npm ci
 
-            # 🔥 CORREÇÃO: Instala o EAS CLI globalmente para evitar falhas de escopo do npx
             - name: 🛠️ Install EAS CLI globally
               run: npm install -g eas-cli
 
@@ -66,7 +70,7 @@ jobs:
                   # 2. Consulta o EAS usando o comando global 'eas' direto
                   BUILD_LIST_JSON=$(eas build:list --platform=android --profile=preview --fingerprint=$ANDROID_HASH --json --non-interactive)
 
-                  # Garante que, se o comando falhar ou voltar vazio, o COUNT seja 0 em vez de quebrar a expressão matemática
+                  # Garante que se o comando falhar por outra razão, o count vire 0 de forma segura
                   BUILD_COUNT=$(echo "$BUILD_LIST_JSON" | jq 'length' 2>/dev/null || echo "0")
 
                   echo "Quantidade de builds encontrados: $BUILD_COUNT"
