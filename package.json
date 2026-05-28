@@ -48,6 +48,7 @@
     "private": true,
     "devDependencies": {
         "@babel/plugin-proposal-decorators": "^7.29.0",
+        "@expo/fingerprint": "^0.19.3",
         "@testing-library/react-native": "^13.3.3",
         "@types/jest": "^29.5.14",
         "@types/react": "~19.1.10",
