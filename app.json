@@ -6,12 +6,7 @@
         "orientation": "portrait",
         "icon": "./assets/image/icon.png",
         "userInterfaceStyle": "light",
-        "splash": {
-            "image": "./assets/image/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff",
-            "imageWidth": 200
-        },
+
         "plugins": [
             [
                 "expo-build-properties",
