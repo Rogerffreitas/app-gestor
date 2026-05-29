@@ -54,4 +54,5 @@ jobs:
             - name: ⚡️ Deploy EAS Update to Preview
               env:
                   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-              run: eas update --platform=android --channel=preview --non-interactive
+              run: |
+                  eas update --platform=android --channel=preview --message "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}" --non-interactive
