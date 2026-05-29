@@ -87,7 +87,7 @@ export default function TransportList() {
                                                 </TextDescricao>
                                                 <TextLabel>Local de destino: </TextLabel>
                                                 <TextDescricao>
-                                                    `${item.workRoutes.departureLocation}`
+                                                    {item.workRoutes.departureLocation}
                                                 </TextDescricao>
                                                 <TextLabel>Estaca: </TextLabel>
                                                 <TextDescricao>{item.deliveryPicket}</TextDescricao>
