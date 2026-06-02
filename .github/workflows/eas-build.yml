@@ -1,0 +1,54 @@
+name: 🛠️ EAS Build (Manual)
+
+on:
+    workflow_dispatch: # Permite disparar manualmente pelo painel do GitHub
+
+jobs:
+    test:
+        name: 🧪 Run Tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: 🏗 Checkout repository
+              uses: actions/checkout@v4
+
+            - name: 🟢 Setup Node.js 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
+
+            - name: 📦 Install dependencies
+              run: npm ci
+
+            - name: 🧪 Run tests
+              run: npm test
+    trigger-build:
+        name: 🤖 Trigger Android Preview Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: 🏗 Checkout repository
+              uses: actions/checkout@v4
+
+            - name: 🟢 Setup Node.js 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
+
+            - name: 🔗 Fix Node Path for Child Processes
+              run: |
+                  sudo rm -f /usr/bin/node
+                  sudo cp $(which node) /usr/bin/node
+                  sudo chmod +x /usr/bin/node
+
+            - name: 📦 Install dependencies
+              run: npm ci
+
+            - name: 🛠️ Install EAS CLI globally
+              run: npm install -g eas-cli
+
+            - name: 🛠 Trigger EAS Build
+              env:
+                  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+              # O parâmetro --no-wait libera o runner do GitHub assim que o EAS aceita o build, poupando tempo de CI
+              run: eas build --platform=android --profile=preview --non-interactive --no-wait
