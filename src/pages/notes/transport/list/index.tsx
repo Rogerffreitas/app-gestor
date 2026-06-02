@@ -111,15 +111,21 @@ export default function TransportList() {
                                                     <View>
                                                         <TextLabel>Distância percorrida: </TextLabel>
                                                         <TextDescricao>
-                                                            {(
-                                                                (item.workRoutes.km +
-                                                                    item.distanceTraveledWithinTheWork) /
-                                                                100
-                                                            ).toLocaleString('pt-br', {
-                                                                style: 'decimal',
-                                                                maximumFractionDigits: 2,
-                                                            })}{' '}
-                                                            km
+                                                            {item.workRoutes.isFixedValue
+                                                                ? `${(
+                                                                      item.workRoutes.km / 100
+                                                                  ).toLocaleString('pt-br', {
+                                                                      style: 'decimal',
+                                                                      maximumFractionDigits: 2,
+                                                                  })} km`
+                                                                : `${(
+                                                                      (item.workRoutes.km +
+                                                                          item.distanceTraveledWithinTheWork) /
+                                                                      100
+                                                                  ).toLocaleString('pt-br', {
+                                                                      style: 'decimal',
+                                                                      maximumFractionDigits: 2,
+                                                                  })} km`}
                                                         </TextDescricao>
                                                     </View>
                                                 )}

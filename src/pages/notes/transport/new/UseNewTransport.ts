@@ -126,9 +126,9 @@ export default function useNewTransport() {
                 ...state,
                 material: item,
                 materials: [],
-                picket: 0,
-                picketDescription: '0',
-                picketVisibility: false,
+                //picket: 0,
+                //picketDescription: '0',
+                //picketVisibility: false,
             }))
             return
         }
@@ -156,7 +156,12 @@ export default function useNewTransport() {
         setStates((state) => ({
             ...state,
             picket: diff,
-            picketDescription: diff === 0 ? `Estaca ${input}` : `${initial} à ${input}`,
+            picketDescription:
+                states.workRoute && states.workRoute.isFixedValue
+                    ? `Estaca ${input}`
+                    : diff === 0
+                      ? `Estaca ${input}`
+                      : `${initial} à ${input}`,
             picketVisibility: false,
         }))
     }
