@@ -149,11 +149,40 @@ export default function useMaintenanceTruckFuelSupplies() {
         })
     }
 
+    const showPrintDialog = () => {
+        return Alert.alert('Deseja imprimir?', 'Para confirmar pressione sim?', [
+            {
+                text: 'SIM',
+                onPress: () => {
+                    handlePrint()
+                },
+            },
+            {
+                text: 'NÃO',
+            },
+        ])
+    }
+
+    async function handlePrint() {
+        try {
+            setStates((state) => ({ ...state, isLoading: true }))
+
+            //await Print.printAsync({ uri: pdf })
+            setStates((state) => ({ ...state, isLoading: false }))
+        } catch (error) {
+            console.info(error.mesage)
+            Alert.alert(`Erro ao tentar imprimir: ${error}`)
+            errorVibration()
+            setStates((state) => ({ ...state, isLoading: false }))
+        }
+    }
+
     return {
         animation,
         states,
 
         actions: {
+            showPrintDialog,
             resetType: () => setStates((states) => ({ ...states, fuelType: null, typeImage: null })),
             handleClickButtonEdit,
             handleClickButtonNew,
