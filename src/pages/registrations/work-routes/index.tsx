@@ -2,6 +2,7 @@ import React from 'react'
 import { FlatList, StyleSheet, ActivityIndicator } from 'react-native'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import styled from 'styled-components/native'
+
 import Container from '../../../components/Container'
 import theme from '../../../global/styles/theme'
 import CardLine from '../../../components/cardLine/CardLine'

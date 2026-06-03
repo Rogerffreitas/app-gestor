@@ -24,6 +24,7 @@ jobs:
               run: npm test
     trigger-build:
         name: 🤖 Trigger Android Preview Build
+        needs: test
         runs-on: ubuntu-latest
         steps:
             - name: 🏗 Checkout repository

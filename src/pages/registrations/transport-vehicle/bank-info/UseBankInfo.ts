@@ -60,7 +60,7 @@ export default function useBankInfo() {
     async function handleClickEditButton() {
         try {
             setStates((state) => ({ ...state, isLoading: true }))
-            const result = await transportVehicleServices.updateTransportVehicleBankInformation(
+            await transportVehicleServices.updateTransportVehicleBankInformation(
                 states.transportVehicle.id,
                 Builder<BankInformation>()
                     .bank(bankInformation.bank)

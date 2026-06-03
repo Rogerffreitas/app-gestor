@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, View, ActivityIndicator, Image } from 'react-native'
+import { FlatList, View, ActivityIndicator, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
 import Container from '../../../../components/Container'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
@@ -19,6 +19,7 @@ import { FuelSupplyTypes } from '../../../../types'
 import ButtonNewRegister from '../../../../components/button/ButtonNewRegister'
 import MenuOptionSelected from '@/src/pages/registrations/financial/components/MenuOptionSelected'
 import getDataFormatada from '@/src/services/formatarData'
+import theme from '@/src/global/styles/theme'
 
 const ASSETS_MAP = {
     truck: require('../../../../assets/truck2.json'),
@@ -185,10 +186,39 @@ export default function MaintenanceTruckFuelSupplies() {
                     <ListaVazia />
                 </View>
                 <ButtonNewRegister activeOpacity={0.7} onPressFunction={actions.handleClickButtonNew} />
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.touchableOpacityPrintStyle}
+                    onPress={actions.showPrintDialog}
+                >
+                    <FontAwesome name="print" size={20} color={'#fff'} />
+                </TouchableOpacity>
             </Container>
         )
     }
 }
+const styles = StyleSheet.create({
+    touchableOpacityPrintStyle: {
+        shadowColor: '#000000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 8,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: theme.colors.menu,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+        position: 'absolute',
+        right: 20,
+        bottom: 90,
+    },
+})
 
 const ContentCardList = styled.View`
     justify-content: center;
