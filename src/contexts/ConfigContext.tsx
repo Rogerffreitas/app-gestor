@@ -27,15 +27,25 @@ export function ConfigContextProvider(props: ConfigContextProviderProps) {
     })
 
     useEffect(() => {
-        _getconfigFromStore()
-        onFetchUpdateAsync()
+        async function initializeApp() {
+            try {
+                await onFetchUpdateAsync()
+                await getconfigFromStore()
+            } catch (error) {
+                console.error('Erro na inicialização:', error)
+            }
+        }
+        initializeApp()
     }, [])
 
-    async function _getconfigFromStore() {
-        setConfig((state) => ({ ...state, isExtraDMTPaid: true }))
-        setConfig((state) => ({ ...state, dmtPicket: 20 }))
-        setConfig((state) => ({ ...state, workRoutes: ['DIÁRIA', 'MEIA DIÁRIA'] }))
-        setConfig((state) => ({ ...state, urlApi: process.env.EXPO_PUBLIC_URL_API }))
+    async function getconfigFromStore() {
+        setConfig((state) => ({
+            ...state,
+            isExtraDMTPaid: true,
+            dmtPicket: 20,
+            workRoutes: ['DIÁRIA', 'MEIA DIÁRIA'],
+            urlApi: process.env.EXPO_PUBLIC_URL_API ?? '',
+        }))
     }
 
     return (

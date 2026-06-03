@@ -210,7 +210,7 @@ function Tabs() {
 
 export default function App() {
     const { signed, loading, firstAccess } = useAuth()
-    console.log('signed: ' + signed)
+    //console.log('signed: ' + signed)
     const theme = useTheme()
 
     if (loading) {
